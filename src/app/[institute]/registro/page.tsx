@@ -7,8 +7,8 @@ interface RegistroPageProps {
   };
 }
 
-export default function RegistroPage({ params }: RegistroPageProps) {
-  const { institute } = params;
+export default async function RegistroPage({ params }: RegistroPageProps) {
+  const { institute } = await params;
 
   return (
     <div className="grid gap-8 p-4 justify-center">
