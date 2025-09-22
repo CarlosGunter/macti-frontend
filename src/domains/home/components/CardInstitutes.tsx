@@ -37,7 +37,7 @@ export default function CardInstitutes({
           className="px-4 py-2 rounded-sm text-white bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
-            window.open(`/${id}/register`, '_self');
+            window.open(`/${id}/registro`, '_self');
           }}
           >
             Registro

@@ -1,3 +1,5 @@
+import { StaticImageData } from 'next/image';
+
 import ciencias from '@/assets/image/institutes/ciencias.webp';
 import cuantico from '@/assets/image/institutes/cuantico.webp';
 import encit from '@/assets/image/institutes/encit.webp';
@@ -9,7 +11,15 @@ import igf from '@/assets/image/institutes/igf.webp';
 import ingenieria from '@/assets/image/institutes/ingenieria.webp';
 import principal from '@/assets/image/institutes/principal.webp';
 
-export const institutes = {
+type Institute = {
+  name: string;
+  moodle: string;
+  jupyter: string;
+  details: string;
+  image: StaticImageData;
+}
+
+export const institutes: Record<string, Institute> = {
   principal: {
     name: "MACTI (principal)",
     moodle: "https://moodle.org",
