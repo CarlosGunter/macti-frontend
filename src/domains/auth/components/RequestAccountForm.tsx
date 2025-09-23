@@ -1,13 +1,15 @@
 'use client';
 
 import { useActionState } from "react";
-import { requestAccountAction } from "../actions/request-account.action";
+import { requestAccountAction } from "../actions/requestAccountAction";
 
-export default function RequestAccountForm() {
+export default function RequestAccountForm({ institute }: { institute: string }) {
   const [state, dispatch, isLoading] = useActionState(requestAccountAction, null);
 
   return (
     <form action={dispatch} className="flex flex-col gap-4">
+        <input type="hidden" name="institute" value={institute} />
+
         <label htmlFor="email">Email:</label>
         <input type="email" id="email" name="email" required className="border p-2 rounded-lg" defaultValue={state?.data?.email.toString() || ""} />
 

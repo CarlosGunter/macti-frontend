@@ -19,7 +19,7 @@ export default async function RegistroPage({ params }: RegistroPageProps) {
         </p>
       </div>
 
-      <RequestAccountForm />
+      <RequestAccountForm institute={institute} />
     </div>
   );
 }
