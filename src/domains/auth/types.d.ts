@@ -6,3 +6,8 @@ export type FieldsRequestAccount = {
   curso: string;
   institute: string;
 };
+
+export type FieldsCreateAccount = {
+  password: string;
+  token: string;
+};

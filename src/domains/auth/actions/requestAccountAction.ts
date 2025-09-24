@@ -6,7 +6,9 @@
  */
 export function requestAccountAction(prevState: unknown, formData: FormData) {
   // El FormData es un objeto que contiene los datos del formulario
-  const getData = Object.fromEntries(formData.entries());
+  const getData = Object.fromEntries(formData.entries().map(([key, value]) =>
+    [key, value.toString()]
+  ));
 
   // Llamar a la API para solicitar la cuenta
 
