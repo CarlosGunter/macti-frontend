@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 MACTI Frontend
 
-## Getting Started
+> 🎓 **M**ateriales didácticos para **A**nálisis **C**omputacional **T**écnico y **I**nvestigación
 
-First, run the development server:
+Una plataforma educativa moderna construida con Next.js que alberga materiales didácticos, haciendo énfasis en ejemplos prácticos y aplicaciones de conceptos abstractos para cursos semestrales de Análisis Numérico y Ecuaciones Diferenciales.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Características
+
+- 🚀 **Next.js 15.5.3** - Framework React de última generación
+- ⚡ **React 19** - UI declarativa y eficiente
+- 🎨 **Tailwind CSS 4** - Estilos utilitarios modernos
+- 📝 **TypeScript** - Tipado estático para mayor robustez
+- 🔧 **ESLint** - Linting y análisis de código
+- 📦 **pnpm** - Gestor de paquetes rápido y eficiente
+
+## 🏗️ Estructura del Proyecto
+
+```
+src/
+├── app/                    # App Router de Next.js
+│   ├── [institute]/       # Rutas dinámicas por instituto
+│   └── globals.css        # Estilos globales
+├── domains/               # Dominios de negocio
+│   ├── auth/             # Autenticación
+│   └── home/             # Página principal
+├── assets/               # Recursos estáticos
+│   ├── image/           # Imágenes
+│   └── logos/           # Logotipos
+├── shared/              # Código compartido
+│   ├── components/      # Componentes reutilizables
+│   ├── config/         # Configuraciones
+│   └── services/       # Servicios
+└── lib/                # Utilidades y helpers
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Inicio Rápido
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 📋 Prerrequisitos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Node.js** >= 18.17.0
+- **pnpm** (recomendado) o npm
 
-## Learn More
+### 📦 Instalación de pnpm
 
-To learn more about Next.js, take a look at the following resources:
+Si no tienes pnpm instalado, puedes instalarlo de las siguientes maneras:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```powershell
+# Usando npm
+npm install -g pnpm
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+O visita la guía oficial completa: https://pnpm.io/installation
 
-## Deploy on Vercel
+### 🔧 Instalación del Proyecto
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clona el repositorio**
+   ```powershell
+   git clone https://github.com/CarlosGunter/macti-frontend
+   cd macti-frontend
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Instala las dependencias**
+   ```powershell
+   pnpm install
+   ```
+
+3. **Inicia el servidor de desarrollo**
+   ```powershell
+   pnpm dev
+   ```
+
+4. **¡Abre tu navegador!** 🌐
+   
+   Visita [http://localhost:3000](http://localhost:3000) para ver la aplicación en funcionamiento.
+
+## 📜 Scripts Disponibles
+
+| Script | Descripción | Comando |
+|--------|-------------|---------|
+| 🔥 **dev** | Inicia el servidor de desarrollo | `pnpm dev` |
+| 🏗️ **build** | Construye la aplicación para producción | `pnpm build` |
+| 🚀 **start** | Inicia el servidor de producción | `pnpm start` |
+| 🔍 **lint** | Ejecuta el linter de código | `pnpm lint` |
