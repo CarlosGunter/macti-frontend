@@ -6,7 +6,9 @@ interface PerfilPageProps {
   };
 }
 
-export default function PerfilPage({ params }: PerfilPageProps) {
+export default async function PerfilPage({ params }: PerfilPageProps) {
+  const { institute } = await params;
+
   return (
     <div className="grid gap-8">
       <h1 className="text-2xl font-bold">Perfil de usuario</h1>
@@ -24,7 +26,7 @@ export default function PerfilPage({ params }: PerfilPageProps) {
             id={`${index + 1}`}
             title={`Curso ${index + 1}`}
             description={`Descripción del curso ${index + 1}`}
-            institute={params.institute}
+            institute={institute}
             />
           ))}
         </div>

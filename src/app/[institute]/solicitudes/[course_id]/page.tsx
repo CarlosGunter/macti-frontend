@@ -4,8 +4,8 @@ interface SolicitudesPageProps {
   };
 }
 
-export default function SolicitudesPage({ params }: SolicitudesPageProps) {
-  const { course_id } = params;
+export default async function SolicitudesPage({ params }: SolicitudesPageProps) {
+  const { course_id } = await params;
 
   return (
     <div>
