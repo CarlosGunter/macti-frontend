@@ -1,3 +1,6 @@
+import { requestAccountService } from "../services/requestAccountService";
+import { FieldsRequestAccount } from "../types";
+
 /**
  * 
  * @param prevState estado previo
@@ -11,6 +14,7 @@ export function requestAccountAction(prevState: unknown, formData: FormData) {
   ));
 
   // Llamar a la API para solicitar la cuenta
+  requestAccountService(getData as FieldsRequestAccount);
 
   return {
     success: true,
