@@ -1,6 +1,6 @@
 export default function UserReqAccountCard() {
   return (
-    <section className="flex justify-between items-center w-full p-4 border rounded shadow gap-2">
+    <section className="flex justify-between items-center w-full p-4 border rounded-lg shadow gap-2">
       <div>
         <h1 className="text-sm">Nombre del Usuario</h1>
         <p className="text-xs">email@ejemplo.com</p>

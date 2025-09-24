@@ -1,4 +1,5 @@
 import CourseCard from "@/domains/courses/components/CourseCard";
+import Link from "next/link";
 
 interface PerfilPageProps {
   params: {
@@ -23,11 +24,12 @@ export default async function PerfilPage({ params }: PerfilPageProps) {
         <div className="grid grid-cols-1 gap-4">
           {Array.from({ length: 5 }).map((_, index) => (
             <CourseCard key={index}
-            id={`${index + 1}`}
             title={`Curso ${index + 1}`}
-            description={`Descripción del curso ${index + 1}`}
-            institute={institute}
-            />
+            description={`Descripción del curso ${index + 1}`} >
+              <Link href={`/${institute}/solicitudes/${index + 1}`} className="px-4 py-2 bg-blue-500 text-white rounded">
+                Solicitudes
+              </Link>
+            </CourseCard>
           ))}
         </div>
       </div>
