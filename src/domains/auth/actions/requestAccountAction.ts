@@ -7,14 +7,22 @@ import { FieldsRequestAccount } from "../types";
  * @param formData datos del formulario
  * @returns objeto con el resultado de la acción
  */
-export function requestAccountAction(prevState: unknown, formData: FormData) {
+export async function requestAccountAction(prevState: unknown, formData: FormData) {
   // El FormData es un objeto que contiene los datos del formulario
   const getData = Object.fromEntries(formData.entries().map(([key, value]) =>
     [key, value.toString()]
   ));
 
   // Llamar a la API para solicitar la cuenta
-  requestAccountService(getData as FieldsRequestAccount);
+  const accountRequestResult = await requestAccountService(
+    getData as FieldsRequestAccount
+  );
+  if (!accountRequestResult.success) {
+    return {
+      success: false,
+      message: "Error al solicitar la cuenta. Inténtalo de nuevo más tarde."
+    };
+  }
 
   return {
     success: true,

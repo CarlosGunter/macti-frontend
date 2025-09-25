@@ -12,7 +12,7 @@ export default async function RegistroPage({ params }: RegistroPageProps) {
 
   return (
     <div className="grid gap-8 p-4 justify-center">
-      <div>
+      <div className="text-center">
         <h1>Solicitar Registro para: {institutes[institute].name}</h1>
         <p className="text-xs">
           Nota: El profesor a cargo del curso debe confirmar tu registro.
