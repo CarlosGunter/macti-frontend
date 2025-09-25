@@ -1,4 +1,4 @@
-import CreateAccount from "@/domains/auth/components/CreateAccout";
+import CreateAccount from "@/domains/auth/components/CreateAccoutForm";
 import { verifyToken } from "@/domains/auth/services/verifyToken";
 import { notFound } from "next/navigation";
 
@@ -17,7 +17,7 @@ export default async function ConfirmacionPage({ searchParams }: ConfirmacionPag
 
   return (
     <div className="grid gap-8 p-4 justify-center">
-      <div>
+      <div className="text-center">
         <h1>Solicitud de cuenta aprobada</h1>
         <p>{userData.name}</p>
         <p className="text-xs">Escribe una contraseña para completar tu registro:</p>
