@@ -11,7 +11,7 @@ export default function RequestAccountForm({ institute }: { institute: string })
     <>
       <form action={dispatch} className="flex flex-col gap-4 w-full max-w-80 place-self-center">
         <label htmlFor="institute">Instituto:</label>
-        <input type="text" id="institute" name="institute" value={institute} />
+        <input type="text" id="institute" name="institute" required className="border p-2 rounded-lg" defaultValue={state?.data?.institute.toString() || ""} />
 
         <label htmlFor="email">Email:</label>
         <input type="email" id="email" name="email" required className="border p-2 rounded-lg" defaultValue={state?.data?.email.toString() || ""} />
