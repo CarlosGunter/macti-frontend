@@ -1,21 +1,20 @@
-import { institutes } from "@/shared/config/institutes";
 import RequestAccountForm from "@/domains/auth/components/RequestAccountForm";
 
 interface RegistroPageProps {
-  params: {
+  searchParams: {
     institute: string;
   };
 }
 
-export default async function RegistroPage({ params }: RegistroPageProps) {
-  const { institute } = await params;
+export default async function RegistroPage({ searchParams }: RegistroPageProps) {
+  const { institute } = await searchParams;
 
   return (
     <div className="grid gap-8 p-4 justify-center">
       <div className="text-center">
-        <h1>Solicitar Registro para: {institutes[institute].name}</h1>
+        <h1>Solicitar Registro para MACTI</h1>
         <p className="text-xs">
-          Nota: El profesor a cargo del curso debe confirmar tu registro.
+          Nota: Cada instituto tiene su propio Registro. Asegúrate de estar en el correcto.
         </p>
       </div>
 
