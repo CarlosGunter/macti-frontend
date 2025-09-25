@@ -1,6 +1,19 @@
 import CreateAccount from "@/domains/auth/components/CreateAccout";
+import { notFound } from "next/navigation";
 
-export default function ConfirmacionPage() {
+interface ConfirmacionPageProps {
+  searchParams: {
+    token?: string;
+  };
+}
+
+export default async function ConfirmacionPage({ searchParams }: ConfirmacionPageProps) {
+  const { token } = await searchParams;
+
+  if (!token) {
+    notFound();
+  }
+
   return (
     <div className="grid gap-8 p-4 justify-center">
       <div>

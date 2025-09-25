@@ -1,6 +1,7 @@
 import CourseCard from "@/domains/courses/components/CourseCard";
 import { institutes } from "@/shared/config/institutes";
 import Link from "next/dist/client/link";
+import { notFound } from "next/navigation";
 
 interface InstitutePageProps {
   params: {
@@ -10,6 +11,11 @@ interface InstitutePageProps {
 
 export default async function InstitutePage({ params }: InstitutePageProps) {
   const { institute } = await params;
+  const validInstitute = institutes[institute];
+  
+  if (!validInstitute) {
+    notFound();
+  }
 
   return (
     <>
