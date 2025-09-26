@@ -4,8 +4,9 @@ import type { FieldsListAccountRequest } from "../types";
 export async function getListAccountRequest({ course_id }: FieldsListAccountRequest) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
-  const listAccountRequestPromise = fetch(`${apiURLBase}/list-account-requests?course_id=${course_id}`, {
+  const listAccountRequestPromise = fetch(`${apiURLBase}/auth/list-accounts-requests?course_id=${parseInt(course_id)}`, {
     method: "GET",
+    cache: "no-store",
     headers: { "Content-Type": "application/json" },
   });
 
@@ -21,6 +22,6 @@ export async function getListAccountRequest({ course_id }: FieldsListAccountRequ
 
   return {
     success: true,
-    data: accountRequestsData
+    data: accountRequestsData.data
   }
 }

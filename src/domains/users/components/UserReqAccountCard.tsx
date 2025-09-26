@@ -5,9 +5,10 @@ import { useNewStatus } from "../hooks/useNewStatus";
 interface UserReqAccountCardProps {
   name: string;
   email: string;
+  userID: string;
 }
 
-export default function UserReqAccountCard({ name, email }: UserReqAccountCardProps) {
+export default function UserReqAccountCard({ name, email, userID }: UserReqAccountCardProps) {
   const { isPending, handleNewStatus,  error } = useNewStatus();
 
   return (
@@ -20,7 +21,7 @@ export default function UserReqAccountCard({ name, email }: UserReqAccountCardPr
       <div className="flex gap-2 items-center">
         <button
         onClick={() => handleNewStatus(
-          { user_id: email, newStatus: 'approved' }
+          { user_id: userID, newStatus: 'approved' }
         )}
         className="p-2 bg-green-500 text-white text-sm rounded"
         disabled={isPending}>
@@ -29,7 +30,7 @@ export default function UserReqAccountCard({ name, email }: UserReqAccountCardPr
         
         <button
         onClick={() => handleNewStatus(
-          { user_id: email, newStatus: 'rejected' }
+          { user_id: userID, newStatus: 'rejected' }
         )}
         className="p-2 bg-red-500 text-white text-sm rounded"
         disabled={isPending}>

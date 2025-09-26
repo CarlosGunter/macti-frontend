@@ -20,5 +20,5 @@ export async function verifyToken(token: string): Promise<Record<string, any>> {
     message: "Token inválido."
   };
   
-  return userData;
+  return userData.data;
 }

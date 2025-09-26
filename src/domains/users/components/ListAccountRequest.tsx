@@ -16,7 +16,7 @@ export default async function ListAccountRequest({ course_id }: FieldsListAccoun
     return (
       <>
         {listAccountRequests.data.map((user: Record<string, any>) => (
-          <UserReqAccountCard key={user.email} name={user.name} email={user.email} />
+          <UserReqAccountCard key={user.id} name={user.name} email={user.email} userID={user.id} />
         ))}
       </>
     );

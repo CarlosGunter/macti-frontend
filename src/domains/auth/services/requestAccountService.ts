@@ -9,8 +9,9 @@ import type { FieldsRequestAccount } from '../types';
 export async function requestAccountService(userRequestData: FieldsRequestAccount) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
-  const accountRequestPromise = fetch(`${apiURLBase}/request-account`, {
+  const accountRequestPromise = fetch(`${apiURLBase}/auth/request-account`, {
     method: "POST",
+    cache: "no-store",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify(userRequestData),
   });
