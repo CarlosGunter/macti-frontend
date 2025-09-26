@@ -14,13 +14,13 @@ export async function CreateAccountAction(prevState: unknown, formData: FormData
   if (!accountCreation.success) {
     return {
       success: false,
-      message: "Error al crear la cuenta. Inténtalo de nuevo más tarde."
+      message: "Error al crear la cuenta. Inténtalo de nuevo más tarde.",
+      data: getData
     };
   }
 
   return {
     success: true,
-    message: "Cuenta creada exitosamente. Ahora puedes iniciar sesión.",
-    data: getData
+    message: "Cuenta creada exitosamente. Ahora puedes iniciar sesión."
   }
 }

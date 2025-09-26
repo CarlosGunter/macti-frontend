@@ -20,13 +20,13 @@ export async function requestAccountAction(prevState: unknown, formData: FormDat
   if (!accountRequestResult.success) {
     return {
       success: false,
-      message: "Error al solicitar la cuenta. Inténtalo de nuevo más tarde."
+      message: "Error al solicitar la cuenta. Inténtalo de nuevo más tarde.",
+      data: getData
     };
   }
 
   return {
     success: true,
-    message: "Solicitud de cuenta enviada. Se enviará un correo de confirmación cuando el profesor a cargo del curso lo apruebe.",
-    data: getData
+    message: "Solicitud de cuenta enviada. Se enviará un correo de confirmación cuando el profesor a cargo del curso lo apruebe."
   }
 }

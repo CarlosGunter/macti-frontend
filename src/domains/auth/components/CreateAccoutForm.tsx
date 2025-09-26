@@ -11,7 +11,7 @@ export default function CreateAccount({ userData }: { userData: Record<string, a
     <>
       <form action={dispatch} className="flex flex-col items-center gap-4 w-full max-w-80 place-self-center">
         <input type="hidden" name='id' defaultValue={userData.id} />
-        <input name="password" type="password" placeholder="Nueva contraseña" className="border p-2 rounded-lg" />
+        <input name="password" type="password" placeholder="Nueva contraseña" className="border p-2 rounded-lg" defaultValue={state?.data?.password || ''} />
         <button type="submit" className="bg-blue-500 text-white p-2 rounded-lg" disabled={isLoading}>Confirmar</button>
       </form>
 
