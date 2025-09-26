@@ -15,7 +15,7 @@ export default async function ConfirmacionPage({ searchParams }: ConfirmacionPag
 
   const userData = await verifyToken(token);
   if (!userData.success) notFound();
-  console.log(userData)
+
   return (
     <div className="grid gap-8 p-4 justify-center">
       <div className="text-center">
@@ -24,7 +24,7 @@ export default async function ConfirmacionPage({ searchParams }: ConfirmacionPag
         <p className="text-xs">Escribe una contraseña para completar tu registro:</p>
       </div>
 
-      <CreateAccount />
+      <CreateAccount userData={userData.data} />
     </div>
   );
 }

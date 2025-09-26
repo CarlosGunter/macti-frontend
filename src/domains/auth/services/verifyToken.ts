@@ -2,7 +2,7 @@ import { tryCatch } from "@/shared/utils/try-catch";
 
 export async function verifyToken(token: string): Promise<Record<string, any>> {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
-  console.log({token})
+
   const verifyTokenPromise = fetch(`${apiURLBase}/auth/confirmacion?token=${token}`, {
     method: "GET",
     cache: "no-store",

@@ -10,6 +10,7 @@ export async function CreateAccountAction(prevState: unknown, formData: FormData
   const accountCreation = await CreateAccountService(
     getData as FieldsCreateAccount
   );
+
   if (!accountCreation.success) {
     return {
       success: false,

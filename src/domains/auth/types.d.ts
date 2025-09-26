@@ -8,6 +8,6 @@ export type FieldsRequestAccount = {
 };
 
 export type FieldsCreateAccount = {
+  id: string;
   password: string;
-  token: string;
 };
