@@ -8,7 +8,7 @@ export async function submitNewStatus({ user_id, newStatus }: UserStatusChangePa
     method: "PATCH",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: user_id, status: newStatus }),
+    body: JSON.stringify({ id: parseInt(user_id), status: newStatus }),
   });
 
   const submitNewStatusResponse = await tryCatch(submitNewStatusPromise);
