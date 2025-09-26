@@ -13,7 +13,7 @@ export async function requestAccountService(userRequestData: FieldsRequestAccoun
     name: userRequestData.name,
     last_name: userRequestData.apellido,
     email: userRequestData.email,
-    teacher: userRequestData.profesor,
+    teacher: userRequestData.profesor || 'admin',
     course_id: parseInt(userRequestData.curso)
   }
 
