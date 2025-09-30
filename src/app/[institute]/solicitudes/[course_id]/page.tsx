@@ -1,4 +1,5 @@
 import ListAccountRequest from "@/domains/users/components/ListAccountRequest";
+import { getListAccountRequest } from "@/domains/users/services/getListAccountRequest";
 import { institutes } from "@/shared/config/institutes";
 
 interface SolicitudesPageProps {
@@ -8,10 +9,9 @@ interface SolicitudesPageProps {
   };
 }
 
-export default async function SolicitudesPage({ params }: SolicitudesPageProps) {
+export default async function SolicitudesPage({ params }: SolicitudesPageProps) { 
   const { course_id, institute } = await params;
-
-
+  const accountRequests = await getListAccountRequest({ course_id });
 
   return (
     <div className="grid gap-6">
@@ -20,8 +20,8 @@ export default async function SolicitudesPage({ params }: SolicitudesPageProps) 
         <h2 className="text-xl">Solicitudes para el curso {course_id}</h2>
       </div>
 
-      <ListAccountRequest course_id={course_id} />
-      
+      <ListAccountRequest accountRequests={accountRequests} />
+
     </div>
   );
 }

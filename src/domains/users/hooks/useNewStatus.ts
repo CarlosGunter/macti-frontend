@@ -5,6 +5,7 @@ import type { UserStatusChangeParams } from "../types";
 export function useNewStatus() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   const handleNewStatus = ({ user_id, newStatus }: UserStatusChangeParams) => {
     startTransition(async () => {
@@ -15,5 +16,12 @@ export function useNewStatus() {
     });
   }
 
-  return { isPending, handleNewStatus, error };
+  const animateDelete = (onDelete: (id: string) => void, id: string) => {
+    setIsDeleted(true);
+    setTimeout(() => {
+      onDelete(id);
+    }, 300);
+  }
+
+  return { isPending, handleNewStatus, error, isDeleted, animateDelete };
 }

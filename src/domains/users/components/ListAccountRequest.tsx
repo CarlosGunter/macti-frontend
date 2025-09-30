@@ -1,22 +1,47 @@
+"use client";
+
 import BannerError from "@/shared/components/feedback/BannerError";
-import { getListAccountRequest } from "../services/getListAccountRequest";
-import { FieldsListAccountRequest } from "../types";
 import UserReqAccountCard from "./UserReqAccountCard";
+import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
-export default async function ListAccountRequest({ course_id }: FieldsListAccountRequest) {
-  const listAccountRequests = await getListAccountRequest({ course_id });
+type AccountRequestsDataProps = {
+  id: string;
+  name: string;
+  email: string;
+};
 
-  if (!listAccountRequests.success && listAccountRequests.message) {
+interface ListAccountRequestProps {
+  accountRequests: {
+    success: boolean;
+    message: string;
+    data?: undefined;
+  } | {
+    success: boolean;
+    data: AccountRequestsDataProps[];
+    message?: undefined;
+  };
+};
+
+const handleClick = (setList: Dispatch<SetStateAction<AccountRequestsDataProps[]>>) => (id: string) => {
+  setList((prevList) => prevList.filter((user) => user.id !== id));
+};
+
+export default function ListAccountRequest({ accountRequests }: ListAccountRequestProps) {
+
+  const [list, setList] = useState(accountRequests.data);
+
+  if (!accountRequests.success && accountRequests.message) {
     return (
-      <BannerError message={listAccountRequests.message} />
+      <BannerError message={accountRequests.message} />
     );
   }
 
-  if (listAccountRequests.data.length > 0) {
+  if (list.length > 0) {
     return (
       <>
-        {listAccountRequests.data.map((user: Record<string, any>) => (
-          <UserReqAccountCard key={user.id} name={user.name} email={user.email} userID={user.id} />
+        {list.map((user: Record<string, any>) => (
+          <UserReqAccountCard key={`${user.id}-${list.length}`} name={user.name} email={user.email} userID={user.id} onDelete={handleClick(setList)} />
         ))}
       </>
     );
