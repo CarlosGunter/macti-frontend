@@ -1,6 +1,5 @@
-import { tryCatch } from '@/shared/utils/try-catch';
 import type { FieldsRequestAccount } from '../types';
-
+import { processFetch } from '@/shared/utils/process-fetch';
 
 /**
  * @param userRequestData datos del usuario que solicita la cuenta
@@ -13,7 +12,6 @@ export async function requestAccountService(userRequestData: FieldsRequestAccoun
     name: userRequestData.name,
     last_name: userRequestData.apellido,
     email: userRequestData.email,
-    teacher: userRequestData.profesor || 'admin',
     course_id: parseInt(userRequestData.curso)
   }
 
@@ -24,16 +22,8 @@ export async function requestAccountService(userRequestData: FieldsRequestAccoun
     body: JSON.stringify(parsedData),
   });
 
-  const getAccountRequests = await tryCatch(accountRequestPromise);
-  if (getAccountRequests.error) {
-    return {
-      success: false,
-      message: "Error al solicitar la cuenta. Inténtalo de nuevo más tarde.",
-      error: getAccountRequests.error?.message || "Error desconocido"
-    }
-  }
+  const [error, getAccountRequests] = await processFetch(accountRequestPromise);
+  if (error) return { success: false };
 
-  return {
-    success: true
-  }
+  return { success: true };
 }

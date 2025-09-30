@@ -4,16 +4,12 @@ type Success = [error: false, data: unknown];
 type Failure = [error: true, data: null | undefined];
 type FetchResult = Success | Failure;
 
-interface FetchingParams {
-  fetchPromise: Promise<Response>;
-}
-
 /**
  * Helper para hacer fetch y manejar errores
  * @param fetchPromise promesa del fetch
  * @returns tupla con error y datos
  */
-export async function processFetch({ fetchPromise }: FetchingParams): Promise<FetchResult> {
+export async function processFetch(fetchPromise: Promise<Response>): Promise<FetchResult> {
 
   const fetchResponse = await tryCatch(fetchPromise);
   if (fetchResponse.error || (fetchResponse.data && !fetchResponse.data.ok)) {
@@ -25,5 +21,5 @@ export async function processFetch({ fetchPromise }: FetchingParams): Promise<Fe
     return [true, null];
   }
 
-  return [false, fetchData];
+  return [false, fetchData.data];
 }
