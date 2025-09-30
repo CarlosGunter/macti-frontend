@@ -23,25 +23,32 @@ interface ListAccountRequestProps {
   };
 };
 
-const handleClick = (setList: Dispatch<SetStateAction<AccountRequestsDataProps[]>>) => (id: string) => {
-  setList((prevList) => prevList.filter((user) => user.id !== id));
-};
+const handleClick = (setList: Dispatch<SetStateAction<AccountRequestsDataProps[]>>) =>
+  (id: string) => {
+    setList((prevList) => prevList.filter((user) => user.id !== id));
+  };
 
 export default function ListAccountRequest({ accountRequests }: ListAccountRequestProps) {
 
-  const [list, setList] = useState(accountRequests.data);
-
-  if (!accountRequests.success && accountRequests.message) {
+  if (!accountRequests.data) {
     return (
       <BannerError message={accountRequests.message} />
     );
   }
+  
+  const [list, setList] = useState(accountRequests.data);
 
-  if (list.length > 0) {
+  if (list && list.length > 0) {
     return (
       <>
         {list.map((user: Record<string, any>) => (
-          <UserReqAccountCard key={`${user.id}-${list.length}`} name={user.name} email={user.email} userID={user.id} onDelete={handleClick(setList)} />
+          <UserReqAccountCard
+          key={`${user.id}-${list.length}`}
+          name={user.name}
+          email={user.email}
+          userID={user.id}
+          onDelete={handleClick(setList)}
+          />
         ))}
       </>
     );
