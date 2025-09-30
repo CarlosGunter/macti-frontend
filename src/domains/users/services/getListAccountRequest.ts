@@ -11,7 +11,7 @@ export async function getListAccountRequest({ course_id }: FieldsListAccountRequ
   });
 
   const listAccountRequests = await tryCatch(listAccountRequestPromise);
-  if (!listAccountRequests.success) {
+  if (listAccountRequests.error) {
     return {
       success: false,
       message: "Error al obtener las solicitudes de cuenta. Inténtalo de nuevo más tarde."

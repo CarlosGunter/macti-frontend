@@ -25,7 +25,7 @@ export async function requestAccountService(userRequestData: FieldsRequestAccoun
   });
 
   const getAccountRequests = await tryCatch(accountRequestPromise);
-  if (!getAccountRequests.success) {
+  if (getAccountRequests.error) {
     return {
       success: false,
       message: "Error al solicitar la cuenta. Inténtalo de nuevo más tarde.",

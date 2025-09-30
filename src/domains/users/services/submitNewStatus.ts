@@ -12,7 +12,7 @@ export async function submitNewStatus({ user_id, newStatus }: UserStatusChangePa
   });
 
   const submitNewStatusResponse = await tryCatch(submitNewStatusPromise);
-  if (!submitNewStatusResponse.success) {
+  if (submitNewStatusResponse.error) {
     return {
       success: false,
       message: "Error al actualizar el estado de la solicitud. Inténtalo de nuevo más tarde."

@@ -9,7 +9,7 @@ export async function verifyToken(token: string): Promise<Record<string, any>> {
   });
 
   const verifyTokenResponse = await tryCatch(verifyTokenPromise);
-  if (!verifyTokenResponse.success || !verifyTokenResponse.data.ok) {
+  if (verifyTokenResponse.error || !verifyTokenResponse.data.ok) {
     return {
       success: false,
       message: "Error al verificar el token. Inténtalo de nuevo más tarde."
@@ -17,7 +17,7 @@ export async function verifyToken(token: string): Promise<Record<string, any>> {
   }
   
   const userData = await tryCatch(verifyTokenResponse.data.json());
-  if (!userData.success) {
+  if (userData.error) {
     return {
       success: false,
       message: "Token inválido."

@@ -17,14 +17,14 @@ export async function CreateAccountService(accountCreationData: FieldsCreateAcco
   });
 
   const createAccountResponse = await tryCatch(createAccountPromise);
-  if (!createAccountResponse.success || !createAccountResponse.data.ok) {
+  if (createAccountResponse.error || !createAccountResponse.data.ok) {
     return {
       success: false,
       message: "Error al crear la cuenta. Inténtalo de nuevo más tarde."
     };
   }
   const accountData = await tryCatch(createAccountResponse.data.json());
-  if (!accountData.success) {
+  if (accountData.error) {
     return {
       success: false,
       message: "Error al crear la cuenta."
