@@ -10,8 +10,8 @@ export function useNewStatus() {
   const handleNewStatus = ({ user_id, newStatus }: UserStatusChangeParams) => {
     startTransition(async () => {
       const result = await submitNewStatus({ user_id, newStatus });
-      if (!result.success) {
-        setError(result.message || "Error desconocido");
+      if (!result) {
+        setError("Error al actualizar el estado del usuario");
       }
     });
   }

@@ -1,5 +1,6 @@
 import { tryCatch } from "@/shared/utils/try-catch";
 import type { UserStatusChangeParams } from "../types";
+import { processFetch } from "@/shared/utils/process-fetch";
 
 export async function submitNewStatus({ user_id, newStatus }: UserStatusChangeParams) {
   const apiURLBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -11,24 +12,8 @@ export async function submitNewStatus({ user_id, newStatus }: UserStatusChangePa
     body: JSON.stringify({ id: parseInt(user_id), status: newStatus }),
   });
 
-  const submitNewStatusResponse = await tryCatch(submitNewStatusPromise);
-  if (submitNewStatusResponse.error) {
-    return {
-      success: false,
-      message: "Error al actualizar el estado de la solicitud. Inténtalo de nuevo más tarde."
-    }
-  }
+  const [error, response] = await processFetch(submitNewStatusPromise);
+  if (error) return undefined;
 
-  const responseData = await submitNewStatusResponse.data.json();
-  if (!responseData.success) {
-    return {
-      success: false,
-      message: "Error al actualizar el estado de la solicitud. Inténtalo de nuevo más tarde."
-    }
-  }
-
-  return {
-    success: true,
-    message: "El estado de la solicitud se ha actualizado correctamente."
-  };
+  return response;
 }
