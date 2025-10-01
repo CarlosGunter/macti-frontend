@@ -20,7 +20,7 @@ export default async function SolicitudesPage({ params }: SolicitudesPageProps) 
         <h2 className="text-xl">Solicitudes para el curso {course_id}</h2>
       </div>
 
-      <ListAccountRequest accountRequests={accountRequests} />
+      <ListAccountRequest accountRequests={accountRequests as Record<string, any>} />
 
     </div>
   );

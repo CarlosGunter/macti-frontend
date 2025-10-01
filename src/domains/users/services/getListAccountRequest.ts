@@ -1,5 +1,5 @@
-import { tryCatch } from "@/shared/utils/try-catch";
 import type { FieldsListAccountRequest } from "../types";
+import { processFetch } from "@/shared/utils/process-fetch";
 
 export async function getListAccountRequest({ course_id }: FieldsListAccountRequest) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
@@ -10,18 +10,8 @@ export async function getListAccountRequest({ course_id }: FieldsListAccountRequ
     headers: { "Content-Type": "application/json" },
   });
 
-  const listAccountRequests = await tryCatch(listAccountRequestPromise);
-  if (listAccountRequests.error) {
-    return {
-      success: false,
-      message: "Error al obtener las solicitudes de cuenta. Inténtalo de nuevo más tarde."
-    }
-  }
+  const [error, listAccountRequests] = await processFetch(listAccountRequestPromise);
+  if (error) return undefined;
 
-  const accountRequestsData = await listAccountRequests.data.json();
-
-  return {
-    success: true,
-    data: accountRequestsData.data
-  }
+  return listAccountRequests;
 }

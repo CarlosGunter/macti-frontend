@@ -12,15 +12,7 @@ type AccountRequestsDataProps = {
 };
 
 interface ListAccountRequestProps {
-  accountRequests: {
-    success: boolean;
-    message: string;
-    data?: undefined;
-  } | {
-    success: boolean;
-    data: AccountRequestsDataProps[];
-    message?: undefined;
-  };
+  accountRequests: Record<string, any>;
 };
 
 const handleClick = (setList: Dispatch<SetStateAction<AccountRequestsDataProps[]>>) =>
@@ -35,8 +27,8 @@ export default function ListAccountRequest({ accountRequests }: ListAccountReque
       <BannerError message={accountRequests.message} />
     );
   }
-  
-  const [list, setList] = useState(accountRequests.data);
+
+  const [list, setList] = useState(accountRequests.data as AccountRequestsDataProps[]);
 
   if (list && list.length > 0) {
     return (
