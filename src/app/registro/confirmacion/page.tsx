@@ -1,7 +1,6 @@
 import CreateAccount from "@/domains/auth/components/CreateAccoutForm";
 import { verifyToken } from "@/domains/auth/services/verifyToken";
 import { notFound } from "next/navigation";
-import { use } from "react";
 
 interface ConfirmacionPageProps {
   searchParams: {
@@ -13,8 +12,8 @@ export default async function ConfirmacionPage({ searchParams }: ConfirmacionPag
   const { token } = await searchParams;
   if (!token) notFound();
 
-  const userData = await verifyToken(token);
-  if (!userData.success) notFound();
+  const userData = await verifyToken(token) as Record<string, any>;
+  if (!userData) notFound();
 
   return (
     <div className="grid gap-8 p-4 justify-center">

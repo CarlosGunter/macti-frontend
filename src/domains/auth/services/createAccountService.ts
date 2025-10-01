@@ -1,5 +1,6 @@
 import { tryCatch } from "@/shared/utils/try-catch";
 import { FieldsCreateAccount } from "../types";
+import { processFetch } from "@/shared/utils/process-fetch";
 
 export async function CreateAccountService(accountCreationData: FieldsCreateAccount) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
@@ -16,23 +17,8 @@ export async function CreateAccountService(accountCreationData: FieldsCreateAcco
     body: JSON.stringify(parsedData),
   });
 
-  const createAccountResponse = await tryCatch(createAccountPromise);
-  if (createAccountResponse.error || !createAccountResponse.data.ok) {
-    return {
-      success: false,
-      message: "Error al crear la cuenta. Inténtalo de nuevo más tarde."
-    };
-  }
-  const accountData = await tryCatch(createAccountResponse.data.json());
-  if (accountData.error) {
-    return {
-      success: false,
-      message: "Error al crear la cuenta."
-    };
-  }
+  const [error, createAccountResponse] = await processFetch(createAccountPromise);
+  if (error) return undefined;
 
-  return {
-    success: true,
-    data: accountData
-  };
+  return createAccountResponse;
 }

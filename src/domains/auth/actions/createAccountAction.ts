@@ -11,7 +11,7 @@ export async function CreateAccountAction(prevState: unknown, formData: FormData
     getData as FieldsCreateAccount
   );
 
-  if (!accountCreation.success) {
+  if (!accountCreation) {
     return {
       success: false,
       message: "Error al crear la cuenta. Inténtalo de nuevo más tarde.",
