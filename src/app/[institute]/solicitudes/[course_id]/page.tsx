@@ -9,6 +9,19 @@ interface SolicitudesPageProps {
   };
 }
 
+// Temporal
+type Account = {
+  id: string;
+  name: string;
+  email: string;
+  status: 'pending' | 'approved' | 'rejected';
+};
+
+interface ListAccountRequestProps {
+  data: Account[];
+  message?: string;
+};
+
 export default async function SolicitudesPage({ params }: SolicitudesPageProps) { 
   const { course_id, institute } = await params;
   const accountRequests = await getListAccountRequest({ course_id });
@@ -20,7 +33,7 @@ export default async function SolicitudesPage({ params }: SolicitudesPageProps) 
         <h2 className="text-xl">Solicitudes para el curso {course_id}</h2>
       </div>
 
-      <ListAccountRequest accountRequests={accountRequests as Record<string, any>} />
+      <ListAccountRequest accountRequests={accountRequests as ListAccountRequestProps} />
 
     </div>
   );

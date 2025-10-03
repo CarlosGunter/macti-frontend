@@ -16,10 +16,10 @@ export function useNewStatus() {
     });
   }
 
-  const animateDelete = (onDelete: (id: string) => void, id: string) => {
+  const animateDelete = (onDelete: (id: string, status: 'pending' | 'approved' | 'rejected') => void, id: string, status: 'pending' | 'approved' | 'rejected') => {
     setIsDeleted(true);
     setTimeout(() => {
-      onDelete(id);
+      onDelete(id, status);
     }, 300);
   }
 
