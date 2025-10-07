@@ -1,8 +1,7 @@
-import { tryCatch } from "@/shared/utils/try-catch";
-import type { UserStatusChangeParams } from "../types";
+import type { AccountStatusPayload } from "../types";
 import { processFetch } from "@/shared/utils/process-fetch";
 
-export async function submitNewStatus({ user_id, newStatus }: UserStatusChangeParams) {
+export async function updateAccountStatus({ user_id, newStatus }: AccountStatusPayload) {
   const apiURLBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
   const submitNewStatusPromise = fetch(`${apiURLBase}/auth/confirm-account`, {

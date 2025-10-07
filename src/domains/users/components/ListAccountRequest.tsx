@@ -1,7 +1,7 @@
 "use client";
 
 import BannerError from "@/shared/components/feedback/BannerError";
-import UserReqAccountCard from "./UserReqAccountCard";
+import UserStatusUpdateCard from "./UserAccountRequestCard";
 import { useState } from "react";
 import { Dispatch, SetStateAction } from "react";
 
@@ -17,7 +17,7 @@ type AccountRequestsDataProps = {
   rejected: Account[];
 };
 
-interface ListAccountRequestProps {
+interface AccountRequestListProps {
   accountRequests: {
     data: Account[];
     message?: string;
@@ -37,7 +37,7 @@ const groupByStatus = (data: Account[]) => {
   return Object.groupBy(data, account => account.status) as AccountRequestsDataProps;
 }
 
-export default function ListAccountRequest({ accountRequests }: ListAccountRequestProps) {
+export default function AccountRequestList({ accountRequests }: AccountRequestListProps) {
 
   if (!accountRequests || !accountRequests.data) {
     return (
@@ -54,7 +54,7 @@ export default function ListAccountRequest({ accountRequests }: ListAccountReque
           <h2 className="text-lg font-semibold">Pendientes:</h2>
           <div className="grid gap-4">
             {list && list.pending?.map((user: Account) => (
-              <UserReqAccountCard
+              <UserStatusUpdateCard
               key={`${user.id}-${list.pending?.length}`}
               name={user.name}
               email={user.email}
@@ -70,7 +70,7 @@ export default function ListAccountRequest({ accountRequests }: ListAccountReque
           <h2 className="text-lg font-semibold">Aprobadas:</h2>
           <div className="grid gap-4">
             {list && list.approved?.map((user: Account) => (
-              <UserReqAccountCard
+              <UserStatusUpdateCard
               key={`${user.id}-${list.approved?.length}`}
               name={user.name}
               email={user.email}
@@ -86,7 +86,7 @@ export default function ListAccountRequest({ accountRequests }: ListAccountReque
           <h2 className="text-lg font-semibold">Rechazadas:</h2>
           <div className="grid gap-4">
             {list && list.rejected?.map((user: Account) => (
-              <UserReqAccountCard
+              <UserStatusUpdateCard
               key={`${user.id}-${list.rejected?.length}`}
               name={user.name}
               email={user.email}

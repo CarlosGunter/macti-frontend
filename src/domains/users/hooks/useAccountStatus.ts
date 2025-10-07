@@ -1,15 +1,15 @@
 import { useState, useTransition } from "react";
-import { submitNewStatus } from "../services/submitNewStatus";
-import type { UserStatusChangeParams } from "../types";
+import { updateAccountStatus } from "../services/updateAccountStatus";
+import type { AccountStatusPayload } from "../types";
 
-export function useNewStatus() {
+export function useAccountStatus() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [isDeleted, setIsDeleted] = useState(false);
 
-  const handleNewStatus = ({ user_id, newStatus }: UserStatusChangeParams) => {
+  const handleNewStatus = ({ user_id, newStatus }: AccountStatusPayload) => {
     startTransition(async () => {
-      const result = await submitNewStatus({ user_id, newStatus });
+      const result = await updateAccountStatus({ user_id, newStatus });
       if (!result) {
         setError("Error al actualizar el estado del usuario");
       }

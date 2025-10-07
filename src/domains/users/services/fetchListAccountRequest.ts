@@ -1,7 +1,7 @@
-import type { FieldsListAccountRequest } from "../types";
+import type { AccountRequestPayload } from "../types";
 import { processFetch } from "@/shared/utils/process-fetch";
 
-export async function getListAccountRequest({ course_id }: FieldsListAccountRequest) {
+export async function fetchAccountRequests({ course_id }: AccountRequestPayload) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const listAccountRequestPromise = fetch(`${apiURLBase}/auth/list-accounts-requests?course_id=${parseInt(course_id)}`, {

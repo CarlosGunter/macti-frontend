@@ -1,8 +1,8 @@
 'use client';
 
-import { useNewStatus } from "../hooks/useNewStatus";
+import { useAccountStatus } from "../hooks/useAccountStatus";
 
-interface UserReqAccountCardProps {
+interface UserStatusUpdateCardProps {
   name: string;
   email: string;
   status: 'pending' | 'approved' | 'rejected';
@@ -10,14 +10,14 @@ interface UserReqAccountCardProps {
   onDelete: (id: string, status: 'pending' | 'approved' | 'rejected') => void;
 }
 
-export default function UserReqAccountCard({ name, email, status, userID, onDelete }: UserReqAccountCardProps) {
+export default function UserStatusUpdateCard({ name, email, status, userID, onDelete }: UserStatusUpdateCardProps) {
   const {
     isPending,
     handleNewStatus,
     error,
     isDeleted,
     animateDelete
-  } = useNewStatus();
+  } = useAccountStatus();
 
   return (
     <article className={`flex justify-between items-center w-full p-4 border rounded-lg shadow gap-2 transition-all ${isDeleted ? 'opacity-0' : 'opacity-100'} ${isDeleted ? 'scale-y-130' : 'scale-y-100'}`}>
