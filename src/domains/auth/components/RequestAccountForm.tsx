@@ -12,9 +12,9 @@ export default function RequestAccountForm({ institute }: { institute: string })
     <>
       <form action={dispatch} className="flex flex-col gap-4 w-full max-w-80 place-self-center">
 
-        <label htmlFor="instituto" className="grid gap-1">
+        <label htmlFor="institute" className="grid gap-1">
           Instituto:
-          <select name="instituto" id="instituto" defaultValue={institute || state?.data?.instituto.toString() || ""} className="border p-2 rounded-lg bg-background/90" required>
+          <select name="institute" id="institute" defaultValue={institute || state?.data?.institute || ""} className="border p-2 rounded-lg bg-background/90" required>
             {Object.keys(institutes).map((key) => (
               <option key={key} value={key}>{institutes[key].name}</option>
             ))}
@@ -23,25 +23,25 @@ export default function RequestAccountForm({ institute }: { institute: string })
 
         <label htmlFor="email" className="grid gap-1">
           Email:
-          <input type="email" id="email" name="email" required className="border p-2 rounded-lg" defaultValue={state?.data?.email.toString() || ""} />
+          <input type="email" id="email" name="email" required className="border p-2 rounded-lg" defaultValue={state?.data?.email || ""} />
         </label>
         
         <label htmlFor="name" className="grid gap-1">
           Nombre:
-          <input type="text" id="name" name="name" required className="border p-2 rounded-lg" defaultValue={state?.data?.name.toString() || ""} />
+          <input type="text" id="name" name="name" required className="border p-2 rounded-lg" defaultValue={state?.data?.name || ""} />
         </label>
 
-        <label htmlFor="apellido" className="grid gap-1">
+        <label htmlFor="last_name" className="grid gap-1">
           Apellido:
-          <input type="text" id="apellido" name="apellido" required className="border p-2 rounded-lg" defaultValue={state?.data?.apellido.toString() || ""} />
+          <input type="text" id="last_name" name="last_name" required className="border p-2 rounded-lg" defaultValue={state?.data?.last_name || ""} />
         </label>
         
         {/* <label htmlFor="profesor">Profesor a cargo:</label>
         <input type="text" id="profesor" name="profesor" required className="border p-2 rounded-lg" defaultValue={state?.data?.profesor.toString() || ""} /> */}
         
-        <label htmlFor="curso" className="grid gap-1">
+        <label htmlFor="course_id" className="grid gap-1">
           Curso:
-          <select name="curso" id="curso" defaultValue={state?.data?.curso.toString() || ""} className="border p-2 rounded-lg bg-background/90" required>
+          <select name="course_id" id="course_id" defaultValue={state?.data?.course_id} className="border p-2 rounded-lg bg-background/90" required>
             {Array.from({ length: 6 }, (_, i) => i).map((num) => (
               <option key={num} value={num}>Curso {num}</option>
             ))}

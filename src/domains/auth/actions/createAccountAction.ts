@@ -1,20 +1,22 @@
-import { CreateAccountService } from "../services/createAccount";
-import { CreateAccountPayload } from "../types";
+import { CreateAccount } from "../services/createAccount";
+import { type CreateAccountPayload, createAccountSchema } from "../schemas/createAccountSchema";
 
-export async function CreateAccountAction(prevState: unknown, formData: FormData) {
-  const getData = Object.fromEntries(formData.entries().map(([key, value]) =>
-    [key, value.toString()]
-  ));
+export async function createAccountAction(prevState: unknown, formData: FormData) {
+  const getData: unknown = Object.fromEntries(formData.entries());
 
-  // Llamar a la API para crear la cuenta
-  const accountCreation = await CreateAccountService(
-    getData as CreateAccountPayload
-  );
+  const validation = createAccountSchema.safeParse(getData);
+  if (!validation.success) {
+    return {
+      message: "Rellena correctamente todos los campos.",
+      data: getData as CreateAccountPayload
+    };
+  }
 
+  const accountCreation = await CreateAccount(validation.data);
   if (!accountCreation) {
     return {
       message: "Error al crear la cuenta. Inténtalo de nuevo más tarde.",
-      data: getData
+      data: validation.data
     };
   }
 

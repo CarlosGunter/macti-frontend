@@ -1,6 +1,6 @@
 import { processFetch } from "@/shared/utils/process-fetch";
 
-export async function verifyToken(token: string) {
+export async function fetchAccountInfo(token: string) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const verifyTokenPromise = fetch(`${apiURLBase}/auth/confirmacion?token=${token}`, {

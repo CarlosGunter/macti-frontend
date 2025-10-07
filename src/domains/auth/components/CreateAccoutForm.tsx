@@ -1,11 +1,11 @@
 'use client';
 
 import { useActionState } from "react";
-import { CreateAccountAction } from "../actions/createAccountAction";
+import { createAccountAction } from "../actions/createAccountAction";
 import Banner from "@/shared/components/feedback/Banner";
 
 export default function CreateAccount({ userData }: { userData: Record<string, any> }) {
-  const [state, dispatch, isLoading] = useActionState(CreateAccountAction, null);
+  const [state, dispatch, isLoading] = useActionState(createAccountAction, null);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import CreateAccount from "@/domains/auth/components/CreateAccoutForm";
-import { verifyToken } from "@/domains/auth/services/fetchAccountInfo";
+import { fetchAccountInfo } from "@/domains/auth/services/fetchAccountInfo";
 import { notFound } from "next/navigation";
 
 interface ConfirmacionPageProps {
@@ -12,7 +12,7 @@ export default async function ConfirmacionPage({ searchParams }: ConfirmacionPag
   const { token } = await searchParams;
   if (!token) notFound();
 
-  const userData = await verifyToken(token) as Record<string, any>;
+  const userData = await fetchAccountInfo(token) as Record<string, any>;
   if (!userData) notFound();
 
   return (
