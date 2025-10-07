@@ -1,5 +1,5 @@
-import { CreateAccountService } from "../services/createAccountService";
-import { FieldsCreateAccount } from "../types";
+import { CreateAccountService } from "../services/createAccount";
+import { CreateAccountPayload } from "../types";
 
 export async function CreateAccountAction(prevState: unknown, formData: FormData) {
   const getData = Object.fromEntries(formData.entries().map(([key, value]) =>
@@ -8,7 +8,7 @@ export async function CreateAccountAction(prevState: unknown, formData: FormData
 
   // Llamar a la API para crear la cuenta
   const accountCreation = await CreateAccountService(
-    getData as FieldsCreateAccount
+    getData as CreateAccountPayload
   );
 
   if (!accountCreation) {

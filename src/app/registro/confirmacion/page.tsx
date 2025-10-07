@@ -1,5 +1,5 @@
 import CreateAccount from "@/domains/auth/components/CreateAccoutForm";
-import { verifyToken } from "@/domains/auth/services/verifyToken";
+import { verifyToken } from "@/domains/auth/services/fetchAccountInfo";
 import { notFound } from "next/navigation";
 
 interface ConfirmacionPageProps {

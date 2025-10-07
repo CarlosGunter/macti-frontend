@@ -1,5 +1,5 @@
-import { requestAccountService } from "../services/requestAccountService";
-import { FieldsRequestAccount } from "../types";
+import { requestAccountService } from "../services/createAccountRequest";
+import { AccountRequestPayload } from "../types";
 
 /**
  * 
@@ -15,7 +15,7 @@ export async function requestAccountAction(prevState: unknown, formData: FormDat
 
   // Llamar a la API para solicitar la cuenta
   const accountRequestResult = await requestAccountService(
-    getData as FieldsRequestAccount
+    getData as AccountRequestPayload
   );
   if (!accountRequestResult.success) {
     return {

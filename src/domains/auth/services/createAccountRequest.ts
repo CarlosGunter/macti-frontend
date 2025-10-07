@@ -1,11 +1,11 @@
-import type { FieldsRequestAccount } from '../types';
+import type { AccountRequestPayload } from '../types';
 import { processFetch } from '@/shared/utils/process-fetch';
 
 /**
  * @param userRequestData datos del usuario que solicita la cuenta
  * @returns resultado del servicio
  */
-export async function requestAccountService(userRequestData: FieldsRequestAccount) {
+export async function requestAccountService(userRequestData: AccountRequestPayload) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const parsedData = {

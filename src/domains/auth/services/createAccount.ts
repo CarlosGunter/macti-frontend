@@ -1,8 +1,8 @@
 import { tryCatch } from "@/shared/utils/try-catch";
-import { FieldsCreateAccount } from "../types";
+import { CreateAccountPayload } from "../types";
 import { processFetch } from "@/shared/utils/process-fetch";
 
-export async function CreateAccountService(accountCreationData: FieldsCreateAccount) {
+export async function CreateAccountService(accountCreationData: CreateAccountPayload) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const parsedData = {

@@ -9,7 +9,7 @@ interface Institute {
   image: StaticImageData;
 }
 
-export default function CardInstitutes({
+export default function InstituteCard({
   id,
   name,
   details,

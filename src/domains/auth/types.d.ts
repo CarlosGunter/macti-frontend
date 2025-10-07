@@ -1,4 +1,4 @@
-export type FieldsRequestAccount = {
+export type AccountRequestPayload = {
   email: string;
   name: string;
   apellido: string;
@@ -7,7 +7,7 @@ export type FieldsRequestAccount = {
   institute: string;
 };
 
-export type FieldsCreateAccount = {
+export type CreateAccountPayload = {
   id: string;
   password: string;
 };
