@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/dist/client/link';
 import { StaticImageData } from 'next/image';
 
 interface Institute {
@@ -17,7 +18,7 @@ export default function InstituteCard({
 }: Institute) {
   return (
     <article className="">
-      <a
+      <Link
       className="relative grid place-items-center h-48 rounded-2xl bg-black/50 bg-[image:var(--img)] bg-cover bg-center bg-no-repeat bg-blend-darken group"
       href={details}
       style={{ "--img": `url(${image.src})` } as React.CSSProperties}
@@ -43,7 +44,7 @@ export default function InstituteCard({
             Registro
           </span>
         </div>
-      </a>
+      </Link>
     </article>
   );
 }
