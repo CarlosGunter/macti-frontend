@@ -4,11 +4,20 @@ import { type CreateAccountPayload, createAccountSchema } from "../schemas/creat
 export async function createAccountAction(prevState: unknown, formData: FormData) {
   const getData: unknown = Object.fromEntries(formData.entries());
 
+  const password = formData.get("password")?.toString();
+  const confirmPassword = formData.get("confirm_password")?.toString();
+  if (password !== confirmPassword) {
+    return {
+      message: "Las contraseñas no coinciden.",
+      data: getData as CreateAccountPayload,
+    };
+  }
+
   const validation = createAccountSchema.safeParse(getData);
   if (!validation.success) {
     return {
       message: "Rellena correctamente todos los campos.",
-      data: getData as CreateAccountPayload
+      data: getData as CreateAccountPayload,
     };
   }
 

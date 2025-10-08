@@ -1,18 +1,52 @@
 'use client';
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createAccountAction } from "../actions/createAccountAction";
 import Banner from "@/shared/components/feedback/Banner";
 
 export default function CreateAccount({ userData }: { userData: Record<string, any> }) {
   const [state, dispatch, isLoading] = useActionState(createAccountAction, null);
 
+  const [password, setPassword] = useState(state?.data?.password || '');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const passwordsMatch = password === confirmPassword;
+
   return (
     <>
-      <form action={dispatch} className="flex flex-col items-center gap-4 w-full max-w-80 place-self-center">
+      <form action={dispatch} className="flex flex-col items-center gap-6 w-full max-w-80 place-self-center">
         <input type="hidden" name='id' defaultValue={userData.id} />
-        <input name="password" type="password" placeholder="Nueva contraseña" className="border p-2 rounded-lg" defaultValue={state?.data?.password || ''} />
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded-lg" disabled={isLoading}>Confirmar</button>
+        
+        <label htmlFor="password" className="grid gap-1.5 w-full">
+          <span>Ingresa una nueva contraseña*</span>
+          <input
+          name="password"
+          type="password"
+          placeholder="Nueva contraseña"
+          className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${!passwordsMatch && confirmPassword ? 'border-red-500' : ''}`}
+          defaultValue={state?.data?.password || ''}
+          onChange={(e) => setPassword(e.target.value)}
+          />
+          <span className="text-xs">Ingresa una contraseña segura.</span>
+        </label>
+
+        <label htmlFor="confirm_password" className="grid gap-1.5 w-full">
+          <span>Confirma tu nueva contraseña*</span>
+          <input
+          name="confirm_password"
+          type="password"
+          placeholder="Confirma tu nueva contraseña"
+          className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${!passwordsMatch && confirmPassword ? 'border-red-500' : ''}`}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
+          {!passwordsMatch && confirmPassword && (
+            <span className="text-xs text-red-500">Las contraseñas no coinciden.</span>
+          )}
+
+        </label>
+
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded-lg w-full" disabled={isLoading}>Confirmar</button>
       </form>
 
       {state && (
