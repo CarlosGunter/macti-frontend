@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Hind_Madurai, Lora } from "next/font/google";
 import "./globals.css";
 import "@/shared/utils/zod-config";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  weight: ["300", "400", "600", "700"],
+  variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const hindMadurai = Hind_Madurai({
+  weight: ["300", "400", "600", "700"],
+  variable: "--font-hind-madurai",
+  subsets: ["latin"],
+});
+
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin"],
 });
 
@@ -26,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${montserrat.variable} ${hindMadurai.variable} ${lora.variable} antialiased`}
       >
         {children}
       </body>
