@@ -116,7 +116,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
       </form>
 
       {message && (
-        <Banner message={message} />
+        <Banner message={message} isError={!success} />
       )}
     </>
   );

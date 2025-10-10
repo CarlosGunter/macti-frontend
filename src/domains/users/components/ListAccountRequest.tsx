@@ -1,6 +1,6 @@
 "use client";
 
-import BannerError from "@/shared/components/feedback/BannerError";
+import Banner from "@/shared/components/feedback/Banner";
 import UserStatusUpdateCard from "./UserAccountRequestCard";
 import { useState } from "react";
 import { Dispatch, SetStateAction } from "react";
@@ -41,7 +41,7 @@ export default function AccountRequestList({ accountRequests }: AccountRequestLi
 
   if (!accountRequests || !accountRequests.data) {
     return (
-      <BannerError message={accountRequests?.message || "Ocurrió un error"} />
+      <Banner message={accountRequests?.message || "Ocurrió un error"} isError />
     );
   }
 

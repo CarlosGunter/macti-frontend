@@ -50,7 +50,10 @@ export default function CreateAccount({ userData }: { userData: Record<string, a
       </form>
 
       {state && (
-        <Banner message={state.message || "Error al crear la cuenta."} />
+        <Banner
+          message={state.message || "Error al crear la cuenta."}
+          isError={!state.message}
+        />
       )}
     </>
   );
