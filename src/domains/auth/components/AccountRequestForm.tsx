@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { accountRequestAction } from "../actions/accountRequestAction";
 import Banner from "@/shared/components/feedback/Banner";
 import { institutes } from "@/shared/config/institutes";
+import Button from "@/shared/components/ui/Button";
 
 export default function AccountRequestForm({ institute }: { institute: string }) {
   const [state, dispatch, isLoading] = useActionState(accountRequestAction, null);
@@ -107,12 +108,11 @@ export default function AccountRequestForm({ institute }: { institute: string })
 
         </label>
         
-        <button
+        <Button
         type="submit"
-        className="bg-blue-500 text-white p-2 rounded-lg mt-4"
         disabled={isLoading} >
           Solicitar
-        </button> 
+        </Button> 
       </form>
 
       {message && (

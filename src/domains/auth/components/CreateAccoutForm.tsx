@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { createAccountAction } from "../actions/createAccountAction";
 import Banner from "@/shared/components/feedback/Banner";
+import Button from "@/shared/components/ui/Button";
 
 export default function CreateAccount({ userData }: { userData: Record<string, any> }) {
   const [state, dispatch, isLoading] = useActionState(createAccountAction, null);
@@ -46,7 +47,12 @@ export default function CreateAccount({ userData }: { userData: Record<string, a
 
         </label>
 
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded-lg w-full" disabled={isLoading}>Confirmar</button>
+        <Button
+        type="submit"
+        className="w-full"
+        disabled={isLoading} >
+          Confirmar
+        </Button>
       </form>
 
       {state && (

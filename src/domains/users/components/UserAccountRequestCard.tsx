@@ -1,5 +1,6 @@
 'use client';
 
+import Button from "@/shared/components/ui/Button";
 import { useAccountStatus } from "../hooks/useAccountStatus";
 
 interface UserStatusUpdateCardProps {
@@ -27,25 +28,25 @@ export default function UserStatusUpdateCard({ name, email, status, userID, onDe
       </div>
 
       <div className="flex gap-2 items-center">
-        <button
+        <Button
         onClick={() => {
           handleNewStatus({ user_id: userID, newStatus: 'approved' });
           animateDelete(onDelete, userID, status);
         }}
-        className="p-2 bg-green-500 text-white text-sm rounded"
+        variant="recommended"
         disabled={isPending}>
           Aprobar
-        </button>
-        
-        <button
+        </Button>
+
+        <Button
         onClick={() => {
           handleNewStatus({ user_id: userID, newStatus: 'rejected' });
           animateDelete(onDelete, userID, status);
         }}
-        className="p-2 bg-red-500 text-white text-sm rounded"
+        variant="danger"
         disabled={isPending}>
           Rechazar
-        </button>
+        </Button>
       </div>
     </article>
   );
