@@ -2,6 +2,8 @@
 
 import Link from 'next/dist/client/link';
 import { StaticImageData } from 'next/image';
+import { LoginButton } from './ui/LoginInCardButton';
+import { LoginProvider } from '@/shared/providers/LoginContext';
 
 interface Institute {
   id: string;
@@ -25,15 +27,9 @@ export default function InstituteCard({
       >
         <h2 className='text-center font-bold text-lg transition-[translate] group-hover:-translate-y-11'>{name}</h2>
         <div className="absolute flex gap-2 bottom-7 opacity-0 translate-y-7 transition-[opacity,translate] group-hover:opacity-100 group-hover:translate-y-0">
-          <span
-          className="px-4 py-2 rounded-sm text-white bg-black/40 hover:bg-black/70 active:bg-black/90 transition-colors duration-200 cursor-pointer"
-          onClick={(e) => {
-            e.preventDefault();
-            window.open(`/${id}/login`, '_self');
-          }}
-          >
-            Login
-          </span>
+          <LoginProvider institute={id}>
+            <LoginButton />
+          </LoginProvider>
           <span
           className="px-4 py-2 rounded-sm text-white bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer"
           onClick={(e) => {
