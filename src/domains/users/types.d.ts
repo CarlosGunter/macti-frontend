@@ -4,5 +4,5 @@ export type AccountRequestPayload = {
 
 export type AccountStatusPayload = {
   user_id: string;
-  newStatus: 'approved' | 'rejected';
-}
+  newStatus: "approved" | "rejected";
+};

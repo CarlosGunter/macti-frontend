@@ -14,7 +14,8 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
       <div className="text-center grid gap-2">
         <h1 className="text-2xl font-bold">Solicitar Registro para MACTI</h1>
         <p className="text-sm">
-          Nota: Cada instituto tiene su propio Registro. Asegúrate de estar en el correcto.
+          Nota: Cada instituto tiene su propio Registro. Asegúrate de estar en el
+          correcto.
         </p>
       </div>
 

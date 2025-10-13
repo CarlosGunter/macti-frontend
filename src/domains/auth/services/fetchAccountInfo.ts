@@ -10,6 +10,6 @@ export async function fetchAccountInfo(token: string) {
 
   const [error, userData] = await processFetch(verifyTokenPromise);
   if (error) return undefined;
-    
+
   return userData;
 }

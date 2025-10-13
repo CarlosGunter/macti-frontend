@@ -14,14 +14,18 @@ export function useAccountStatus() {
         setError("Error al actualizar el estado del usuario");
       }
     });
-  }
+  };
 
-  const animateDelete = (onDelete: (id: string, status: 'pending' | 'approved' | 'rejected') => void, id: string, status: 'pending' | 'approved' | 'rejected') => {
+  const animateDelete = (
+    onDelete: (id: string, status: "pending" | "approved" | "rejected") => void,
+    id: string,
+    status: "pending" | "approved" | "rejected",
+  ) => {
     setIsDeleted(true);
     setTimeout(() => {
       onDelete(id, status);
     }, 300);
-  }
+  };
 
   return { isPending, handleNewStatus, error, isDeleted, animateDelete };
 }

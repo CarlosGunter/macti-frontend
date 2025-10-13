@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Hind_Madurai, Lora } from "next/font/google";
+import { Hind_Madurai, Lora, Montserrat } from "next/font/google";
 import "./globals.css";
 import "@/shared/utils/zod-config";
 
@@ -22,7 +22,8 @@ const lora = Lora({
 
 export const metadata: Metadata = {
   title: "MACTI",
-  description: "MACTI es una plataforma que alberga materiales didácticos haciendo énfasis en ejemplos prácticos y aplicaciones de conceptos abstractos para los cursos semestrales de análisis Numérico y Ecuaciones Diferenciales.",
+  description:
+    "MACTI es una plataforma que alberga materiales didácticos haciendo énfasis en ejemplos prácticos y aplicaciones de conceptos abstractos para los cursos semestrales de análisis Numérico y Ecuaciones Diferenciales.",
 };
 
 export default function RootLayout({
