@@ -26,7 +26,7 @@ export default function Button({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className={`p-2 rounded-lg transition-colors duration-200 ${variants[variant]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      className={`p-2 rounded-lg transition-colors duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
       {children}
     </button>

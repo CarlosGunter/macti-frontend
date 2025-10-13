@@ -1,7 +1,10 @@
+import {
+  type CreateAccountPayload,
+  createAccountSchema,
+} from "../schemas/createAccountSchema";
 import { CreateAccount } from "../services/createAccount";
-import { type CreateAccountPayload, createAccountSchema } from "../schemas/createAccountSchema";
 
-export async function createAccountAction(prevState: unknown, formData: FormData) {
+export async function createAccountAction(_prevState: unknown, formData: FormData) {
   const getData: unknown = Object.fromEntries(formData.entries());
 
   const password = formData.get("password")?.toString();
@@ -25,12 +28,12 @@ export async function createAccountAction(prevState: unknown, formData: FormData
   if (!accountCreation) {
     return {
       message: "Error al crear la cuenta. Inténtalo de nuevo más tarde.",
-      data: validation.data
+      data: validation.data,
     };
   }
 
   return {
     message: "Cuenta creada exitosamente. Ahora puedes iniciar sesión.",
-    data: null
+    data: null,
   };
 }

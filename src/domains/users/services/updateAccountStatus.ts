@@ -1,5 +1,5 @@
-import type { AccountStatusPayload } from "../types";
 import { processFetch } from "@/shared/utils/process-fetch";
+import type { AccountStatusPayload } from "../types";
 
 export async function updateAccountStatus({ user_id, newStatus }: AccountStatusPayload) {
   const apiURLBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -8,7 +8,7 @@ export async function updateAccountStatus({ user_id, newStatus }: AccountStatusP
     method: "PATCH",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: parseInt(user_id), status: newStatus }),
+    body: JSON.stringify({ id: parseInt(user_id, 10), status: newStatus }),
   });
 
   const [error, response] = await processFetch(submitNewStatusPromise);

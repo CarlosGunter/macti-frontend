@@ -1,5 +1,5 @@
-import type { AccountRequestPayload } from '../schemas/accountRequestSchema';
-import { processFetch } from '@/shared/utils/process-fetch';
+import { processFetch } from "@/shared/utils/process-fetch";
+import type { AccountRequestPayload } from "../schemas/accountRequestSchema";
 
 /**
  * @param userRequestData datos del usuario que solicita la cuenta
@@ -11,11 +11,11 @@ export async function createAccountRequest(userRequestData: AccountRequestPayloa
   const accountRequestPromise = fetch(`${apiURLBase}/auth/request-account`, {
     method: "POST",
     cache: "no-store",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userRequestData),
   });
 
-  const [error, getAccountRequests] = await processFetch(accountRequestPromise);
+  const [error, _getAccountRequests] = await processFetch(accountRequestPromise);
   if (error) return { success: false };
 
   return { success: true };

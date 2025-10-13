@@ -1,14 +1,17 @@
 import z from "zod";
-import { type AccountRequestPayload, accountRequestSchema } from "../schemas/accountRequestSchema";
+import {
+  type AccountRequestPayload,
+  accountRequestSchema,
+} from "../schemas/accountRequestSchema";
 import { createAccountRequest } from "../services/createAccountRequest";
 
 /**
- * 
+ *
  * @param prevState estado previo
  * @param formData datos del formulario
  * @returns objeto con el resultado de la acción
  */
-export async function accountRequestAction(prevState: unknown, formData: FormData) {
+export async function accountRequestAction(_prevState: unknown, formData: FormData) {
   const getData: unknown = Object.fromEntries(formData.entries());
 
   const validation = accountRequestSchema.safeParse(getData);
@@ -17,7 +20,7 @@ export async function accountRequestAction(prevState: unknown, formData: FormDat
       success: false,
       message: "Rellena correctamente todos los campos.",
       data: getData as AccountRequestPayload,
-      errors: z.treeifyError(validation.error).properties
+      errors: z.treeifyError(validation.error).properties,
     };
   }
 
@@ -27,14 +30,15 @@ export async function accountRequestAction(prevState: unknown, formData: FormDat
       success: false,
       message: "Error al solicitar la cuenta. Inténtalo de nuevo más tarde.",
       data: validation.data,
-      errors: null
+      errors: null,
     };
   }
 
   return {
     success: true,
-    message: "Solicitud de cuenta enviada. Se enviará un correo de confirmación cuando el profesor a cargo del curso lo apruebe.",
+    message:
+      "Solicitud de cuenta enviada. Se enviará un correo de confirmación cuando el profesor a cargo del curso lo apruebe.",
     data: null,
-    errors: null
-  }
+    errors: null,
+  };
 }

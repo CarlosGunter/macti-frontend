@@ -14,15 +14,15 @@ type Account = {
   id: string;
   name: string;
   email: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
 };
 
 interface ListAccountRequestProps {
   data: Account[];
   message?: string;
-};
+}
 
-export default async function SolicitudesPage({ params }: SolicitudesPageProps) { 
+export default async function SolicitudesPage({ params }: SolicitudesPageProps) {
   const { course_id, institute } = await params;
   const accountRequests = await fetchAccountRequests({ course_id });
 
@@ -34,7 +34,6 @@ export default async function SolicitudesPage({ params }: SolicitudesPageProps) 
       </div>
 
       <AccountRequestList accountRequests={accountRequests as ListAccountRequestProps} />
-
     </div>
   );
 }

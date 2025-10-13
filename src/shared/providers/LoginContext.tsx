@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import Keycloak from 'keycloak-js';
-import { useParams } from 'next/navigation';
-import { keycloakConfigs } from '@/shared/config/kcConfig';
+import Keycloak from "keycloak-js";
+import { useParams } from "next/navigation";
+import type React from "react";
+import { createContext, useContext, useState } from "react";
+import { keycloakConfigs } from "@/shared/config/kcConfig";
 
 type AuthContextType = {
   authenticated: boolean;
@@ -23,7 +24,10 @@ interface LoginProviderProps {
   institute?: string;
 }
 
-export const LoginProvider = ({ children, institute: propInstitute }: LoginProviderProps) => {
+export const LoginProvider = ({
+  children,
+  institute: propInstitute,
+}: LoginProviderProps) => {
   const { institute: paramInstitute } = useParams();
   // Esto permite usar el provider tanto con prop como en rutas dinámicas
   const institute = propInstitute || paramInstitute;
@@ -43,10 +47,13 @@ export const LoginProvider = ({ children, institute: propInstitute }: LoginProvi
     const kc = new Keycloak(cfg);
     setKeycloak(kc);
 
-    kc.init({ onLoad: 'check-sso', silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html' })
-      .then(auth => {
+    kc.init({
+      onLoad: "check-sso",
+      silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
+    })
+      .then((auth) => {
         setAuthenticated(auth);
-        if (auth) localStorage.setItem('token', kc.token!);
+        if (auth) localStorage.setItem("token", kc.token || "");
       })
       .catch(console.error);
   };
