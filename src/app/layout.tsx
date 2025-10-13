@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Hind_Madurai, Lora, Montserrat } from "next/font/google";
 import "./globals.css";
-import "@/shared/utils/zod-config";
 
 const montserrat = Montserrat({
   weight: ["300", "400", "600", "700"],
