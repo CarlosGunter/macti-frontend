@@ -16,7 +16,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
   return (
     <article className="">
       <Link
-        className="relative grid place-items-center h-48 rounded-2xl bg-black/50 bg-[image:var(--img)] bg-cover bg-center bg-no-repeat bg-blend-darken group"
+        className="relative grid place-items-center h-48 rounded-2xl bg-black/50 bg-[image:var(--img)] bg-cover bg-center bg-no-repeat bg-blend-darken text-white group"
         href={details}
         style={{ "--img": `url(${image.src})` } as React.CSSProperties}
       >
@@ -31,7 +31,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
           {/* biome-ignore lint: false positive */}
           <span
             role="button"
-            className="px-4 py-2 rounded-sm text-white bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer"
+            className="px-4 py-2 rounded-sm bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               window.open(`/registro?institute=${id}`, "_self");

@@ -4,7 +4,7 @@ import mactiLogo from "@/assets/image/logos/macti_logo.png";
 export default function Hero() {
   return (
     <div
-      className={`relative w-full h-80 flex flex-col items-center justify-center gap-4 bg-[url(/svg/low-poly-grid-haikei.svg)] bg-cover bg-center bg-no-repeat bg-fixed md:h-96 lg:h-130`}
+      className={`relative w-full h-80 flex flex-col items-center justify-center gap-4 bg-[url(/svg/low-poly-grid-haikei.svg)] bg-cover bg-center bg-no-repeat bg-fixed text-white md:h-96 lg:h-130`}
     >
       <Image src={mactiLogo} alt="MACTI Logo" className="w-36 h-auto" />
       <p className="max-w-xl text-center px-2">
