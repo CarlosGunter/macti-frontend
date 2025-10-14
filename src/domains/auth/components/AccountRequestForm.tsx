@@ -23,7 +23,6 @@ export default function AccountRequestForm({ institute }: { institute: string })
             name="institute"
             id="institute"
             defaultValue={institute || data?.institute || ""}
-            className="border p-2 rounded-lg bg-background/90 appearance-none"
           >
             {Object.keys(institutes).map((key) => (
               <option key={key} value={key}>
@@ -44,9 +43,12 @@ export default function AccountRequestForm({ institute }: { institute: string })
             type="email"
             id="email"
             name="email"
-            className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${Array.isArray(errors?.email?.errors) ? "border-red-500" : ""}`}
+            className={`${Array.isArray(errors?.email?.errors) ? "border-red-500" : ""}`}
             defaultValue={data?.email || ""}
             placeholder="ejemplo@dominio.com"
+            onChange={(e) => {
+              e.target.value = e.target.value.toLowerCase();
+            }}
           />
 
           {Array.isArray(errors?.email?.errors) ? (
@@ -63,7 +65,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
             type="text"
             id="name"
             name="name"
-            className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${Array.isArray(errors?.name?.errors) ? "border-red-500" : ""}`}
+            className={`${Array.isArray(errors?.name?.errors) ? "border-red-500" : ""}`}
             defaultValue={data?.name || ""}
             placeholder="Juan"
           />
@@ -82,7 +84,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
             type="text"
             id="last_name"
             name="last_name"
-            className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${Array.isArray(errors?.last_name?.errors) ? "border-red-500" : ""}`}
+            className={`${Array.isArray(errors?.last_name?.errors) ? "border-red-500" : ""}`}
             defaultValue={data?.last_name || ""}
             placeholder="Pérez"
           />
@@ -101,7 +103,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
             name="course_id"
             id="course_id"
             defaultValue={data?.course_id}
-            className={`border p-2 rounded-lg bg-background/90 appearance-none focus:outline-none focus:ring-0 ${Array.isArray(errors?.course_id?.errors) ? "border-red-500" : ""}`}
+            className={`${Array.isArray(errors?.course_id?.errors) ? "border-red-500" : ""}`}
           >
             <optgroup label={"Cursos del instituto seleccionado"}>
               {Array.from({ length: 6 }, (_, i) => i).map((num) => (

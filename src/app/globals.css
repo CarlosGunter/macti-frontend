@@ -4,6 +4,11 @@
   /* Colores */
   --color-background: light-dark(#fff, #0a0a0a);
   --color-foreground: light-dark(#171717, #ededed);
+  --color-primary: light-dark(#ffffff, #151515);
+  --color-primary-hv: light-dark(#f5f5f5, #1c1c1c);
+  --color-accent: light-dark(#0070f3, #79ffe1);
+  --color-border-primary: light-dark(#b9b9b9, #2c2c2c);
+  --color-border-secondary: light-dark(#eeeeee, #3c3c3c);
 
   /* Fuentes */
   --font-headers: var(--font-montserrat);
@@ -12,6 +17,8 @@
 
 @layer base {
   body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-family: var(--font-text), Helvetica, Arial, sans-serif;
   }
 
@@ -22,5 +29,29 @@
   h5,
   h6 {
     font-family: var(--font-headers), Helvetica, Arial, sans-serif;
+  }
+
+  input, select {
+    appearance: none;
+    padding-block: 0.375rem;
+    padding-inline: 0.5rem;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-border-primary);
+    border-radius: 0.5rem;
+    background-color: var(--color-primary);
+
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline-style: none;
+      border-color: transparent;
+      @apply ring-1 ring-accent;
+      @apply shadow-md shadow-accent/20;
+    }
+  }
+
+  select:hover {
+    background-color: var(--color-primary-hv);
   }
 }

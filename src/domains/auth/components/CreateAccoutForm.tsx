@@ -31,7 +31,7 @@ export default function CreateAccount({
             name="password"
             type="password"
             placeholder="Nueva contraseña"
-            className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${!passwordsMatch && confirmPassword ? "border-red-500" : ""}`}
+            className={`${!passwordsMatch && confirmPassword ? "border-red-500" : ""}`}
             defaultValue={state?.data?.password || ""}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -44,7 +44,7 @@ export default function CreateAccount({
             name="confirm_password"
             type="password"
             placeholder="Confirma tu nueva contraseña"
-            className={`border p-2 rounded-lg focus:outline-none focus:ring-0 ${!passwordsMatch && confirmPassword ? "border-red-500" : ""}`}
+            className={`${!passwordsMatch && confirmPassword ? "border-red-500" : ""}`}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 

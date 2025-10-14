@@ -10,7 +10,8 @@ interface ButtonProps {
 const variants = {
   recommended: "bg-green-700 text-white hover:bg-green-600",
   danger: "bg-red-700 text-white hover:bg-red-600",
-  default: "bg-gray-200 text-black hover:bg-gray-300",
+  default:
+    "bg-black text-white hover:ring-1 hover:ring-offset-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-gray-200",
 };
 
 export default function Button({
@@ -26,7 +27,7 @@ export default function Button({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className={`p-2 rounded-lg transition-colors duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+      className={`p-2 rounded-lg transition-shadow duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
       {children}
     </button>
