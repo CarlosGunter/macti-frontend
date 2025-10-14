@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" className="scheme-light-dark">
       <body
         className={`${montserrat.variable} ${hindMadurai.variable} ${lora.variable} antialiased`}
       >
