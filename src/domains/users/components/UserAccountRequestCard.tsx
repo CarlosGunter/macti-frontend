@@ -36,9 +36,9 @@ export default function UserStatusUpdateCard({
             animateDelete(onDelete, userID, status);
           }}
           variant="recommended"
-          disabled={isPending}
+          isLoading={isPending}
         >
-          Aprobar
+          <span>Aprobar</span>
         </Button>
 
         <Button
@@ -47,9 +47,9 @@ export default function UserStatusUpdateCard({
             animateDelete(onDelete, userID, status);
           }}
           variant="danger"
-          disabled={isPending}
+          isLoading={isPending}
         >
-          Rechazar
+          <span>Rechazar</span>
         </Button>
       </div>
     </article>

@@ -53,8 +53,12 @@ export default function CreateAccount({
           )}
         </label>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          Confirmar
+        <Button
+          type="submit"
+          className="w-full flex gap-2 justify-center items-center"
+          isLoading={isLoading}
+        >
+          <span>Crear cuenta</span>
         </Button>
       </form>
 

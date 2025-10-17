@@ -1,8 +1,11 @@
+import { Spinner } from "./Spinner";
+
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  isLoading?: boolean;
   className?: string;
   variant?: "recommended" | "danger" | "default";
 }
@@ -19,6 +22,7 @@ export default function Button({
   onClick,
   type = "button",
   disabled = false,
+  isLoading = false,
   className = "",
   variant = "default",
 }: ButtonProps) {
@@ -26,9 +30,10 @@ export default function Button({
     <button
       onClick={onClick}
       type={type}
-      disabled={disabled}
-      className={`p-2 rounded-lg transition-shadow duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+      disabled={disabled || isLoading}
+      className={`p-2 rounded-lg transition-shadow duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${isLoading && "cursor-progress"} ${className}`}
     >
+      {isLoading && <Spinner />}
       {children}
     </button>
   );

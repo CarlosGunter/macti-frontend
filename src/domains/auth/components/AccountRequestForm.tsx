@@ -123,8 +123,8 @@ export default function AccountRequestForm({ institute }: { institute: string })
           )}
         </label>
 
-        <Button type="submit" disabled={isLoading}>
-          Solicitar
+        <Button type="submit" isLoading={isLoading}>
+          <span>Solicitar</span>
         </Button>
       </form>
 
