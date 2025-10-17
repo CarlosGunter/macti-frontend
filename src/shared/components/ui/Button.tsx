@@ -31,7 +31,7 @@ export default function Button({
       onClick={onClick}
       type={type}
       disabled={disabled || isLoading}
-      className={`p-2 rounded-lg transition-shadow duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${isLoading && "cursor-progress"} ${className}`}
+      className={`flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 ${variants[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${isLoading && "cursor-progress"} ${className}`}
     >
       {isLoading && <Spinner />}
       {children}
