@@ -7,7 +7,7 @@ import { CreateAccount } from "../services/createAccount";
 export async function createAccountAction(_prevState: unknown, formData: FormData) {
   const getData: unknown = Object.fromEntries(formData.entries());
 
-  const password = formData.get("password")?.toString();
+  const password = formData.get("new_password")?.toString();
   const confirmPassword = formData.get("confirm_password")?.toString();
   if (password !== confirmPassword) {
     return {

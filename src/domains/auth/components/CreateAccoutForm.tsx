@@ -12,7 +12,7 @@ export default function CreateAccount({
 }) {
   const [state, dispatch, isLoading] = useActionState(createAccountAction, null);
 
-  const [password, setPassword] = useState(state?.data?.password || "");
+  const [password, setPassword] = useState(state?.data?.new_password || "");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const passwordsMatch = password === confirmPassword;
@@ -23,16 +23,16 @@ export default function CreateAccount({
         action={dispatch}
         className="flex flex-col items-center gap-6 w-full max-w-80 place-self-center"
       >
-        <input type="hidden" name="id" defaultValue={userData.id} />
+        <input type="hidden" name="user_id" defaultValue={userData.id} />
 
-        <label htmlFor="password" className="grid gap-1.5 w-full">
+        <label htmlFor="new_password" className="grid gap-1.5 w-full">
           <span>Ingresa una nueva contraseña*</span>
           <input
-            name="password"
+            name="new_password"
             type="password"
             placeholder="Nueva contraseña"
             className={`${!passwordsMatch && confirmPassword ? "border-red-500" : ""}`}
-            defaultValue={state?.data?.password || ""}
+            defaultValue={state?.data?.new_password || ""}
             onChange={(e) => setPassword(e.target.value)}
           />
           <span className="text-xs">Ingresa una contraseña segura.</span>
