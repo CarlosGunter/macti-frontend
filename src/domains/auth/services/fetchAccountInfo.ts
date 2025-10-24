@@ -1,4 +1,5 @@
 import { processFetch } from "@/shared/utils/process-fetch";
+import { createAccountResponseSchema } from "../schemas/createAccountSchema";
 
 export async function fetchAccountInfo(token: string) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
@@ -11,5 +12,8 @@ export async function fetchAccountInfo(token: string) {
   const [error, userData] = await processFetch(verifyTokenPromise);
   if (error) return undefined;
 
-  return userData;
+  const parsedUserData = createAccountResponseSchema.safeParse(userData);
+  if (!parsedUserData.success) return undefined;
+
+  return parsedUserData.data;
 }
