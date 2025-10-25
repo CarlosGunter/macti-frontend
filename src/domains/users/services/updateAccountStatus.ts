@@ -8,7 +8,7 @@ export async function updateAccountStatus({ user_id, newStatus }: AccountStatusP
     method: "PATCH",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id: parseInt(user_id, 10), status: newStatus }),
+    body: JSON.stringify({ id: user_id, status: newStatus }),
   });
 
   const [error, response] = await processFetch(submitNewStatusPromise);

@@ -1,4 +1,5 @@
 import { useState, useTransition } from "react";
+import type { ListAccountsProps } from "../schemas/listAccountsSchema";
 import { updateAccountStatus } from "../services/updateAccountStatus";
 import type { AccountStatusPayload } from "../types";
 
@@ -17,9 +18,9 @@ export function useAccountStatus() {
   };
 
   const animateDelete = (
-    onDelete: (id: string, status: "pending" | "approved" | "rejected") => void,
-    id: string,
-    status: "pending" | "approved" | "rejected",
+    onDelete: (id: number, status: ListAccountsProps[number]["status"]) => void,
+    id: number,
+    status: ListAccountsProps[number]["status"],
   ) => {
     setIsDeleted(true);
     setTimeout(() => {

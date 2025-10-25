@@ -2,46 +2,33 @@
 
 import { type Dispatch, type SetStateAction, useState } from "react";
 import Banner from "@/shared/components/feedback/Banner";
+import type { ListAccountsProps } from "../schemas/listAccountsSchema";
 import UserStatusUpdateCard from "./UserAccountRequestCard";
 
-type Account = {
-  id: string;
-  name: string;
-  email: string;
-  status: "pending" | "approved" | "rejected";
-};
-type AccountRequestsDataProps = {
-  pending: Account[];
-  approved: Account[];
-  rejected: Account[];
-};
-
 interface AccountRequestListProps {
-  accountRequests: {
-    data: Account[];
-    message?: string;
-  };
+  accountRequests: ListAccountsProps | undefined;
 }
 
+type ListByStatus = Record<ListAccountsProps[number]["status"], ListAccountsProps>;
 const handleClick =
-  (setList: Dispatch<SetStateAction<AccountRequestsDataProps>>) =>
-  (id: string, status: "pending" | "approved" | "rejected") => {
+  (setList: Dispatch<SetStateAction<ListByStatus>>) =>
+  (id: number, status: keyof ListByStatus) => {
     setList((prevList) => ({
       ...prevList,
       [status]: prevList[status].filter((user) => user.id !== id),
     }));
   };
 
-const groupByStatus = (data: Account[]) => {
-  if (!data) return { pending: [], approved: [], rejected: [] };
-  return Object.groupBy(data, (account) => account.status) as AccountRequestsDataProps;
+const groupByStatus = (data: ListAccountsProps | undefined) => {
+  if (!data) return { pending: [], approved: [], rejected: [], created: [] };
+  return Object.groupBy(data, (account) => account.status) as ListByStatus;
 };
 
 export default function AccountRequestList({ accountRequests }: AccountRequestListProps) {
-  const [list, setList] = useState(groupByStatus(accountRequests.data));
+  const [list, setList] = useState(groupByStatus(accountRequests));
 
-  if (!accountRequests || !accountRequests.data) {
-    return <Banner message={accountRequests?.message || "Ocurrió un error"} isError />;
+  if (!accountRequests) {
+    return <Banner message="Ocurrió un error al cargar las solicitudes" isError />;
   }
 
   if (list) {
@@ -50,13 +37,14 @@ export default function AccountRequestList({ accountRequests }: AccountRequestLi
         <div className="grid gap-2">
           <h2 className="text-lg font-semibold">Pendientes:</h2>
           <div className="grid gap-4">
-            {list?.pending?.map((user: Account) => (
+            {list?.pending?.map((user) => (
               <UserStatusUpdateCard
                 key={`${user.id}-${list.pending?.length}`}
+                id={user.id}
                 name={user.name}
+                last_name={user.last_name}
                 email={user.email}
                 status={user.status}
-                userID={user.id}
                 onDelete={handleClick(setList)}
               />
             ))}
@@ -66,13 +54,14 @@ export default function AccountRequestList({ accountRequests }: AccountRequestLi
         <div>
           <h2 className="text-lg font-semibold">Aprobadas:</h2>
           <div className="grid gap-4">
-            {list?.approved?.map((user: Account) => (
+            {list?.approved?.map((user) => (
               <UserStatusUpdateCard
                 key={`${user.id}-${list.approved?.length}`}
+                id={user.id}
                 name={user.name}
+                last_name={user.last_name}
                 email={user.email}
                 status={user.status}
-                userID={user.id}
                 onDelete={handleClick(setList)}
               />
             ))}
@@ -82,13 +71,14 @@ export default function AccountRequestList({ accountRequests }: AccountRequestLi
         <div>
           <h2 className="text-lg font-semibold">Rechazadas:</h2>
           <div className="grid gap-4">
-            {list?.rejected?.map((user: Account) => (
+            {list?.rejected?.map((user) => (
               <UserStatusUpdateCard
                 key={`${user.id}-${list.rejected?.length}`}
+                id={user.id}
                 name={user.name}
+                last_name={user.last_name}
                 email={user.email}
                 status={user.status}
-                userID={user.id}
                 onDelete={handleClick(setList)}
               />
             ))}

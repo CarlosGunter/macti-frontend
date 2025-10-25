@@ -3,6 +3,6 @@ export type AccountRequestPayload = {
 };
 
 export type AccountStatusPayload = {
-  user_id: string;
+  user_id: number;
   newStatus: "approved" | "rejected";
 };

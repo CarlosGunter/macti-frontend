@@ -4,12 +4,9 @@ import { useActionState, useState } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import Button from "@/shared/components/ui/Button";
 import { createAccountAction } from "../actions/createAccountAction";
+import type { CreateAccountResponse } from "../schemas/createAccountSchema";
 
-export default function CreateAccount({
-  userData,
-}: {
-  userData: Record<string, string>;
-}) {
+export default function CreateAccount({ userData }: { userData: CreateAccountResponse }) {
   const [state, dispatch, isLoading] = useActionState(createAccountAction, null);
 
   const [password, setPassword] = useState(state?.data?.new_password || "");
