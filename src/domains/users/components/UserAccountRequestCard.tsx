@@ -17,7 +17,7 @@ export default function UserStatusUpdateCard({
   status,
   onDelete,
 }: UserStatusUpdateCardProps) {
-  const { isPending, handleNewStatus, isDeleted, animateDelete } = useAccountStatus();
+  const { isPending, handleNewStatus, isDeleted } = useAccountStatus();
 
   return (
     <article
@@ -31,8 +31,10 @@ export default function UserStatusUpdateCard({
       <div className="flex gap-2 items-center">
         <Button
           onClick={() => {
-            handleNewStatus({ user_id: id, newStatus: "approved" });
-            animateDelete(onDelete, id, status);
+            handleNewStatus({
+              payload: { user_id: id, newStatus: "approved" },
+              options: { onDelete, id, status },
+            });
           }}
           variant="recommended"
           isLoading={isPending}
@@ -42,8 +44,10 @@ export default function UserStatusUpdateCard({
 
         <Button
           onClick={() => {
-            handleNewStatus({ user_id: id, newStatus: "rejected" });
-            animateDelete(onDelete, id, status);
+            handleNewStatus({
+              payload: { user_id: id, newStatus: "rejected" },
+              options: { onDelete, id, status },
+            });
           }}
           variant="danger"
           isLoading={isPending}
