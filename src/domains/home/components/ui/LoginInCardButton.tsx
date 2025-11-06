@@ -2,7 +2,7 @@
 
 import { useLogin } from "@/shared/providers/LoginContext";
 
-export function LoginButton() {
+export function LoginCardButton() {
   const { authenticated, login, logout } = useLogin();
 
   return (
