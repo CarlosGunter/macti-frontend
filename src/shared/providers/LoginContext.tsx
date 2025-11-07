@@ -64,7 +64,12 @@ export function LoginProvider({
     const kc = new Keycloak(cfg);
     setKeycloak(kc);
 
-    const { data: _auth, error } = await tryCatch(kc.init({ checkLoginIframe: false }));
+    const { data: _auth, error } = await tryCatch(
+      kc.init({
+        checkLoginIframe: false,
+        redirectUri: `${window.location.origin}/${institute}`,
+      }),
+    );
     if (error) {
       console.error("Error al inicializar Keycloak", error);
       return null;
