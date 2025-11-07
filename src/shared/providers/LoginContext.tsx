@@ -36,6 +36,23 @@ export function LoginProvider({
   const [authenticated, setAuthenticated] = useState(false);
   const [keycloak, setKeycloak] = useState<Keycloak | null>(null);
 
+  // biome-ignore lint: false positive
+  useEffect(() => {
+    initializeKeycloak();
+
+    setAuthenticated(() => {
+      const jwtKc = sessionStorage.getItem("token");
+      if (!jwtKc) return false;
+
+      // Verificar si el token no ha expirado
+      const payload = JSON.parse(atob(jwtKc.split(".")[1]));
+      const exp = payload.exp;
+      const now = Math.floor(Date.now() / 1000);
+      console.log(now, exp, new Date(exp * 1000));
+      return now < exp;
+    });
+  }, [institute]);
+
   const initializeKeycloak = async () => {
     if (!institute) return null;
 
@@ -48,52 +65,31 @@ export function LoginProvider({
     const kc = new Keycloak(cfg);
     setKeycloak(kc);
 
-    const { data: auth, error } = await tryCatch(kc.init({ checkLoginIframe: false }));
-
+    const { data: _auth, error } = await tryCatch(kc.init({ checkLoginIframe: false }));
     if (error) {
       console.error("Error al inicializar Keycloak", error);
       return null;
     }
 
     try {
-      if (kc.token) localStorage.setItem("token", kc.token);
+      if (kc.token) sessionStorage.setItem("token", kc.token);
     } catch (e) {
-      console.error("No se pudo guardar el token en localStorage", e);
-    }
-
-    setAuthenticated(auth);
-
-    try {
-      const kcAny = kc as unknown as {
-        onAuthSuccess?: () => void;
-        onAuthLogout?: () => void;
-      };
-      kcAny.onAuthSuccess = () => setAuthenticated(true);
-      kcAny.onAuthLogout = () => setAuthenticated(false);
-    } catch {
-      console.error("No se pudieron asignar los manejadores de eventos");
+      console.error("No se pudo guardar el token en sessionStorage", e);
     }
 
     return kc;
   };
 
   const login = async () => {
-    if (!keycloak) {
-      const kc = await initializeKeycloak();
+    if (keycloak) await keycloak.login();
 
-      if (kc) await kc.login();
-      return;
-    }
+    const kc = await initializeKeycloak();
+    if (kc) await kc.login();
 
-    await keycloak.login();
+    return;
   };
 
   const logout = () => keycloak?.logout();
-
-  // biome-ignore lint: false positive
-  useEffect(() => {
-    initializeKeycloak();
-  }, []);
 
   return (
     <AuthContext.Provider
