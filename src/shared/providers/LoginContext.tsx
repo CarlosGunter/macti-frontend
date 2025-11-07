@@ -48,7 +48,6 @@ export function LoginProvider({
       const payload = JSON.parse(atob(jwtKc.split(".")[1]));
       const exp = payload.exp;
       const now = Math.floor(Date.now() / 1000);
-      console.log(now, exp, new Date(exp * 1000));
       return now < exp;
     });
   }, [institute]);
