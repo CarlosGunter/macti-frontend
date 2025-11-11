@@ -93,7 +93,10 @@ export function LoginProvider({
     return;
   };
 
-  const logout = () => keycloak?.logout();
+  const logout = () => {
+    keycloak?.logout();
+    sessionStorage.removeItem("token");
+  };
 
   return (
     <AuthContext.Provider
