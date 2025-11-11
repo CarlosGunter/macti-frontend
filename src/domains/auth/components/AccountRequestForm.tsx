@@ -59,7 +59,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
         </label>
 
         <label htmlFor="name" className="grid gap-1.5">
-          <span>Nombre*</span>
+          <span>Nombre(s)*</span>
 
           <input
             type="text"
@@ -78,7 +78,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
         </label>
 
         <label htmlFor="last_name" className="grid gap-1.5">
-          <span>Apellido*</span>
+          <span>Apellidos*</span>
 
           <input
             type="text"
@@ -86,13 +86,13 @@ export default function AccountRequestForm({ institute }: { institute: string })
             name="last_name"
             className={`${Array.isArray(errors?.last_name?.errors) ? "border-red-500" : ""}`}
             defaultValue={data?.last_name || ""}
-            placeholder="Pérez"
+            placeholder="Pérez López"
           />
 
           {Array.isArray(errors?.last_name?.errors) ? (
             <span className="text-red-500 text-xs">{errors.last_name.errors[0]}</span>
           ) : (
-            <span className="text-xs">Ingresa tu primer apellido.</span>
+            <span className="text-xs">Ingresa tus apellidos.</span>
           )}
         </label>
 
