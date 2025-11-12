@@ -85,12 +85,13 @@ export function LoginProvider({
   };
 
   const login = async () => {
-    if (keycloak) await keycloak.login();
+    if (keycloak) {
+      await keycloak.login();
+      return;
+    }
 
     const kc = await initializeKeycloak();
     if (kc) await kc.login();
-
-    return;
   };
 
   const logout = () => {
