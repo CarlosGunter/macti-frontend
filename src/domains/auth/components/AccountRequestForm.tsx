@@ -4,11 +4,14 @@ import { useActionState } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import Button from "@/shared/components/ui/Button";
 import { institutes } from "@/shared/config/institutes";
+import { useAutoDismissBanner } from "@/shared/hooks/useAutoDismissBanner";
 import { accountRequestAction } from "../actions/accountRequestAction";
 
 export default function AccountRequestForm({ institute }: { institute: string }) {
   const [state, dispatch, isLoading] = useActionState(accountRequestAction, null);
   const { success, message, data, errors } = state || {};
+
+  const isBannerVisible = useAutoDismissBanner(message || null);
 
   return (
     <>
@@ -128,7 +131,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
         </Button>
       </form>
 
-      {message && <Banner message={message} isError={!success} />}
+      {isBannerVisible && message && <Banner message={message} isError={!success} />}
     </>
   );
 }

@@ -5,6 +5,7 @@ import VisibilityIcon from "@/assets/svg/visibility";
 import VisibilityOffIcon from "@/assets/svg/visibilityOff";
 import Banner from "@/shared/components/feedback/Banner";
 import Button from "@/shared/components/ui/Button";
+import { useAutoDismissBanner } from "@/shared/hooks/useAutoDismissBanner";
 import { createAccountAction } from "../actions/createAccountAction";
 import type { CreateAccountResponse } from "../schemas/createAccountSchema";
 
@@ -17,6 +18,8 @@ export default function CreateAccount({ userData }: { userData: CreateAccountRes
   const [isVisibleConfirmPass, setIsVisibleConfirmPass] = useState(false);
 
   const passwordsMatch = password === confirmPassword;
+
+  const isBannerVisible = useAutoDismissBanner(state?.message || null);
 
   return (
     <>
@@ -77,7 +80,7 @@ export default function CreateAccount({ userData }: { userData: CreateAccountRes
         </Button>
       </form>
 
-      {state && (
+      {isBannerVisible && state && (
         <Banner
           message={state.message || "Error al crear la cuenta."}
           isError={!state.message}
