@@ -1,15 +1,13 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/shared/components/ui/Button";
 import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../constants";
 import { useAccountStatus } from "../hooks/useAccountStatus";
 import type { ListAccountsProps } from "../schemas/listAccountsSchema";
-import type { UserStatus } from "../types";
 
 type UserType = ListAccountsProps[number];
-interface UserStatusUpdateCardProps extends UserType {
-  handleChangeStatus: (id: number, status: UserStatus) => void;
-}
+interface UserStatusUpdateCardProps extends UserType {}
 
 export default function UserStatusUpdateCard({
   id,
@@ -17,8 +15,8 @@ export default function UserStatusUpdateCard({
   last_name,
   email,
   status,
-  handleChangeStatus,
 }: UserStatusUpdateCardProps) {
+  const queryClient = useQueryClient();
   const { isPending, updateStatus } = useAccountStatus();
 
   return (
@@ -40,7 +38,8 @@ export default function UserStatusUpdateCard({
               updateStatus({
                 user_id: id,
                 newStatus: USER_STATUSES.REJECTED,
-                onChangeStatus: handleChangeStatus,
+                onSuccess: () =>
+                  queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
               });
             }}
             isLoading={isPending}
@@ -61,7 +60,8 @@ export default function UserStatusUpdateCard({
                   updateStatus({
                     user_id: id,
                     newStatus: userStatus,
-                    onChangeStatus: handleChangeStatus,
+                    onSuccess: () =>
+                      queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
                   });
                 }}
                 isLoading={isPending}
