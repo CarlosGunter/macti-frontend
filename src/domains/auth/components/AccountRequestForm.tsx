@@ -4,11 +4,14 @@ import { useActionState } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import Button from "@/shared/components/ui/Button";
 import { institutes } from "@/shared/config/institutes";
+import { useAutoDismissBanner } from "@/shared/hooks/useAutoDismissBanner";
 import { accountRequestAction } from "../actions/accountRequestAction";
 
 export default function AccountRequestForm({ institute }: { institute: string }) {
   const [state, dispatch, isLoading] = useActionState(accountRequestAction, null);
   const { success, message, data, errors } = state || {};
+
+  const isBannerVisible = useAutoDismissBanner(message || null);
 
   return (
     <>
@@ -59,7 +62,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
         </label>
 
         <label htmlFor="name" className="grid gap-1.5">
-          <span>Nombre*</span>
+          <span>Nombre(s)*</span>
 
           <input
             type="text"
@@ -78,7 +81,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
         </label>
 
         <label htmlFor="last_name" className="grid gap-1.5">
-          <span>Apellido*</span>
+          <span>Apellidos*</span>
 
           <input
             type="text"
@@ -86,13 +89,13 @@ export default function AccountRequestForm({ institute }: { institute: string })
             name="last_name"
             className={`${Array.isArray(errors?.last_name?.errors) ? "border-red-500" : ""}`}
             defaultValue={data?.last_name || ""}
-            placeholder="Pérez"
+            placeholder="Pérez López"
           />
 
           {Array.isArray(errors?.last_name?.errors) ? (
             <span className="text-red-500 text-xs">{errors.last_name.errors[0]}</span>
           ) : (
-            <span className="text-xs">Ingresa tu primer apellido.</span>
+            <span className="text-xs">Ingresa tus apellidos.</span>
           )}
         </label>
 
@@ -128,7 +131,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
         </Button>
       </form>
 
-      {message && <Banner message={message} isError={!success} />}
+      {isBannerVisible && message && <Banner message={message} isError={!success} />}
     </>
   );
 }
