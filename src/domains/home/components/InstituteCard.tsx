@@ -3,7 +3,7 @@
 import Link from "next/dist/client/link";
 import type { StaticImageData } from "next/image";
 import { LoginProvider } from "@/shared/providers/LoginContext";
-import { LoginButton } from "./ui/LoginInCardButton";
+import { LoginCardButton } from "./ui/LoginInCardButton";
 
 interface Institute {
   id: string;
@@ -25,7 +25,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
         </h2>
         <div className="absolute flex gap-2 bottom-7 opacity-0 translate-y-7 transition-[opacity,translate] group-hover:opacity-100 group-hover:translate-y-0">
           <LoginProvider institute={id}>
-            <LoginButton />
+            <LoginCardButton />
           </LoginProvider>
           {/* No se puede poner un botón dentro de un anchor */}
           {/* biome-ignore lint: false positive */}
