@@ -1,6 +1,6 @@
 "use client";
 
-import Keycloak from "keycloak-js";
+import Keycloak, { type KeycloakInitOptions } from "keycloak-js";
 import { useParams } from "next/navigation";
 import type React from "react";
 import {
@@ -27,6 +27,14 @@ const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
+const TOKEN_MIN_VALIDITY_SECONDS = 60;
+const REFRESH_INTERVAL_MS = 30_000;
+const STORAGE_KEYS = {
+  token: "token",
+  refreshToken: "refreshToken",
+  idToken: "idToken",
+};
+
 interface LoginProviderProps {
   children: React.ReactNode;
   institute?: string;
@@ -47,27 +55,41 @@ export function LoginProvider({
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
 
-  const updateStoredToken = useCallback((kcToken?: string | null) => {
-    if (!kcToken) {
-      setToken(undefined);
-      try {
-        sessionStorage.removeItem("token");
-      } catch (error) {
-        console.error("No se pudo limpiar el token en sessionStorage", error);
-      }
-      return;
-    }
+  const persistTokens = useCallback(
+    ({
+      token: tokenValue,
+      refreshToken: refreshTokenValue,
+      idToken: idTokenValue,
+    }: {
+      token?: string | null;
+      refreshToken?: string | null;
+      idToken?: string | null;
+    } = {}) => {
+      setToken(tokenValue ?? undefined);
 
-    setToken(kcToken);
-    try {
-      sessionStorage.setItem("token", kcToken);
-    } catch (error) {
-      console.error("No se pudo guardar el token en sessionStorage", error);
-    }
-  }, []);
+      const entries: Array<[string, string | null | undefined]> = [
+        [STORAGE_KEYS.token, tokenValue],
+        [STORAGE_KEYS.refreshToken, refreshTokenValue],
+        [STORAGE_KEYS.idToken, idTokenValue],
+      ];
+
+      for (const [key, value] of entries) {
+        try {
+          if (value == null || value === "") {
+            localStorage.removeItem(key);
+          } else {
+            localStorage.setItem(key, value);
+          }
+        } catch (error) {
+          console.error(`Keycloak: no se pudo persistir ${key}`, error);
+        }
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    const storedToken = sessionStorage.getItem("token");
+    const storedToken = localStorage.getItem(STORAGE_KEYS.token);
     if (!storedToken) {
       setAuthenticated(false);
       setToken(undefined);
@@ -80,7 +102,7 @@ export function LoginProvider({
       const exp = payload.exp;
       const now = Math.floor(Date.now() / 1000);
       if (!exp || now >= exp) {
-        updateStoredToken(null);
+        persistTokens();
         setAuthenticated(false);
         return;
       }
@@ -89,68 +111,125 @@ export function LoginProvider({
       setAuthenticated(true);
     } catch (error) {
       console.error("No se pudo validar el token almacenado", error);
-      updateStoredToken(null);
+      persistTokens();
       setAuthenticated(false);
     }
-  }, [updateStoredToken]);
+  }, [persistTokens]);
 
   const initializeKeycloak = useCallback(async () => {
     if (!institute) return null;
 
-    const { data: auth, error } = await tryCatch(
-      keycloak.init({
-        checkLoginIframe: false,
-        redirectUri: `${window.location.origin}/${institute}`,
-      }),
-    );
+    const storedToken = localStorage.getItem(STORAGE_KEYS.token) ?? undefined;
+    const storedRefreshToken =
+      localStorage.getItem(STORAGE_KEYS.refreshToken) ?? undefined;
+    const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken) ?? undefined;
+
+    const initOptions: KeycloakInitOptions = {
+      checkLoginIframe: false,
+      redirectUri: `${window.location.origin}/${institute}`,
+    };
+
+    if (storedToken && storedRefreshToken) {
+      initOptions.token = storedToken;
+      initOptions.refreshToken = storedRefreshToken;
+      if (storedIdToken) initOptions.idToken = storedIdToken;
+    }
+
+    const { data: auth, error } = await tryCatch(keycloak.init(initOptions));
     if (error) {
       console.error("Error al inicializar Keycloak", error);
-      updateStoredToken(null);
+      persistTokens();
       setAuthenticated(false);
       return null;
     }
 
-    if (keycloak.token) {
-      updateStoredToken(keycloak.token);
-      setAuthenticated(true);
-      return true;
+    if (!keycloak.token || !keycloak.refreshToken) {
+      persistTokens();
+      setAuthenticated(false);
+      return auth ?? null;
     }
 
-    setAuthenticated((prev) => (auth ? true : prev));
-    return auth;
-  }, [institute, keycloak, updateStoredToken]);
+    persistTokens({
+      token: keycloak.token,
+      refreshToken: keycloak.refreshToken,
+      idToken: keycloak.idToken ?? null,
+    });
+
+    setAuthenticated(true);
+    return true;
+  }, [institute, keycloak, persistTokens]);
 
   useEffect(() => {
     initializeKeycloak();
   }, [initializeKeycloak]);
 
-  const refreshToken = useCallback(async () => {
-    if (!authenticated || !keycloak.token) return;
+  const refreshToken = useCallback(
+    async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
+      if (!keycloak.token) {
+        const storedToken = localStorage.getItem(STORAGE_KEYS.token);
+        if (storedToken) keycloak.token = storedToken;
+      }
 
-    const TOKEN_MIN_VALIDITY_SECONDS = 60;
-    if (!keycloak.isTokenExpired(TOKEN_MIN_VALIDITY_SECONDS)) return;
+      if (!keycloak.refreshToken) {
+        const storedRefreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken);
+        if (storedRefreshToken) keycloak.refreshToken = storedRefreshToken;
+      }
 
-    const { data: refreshed, error } = await tryCatch(
-      keycloak.updateToken(TOKEN_MIN_VALIDITY_SECONDS),
-    );
-    if (error) {
-      console.error("No se pudo refrescar el token", error);
-      keycloak.clearToken();
-      updateStoredToken(null);
-      setAuthenticated(false);
-      return;
-    }
+      if (!keycloak.idToken) {
+        const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken);
+        if (storedIdToken) keycloak.idToken = storedIdToken;
+      }
 
-    if ((refreshed || keycloak.token) && keycloak.token) {
-      updateStoredToken(keycloak.token);
-      setAuthenticated(true);
-    }
-  }, [authenticated, keycloak, updateStoredToken]);
+      if (!keycloak.token || !keycloak.refreshToken) {
+        console.warn("Keycloak: no se encontraron tokens suficientes para refrescar.");
+        persistTokens();
+        setAuthenticated(false);
+        return false;
+      }
+
+      const { data: refreshed, error } = await tryCatch(
+        keycloak.updateToken(minValidity),
+      );
+      if (error) {
+        console.error("Keycloak: no se pudo refrescar el token", error);
+        keycloak.clearToken();
+        persistTokens();
+        setAuthenticated(false);
+        return false;
+      }
+
+      if (refreshed) {
+        console.info("Keycloak: token refrescado correctamente");
+      } else {
+        console.debug("Keycloak: token vigente, no fue necesario refrescar");
+      }
+
+      persistTokens({
+        token: keycloak.token ?? null,
+        refreshToken: keycloak.refreshToken ?? null,
+        idToken: keycloak.idToken ?? null,
+      });
+      setAuthenticated(Boolean(keycloak.token));
+
+      return Boolean(refreshed);
+    },
+    [keycloak, persistTokens],
+  );
+
+  useEffect(() => {
+    keycloak.onTokenExpired = () => {
+      console.warn("Keycloak: token reportado como expirado, intentando refrescar");
+      void refreshToken(-1);
+    };
+
+    return () => {
+      keycloak.onTokenExpired = undefined;
+    };
+  }, [keycloak, refreshToken]);
 
   useEffect(() => {
     if (!authenticated) return;
 
-    const REFRESH_INTERVAL_MS = 30_000;
     const intervalId = window.setInterval(() => {
       void refreshToken();
     }, REFRESH_INTERVAL_MS);
@@ -169,7 +248,7 @@ export function LoginProvider({
   const logout = () => {
     keycloak.logout();
     keycloak.clearToken();
-    updateStoredToken(null);
+    persistTokens();
     setAuthenticated(false);
   };
 
