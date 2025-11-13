@@ -9,11 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.7",
     "keycloak-js": "^26.2.0",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "zod": "4.2.0-canary.20251001T172710"
+    "zod": "4.2.0-canary.20251001T172710",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
