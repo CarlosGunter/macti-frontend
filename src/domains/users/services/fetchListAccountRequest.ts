@@ -19,7 +19,7 @@ export async function fetchAccountRequests({
   }
 
   const listAccountRequestPromise = fetch(
-    `${apiURLBase}/auth/list-accounts-requests?${queryParams.toString()}`,
+    `${apiURLBase}/auth/list-account-requests?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
