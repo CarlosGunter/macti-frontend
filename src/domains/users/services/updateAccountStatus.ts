@@ -4,7 +4,7 @@ import type { AccountStatusPayload } from "../types";
 export async function updateAccountStatus({ user_id, newStatus }: AccountStatusPayload) {
   const apiURLBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-  const submitNewStatusPromise = fetch(`${apiURLBase}/auth/confirm-account`, {
+  const submitNewStatusPromise = fetch(`${apiURLBase}/auth/change-status`, {
     method: "PATCH",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },

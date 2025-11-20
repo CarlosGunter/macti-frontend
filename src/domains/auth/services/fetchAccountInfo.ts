@@ -4,10 +4,13 @@ import { createAccountResponseSchema } from "../schemas/createAccountSchema";
 export async function fetchAccountInfo(token: string) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
-  const verifyTokenPromise = fetch(`${apiURLBase}/auth/confirmacion?token=${token}`, {
-    method: "GET",
-    cache: "no-store",
-  });
+  const verifyTokenPromise = fetch(
+    `${apiURLBase}/auth/user-info-by-token?token=${token}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    },
+  );
 
   const [error, userData] = await processFetch(verifyTokenPromise);
   if (error) return undefined;
