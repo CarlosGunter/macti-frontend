@@ -8,5 +8,10 @@ export const createAccountSchema = z.object({
     .max(99999999, "El ID no puede tener más de 8 dígitos."),
   new_password: z.string().min(1),
 });
-
 export type CreateAccountPayload = z.infer<typeof createAccountSchema>;
+
+export const createAccountResponseSchema = z.object({
+  id: z.number().int(),
+  email: z.email(),
+});
+export type CreateAccountResponse = z.infer<typeof createAccountResponseSchema>;

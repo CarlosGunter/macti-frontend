@@ -1,100 +1,73 @@
 "use client";
 
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Banner from "@/shared/components/feedback/Banner";
+import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
+import { fetchAccountRequests } from "../services/fetchListAccountRequest";
+import { useFilterStore } from "../stores/filterStore";
+import type { UserStatus } from "../types";
 import UserStatusUpdateCard from "./UserAccountRequestCard";
 
-type Account = {
-  id: string;
-  name: string;
-  email: string;
-  status: "pending" | "approved" | "rejected";
-};
-type AccountRequestsDataProps = {
-  pending: Account[];
-  approved: Account[];
-  rejected: Account[];
-};
-
 interface AccountRequestListProps {
-  accountRequests: {
-    data: Account[];
-    message?: string;
-  };
+  course_id: string;
+  institute: string;
 }
 
-const handleClick =
-  (setList: Dispatch<SetStateAction<AccountRequestsDataProps>>) =>
-  (id: string, status: "pending" | "approved" | "rejected") => {
-    setList((prevList) => ({
-      ...prevList,
-      [status]: prevList[status].filter((user) => user.id !== id),
-    }));
-  };
+export default function AccountRequestList({
+  course_id,
+  institute,
+}: AccountRequestListProps) {
+  const { statusFilter, setStatusFilter } = useFilterStore();
 
-const groupByStatus = (data: Account[]) => {
-  if (!data) return { pending: [], approved: [], rejected: [] };
-  return Object.groupBy(data, (account) => account.status) as AccountRequestsDataProps;
-};
+  const {
+    data: accountRequests,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["accountRequests", course_id, institute, statusFilter],
+    queryFn: () =>
+      fetchAccountRequests({ course_id, institute, status: statusFilter || undefined }),
+  });
 
-export default function AccountRequestList({ accountRequests }: AccountRequestListProps) {
-  const [list, setList] = useState(groupByStatus(accountRequests.data));
-
-  if (!accountRequests || !accountRequests.data) {
-    return <Banner message={accountRequests?.message || "Ocurrió un error"} isError />;
+  if (isLoading) {
+    return <Banner message="Cargando solicitudes..." />;
   }
 
-  if (list) {
-    return (
-      <section className="grid gap-8">
-        <div className="grid gap-2">
-          <h2 className="text-lg font-semibold">Pendientes:</h2>
-          <div className="grid gap-4">
-            {list?.pending?.map((user: Account) => (
-              <UserStatusUpdateCard
-                key={`${user.id}-${list.pending?.length}`}
-                name={user.name}
-                email={user.email}
-                status={user.status}
-                userID={user.id}
-                onDelete={handleClick(setList)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-lg font-semibold">Aprobadas:</h2>
-          <div className="grid gap-4">
-            {list?.approved?.map((user: Account) => (
-              <UserStatusUpdateCard
-                key={`${user.id}-${list.approved?.length}`}
-                name={user.name}
-                email={user.email}
-                status={user.status}
-                userID={user.id}
-                onDelete={handleClick(setList)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-lg font-semibold">Rechazadas:</h2>
-          <div className="grid gap-4">
-            {list?.rejected?.map((user: Account) => (
-              <UserStatusUpdateCard
-                key={`${user.id}-${list.rejected?.length}`}
-                name={user.name}
-                email={user.email}
-                status={user.status}
-                userID={user.id}
-                onDelete={handleClick(setList)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+  if (error) {
+    return <Banner message="Ocurrió un error al cargar las solicitudes" isError />;
   }
+
+  return (
+    <section className="grid gap-4">
+      <div className="flex items-center justify-end gap-2">
+        <label htmlFor="status-filter" className="block text-sm font-medium">
+          Filtrar por estado:
+        </label>
+        <select
+          id="status-filter"
+          value={statusFilter || ""}
+          onChange={(e) => setStatusFilter((e.target.value as UserStatus) || null)}
+          className="mt-1 border-gray-500"
+        >
+          <option value="">Todos</option>
+          {Object.values(USER_STATUSES).map((status) => (
+            <option key={status} value={status}>
+              {STATUS_BADGE_LABELS[status]}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {accountRequests?.map((user) => (
+        <UserStatusUpdateCard
+          key={user.id}
+          id={user.id}
+          name={user.name}
+          last_name={user.last_name}
+          email={user.email}
+          status={user.status}
+        />
+      ))}
+    </section>
+  );
 }

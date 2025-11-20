@@ -1,56 +1,80 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/shared/components/ui/Button";
+import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../constants";
 import { useAccountStatus } from "../hooks/useAccountStatus";
+import type { ListAccountsProps } from "../schemas/listAccountsSchema";
 
-interface UserStatusUpdateCardProps {
-  name: string;
-  email: string;
-  status: "pending" | "approved" | "rejected";
-  userID: string;
-  onDelete: (id: string, status: "pending" | "approved" | "rejected") => void;
-}
+type UserType = ListAccountsProps[number];
+interface UserStatusUpdateCardProps extends UserType {}
 
 export default function UserStatusUpdateCard({
+  id,
   name,
+  last_name,
   email,
   status,
-  userID,
-  onDelete,
 }: UserStatusUpdateCardProps) {
-  const { isPending, handleNewStatus, isDeleted, animateDelete } = useAccountStatus();
+  const queryClient = useQueryClient();
+  const { isPending, updateStatus } = useAccountStatus();
 
   return (
-    <article
-      className={`flex justify-between items-center w-full p-4 border rounded-lg shadow gap-2 transition-all ${isDeleted ? "opacity-0" : "opacity-100"} ${isDeleted ? "scale-y-130" : "scale-y-100"}`}
-    >
-      <div>
-        <h1 className="text-sm">{name}</h1>
-        <p className="text-xs">{email}</p>
+    <article className="flex justify-between items-center w-full p-4 border rounded-lg shadow gap-2 transition-all">
+      <div className="flex place-items-center gap-4">
+        <div>
+          <h1 className="text-sm">{`${name} ${last_name}`}</h1>
+          <p className="text-xs">{email}</p>
+        </div>
+        <span className="px-2 py-1 text-xs font-medium bg-accent text-black rounded-full">
+          {STATUS_BADGE_LABELS[status]}
+        </span>
       </div>
 
       <div className="flex gap-2 items-center">
-        <Button
-          onClick={() => {
-            handleNewStatus({ user_id: userID, newStatus: "approved" });
-            animateDelete(onDelete, userID, status);
-          }}
-          variant="recommended"
-          isLoading={isPending}
-        >
-          <span>Aprobar</span>
-        </Button>
-
-        <Button
-          onClick={() => {
-            handleNewStatus({ user_id: userID, newStatus: "rejected" });
-            animateDelete(onDelete, userID, status);
-          }}
-          variant="danger"
-          isLoading={isPending}
-        >
-          <span>Rechazar</span>
-        </Button>
+        {status === USER_STATUSES.CREATED ? (
+          <Button
+            onClick={() => {
+              updateStatus({
+                user_id: id,
+                newStatus: USER_STATUSES.REJECTED,
+                onSuccess: () =>
+                  queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
+              });
+            }}
+            isLoading={isPending}
+            variant="danger"
+          >
+            <span>Eliminar</span>
+          </Button>
+        ) : (
+          Object.values(USER_STATUSES)
+            .filter(
+              (userStatus) =>
+                userStatus !== USER_STATUSES.CREATED && userStatus !== status,
+            )
+            .map((userStatus) => (
+              <Button
+                key={userStatus}
+                onClick={() => {
+                  updateStatus({
+                    user_id: id,
+                    newStatus: userStatus,
+                    onSuccess: () =>
+                      queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
+                  });
+                }}
+                isLoading={isPending}
+                variant={
+                  userStatus === USER_STATUSES.APPROVED ? "recommended" : "default"
+                }
+              >
+                <span>
+                  {STATUS_BTN_LABELS[userStatus as keyof typeof STATUS_BTN_LABELS]}
+                </span>
+              </Button>
+            ))
+        )}
       </div>
     </article>
   );

@@ -2,7 +2,7 @@ import { Spinner } from "./Spinner";
 
 interface ButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   isLoading?: boolean;
@@ -14,7 +14,7 @@ const variants = {
   recommended: "bg-green-700 text-white hover:bg-green-600",
   danger: "bg-red-700 text-white hover:bg-red-600",
   default:
-    "bg-black text-white hover:ring-1 hover:ring-offset-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-gray-200",
+    "bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current",
 };
 
 export default function Button({

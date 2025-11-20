@@ -15,4 +15,9 @@ export const keycloakConfigs: Record<string, KeycloakConfig> = {
     realm: "macti3dev",
     clientId: "next-login",
   },
+  ingenieria: {
+    url: "https://keycloakmacti3.duckdns.org:8445/",
+    realm: "macti4dev",
+    clientId: "next-login",
+  },
 };
