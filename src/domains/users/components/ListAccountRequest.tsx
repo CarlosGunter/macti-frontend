@@ -1,45 +1,73 @@
 "use client";
 
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Banner from "@/shared/components/feedback/Banner";
-import type { ListAccountsProps } from "../schemas/listAccountsSchema";
+import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
+import { fetchAccountRequests } from "../services/fetchListAccountRequest";
+import { useFilterStore } from "../stores/filterStore";
 import type { UserStatus } from "../types";
 import UserStatusUpdateCard from "./UserAccountRequestCard";
 
 interface AccountRequestListProps {
-  accountRequests: ListAccountsProps | undefined;
+  course_id: string;
+  institute: string;
 }
 
-const handleClick =
-  (setList: Dispatch<SetStateAction<ListAccountsProps | undefined>>) =>
-  (id: number, status: UserStatus) => {
-    setList((prevList) =>
-      prevList?.map((user) => (user.id === id ? { ...user, status } : user)),
-    );
-  };
+export default function AccountRequestList({
+  course_id,
+  institute,
+}: AccountRequestListProps) {
+  const { statusFilter, setStatusFilter } = useFilterStore();
 
-export default function AccountRequestList({ accountRequests }: AccountRequestListProps) {
-  const [list, setList] = useState(accountRequests);
+  const {
+    data: accountRequests,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["accountRequests", course_id, institute, statusFilter],
+    queryFn: () =>
+      fetchAccountRequests({ course_id, institute, status: statusFilter || undefined }),
+  });
 
-  if (!accountRequests) {
+  if (isLoading) {
+    return <Banner message="Cargando solicitudes..." />;
+  }
+
+  if (error) {
     return <Banner message="Ocurrió un error al cargar las solicitudes" isError />;
   }
 
-  if (list) {
-    return (
-      <section className="grid gap-4">
-        {list?.map((user) => (
-          <UserStatusUpdateCard
-            key={`${user.id}-${list.length}`}
-            id={user.id}
-            name={user.name}
-            last_name={user.last_name}
-            email={user.email}
-            status={user.status}
-            handleChangeStatus={handleClick(setList)}
-          />
-        ))}
-      </section>
-    );
-  }
+  return (
+    <section className="grid gap-4">
+      <div className="flex items-center justify-end gap-2">
+        <label htmlFor="status-filter" className="block text-sm font-medium">
+          Filtrar por estado:
+        </label>
+        <select
+          id="status-filter"
+          value={statusFilter || ""}
+          onChange={(e) => setStatusFilter((e.target.value as UserStatus) || null)}
+          className="mt-1 border-gray-500"
+        >
+          <option value="">Todos</option>
+          {Object.values(USER_STATUSES).map((status) => (
+            <option key={status} value={status}>
+              {STATUS_BADGE_LABELS[status]}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {accountRequests?.map((user) => (
+        <UserStatusUpdateCard
+          key={user.id}
+          id={user.id}
+          name={user.name}
+          last_name={user.last_name}
+          email={user.email}
+          status={user.status}
+        />
+      ))}
+    </section>
+  );
 }
