@@ -1,10 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useActionState, useState } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import Button from "@/shared/components/ui/Button";
 import { institutes } from "@/shared/config/institutes";
 import { useAutoDismissBanner } from "@/shared/hooks/useAutoDismissBanner";
+import { fetchCourses } from "@/shared/services/fetchCourses";
 import { accountRequestAction } from "../actions/accountRequestAction";
 
 export default function AccountRequestForm({ institute }: { institute: string }) {
@@ -12,6 +14,24 @@ export default function AccountRequestForm({ institute }: { institute: string })
   const { success, message, data, errors } = state || {};
 
   const isBannerVisible = useAutoDismissBanner(message || null);
+
+  const [selectedInstitute, setSelectedInstitute] = useState(
+    institute || data?.institute || "",
+  );
+
+  const {
+    data: courses,
+    isLoading: coursesLoading,
+    error: coursesError,
+  } = useQuery({
+    queryKey: ["courses", selectedInstitute],
+    queryFn: async () => {
+      const result = await fetchCourses({ institute: selectedInstitute });
+      if (!result) throw new Error("No se pudieron cargar los cursos");
+      return result;
+    },
+    enabled: !!selectedInstitute,
+  });
 
   return (
     <>
@@ -25,8 +45,10 @@ export default function AccountRequestForm({ institute }: { institute: string })
           <select
             name="institute"
             id="institute"
-            defaultValue={institute || data?.institute || ""}
+            value={selectedInstitute}
+            onChange={(e) => setSelectedInstitute(e.target.value)}
           >
+            <option value="">Selecciona un instituto</option>
             {Object.keys(institutes).map((key) => (
               <option key={key} value={key}>
                 {institutes[key].name}
@@ -107,14 +129,21 @@ export default function AccountRequestForm({ institute }: { institute: string })
             id="course_id"
             defaultValue={data?.course_id}
             className={`${Array.isArray(errors?.course_id?.errors) ? "border-red-500" : ""}`}
+            disabled={!selectedInstitute || coursesLoading}
           >
-            <optgroup label={"Cursos del instituto seleccionado"}>
-              {Array.from({ length: 6 }, (_, i) => i).map((num) => (
-                <option key={num} value={num} className="">
-                  Curso {num}
+            {coursesLoading ? (
+              <option>Cargando cursos...</option>
+            ) : coursesError ? (
+              <option>Error al cargar cursos</option>
+            ) : courses && courses.length > 0 ? (
+              courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.displayname}
                 </option>
-              ))}
-            </optgroup>
+              ))
+            ) : (
+              <option>No hay cursos disponibles</option>
+            )}
           </select>
 
           {Array.isArray(errors?.course_id?.errors) ? (
