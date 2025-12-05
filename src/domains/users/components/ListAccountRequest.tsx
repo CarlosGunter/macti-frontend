@@ -18,6 +18,7 @@ export default function AccountRequestList({
   institute,
 }: AccountRequestListProps) {
   const { statusFilter, setStatusFilter } = useFilterStore();
+  const userToken = localStorage.getItem("token");
 
   const {
     data: accountRequests,
@@ -26,7 +27,12 @@ export default function AccountRequestList({
   } = useQuery({
     queryKey: ["accountRequests", course_id, institute, statusFilter],
     queryFn: () =>
-      fetchAccountRequests({ course_id, institute, status: statusFilter || undefined }),
+      fetchAccountRequests({
+        course_id,
+        institute,
+        status: statusFilter || undefined,
+        userToken,
+      }),
   });
 
   if (isLoading) {

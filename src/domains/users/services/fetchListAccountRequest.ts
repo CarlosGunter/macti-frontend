@@ -6,6 +6,7 @@ export async function fetchAccountRequests({
   course_id,
   institute,
   status,
+  userToken,
 }: AccountRequestPayload) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
@@ -23,7 +24,10 @@ export async function fetchAccountRequests({
     {
       method: "GET",
       cache: "no-store",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken || ""}`,
+      },
     },
   );
 
