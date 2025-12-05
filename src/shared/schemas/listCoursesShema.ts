@@ -7,7 +7,7 @@ export const listCoursesSchema = z.array(
     fullname: z.string(),
     displayname: z.string(),
     summary: z.string(),
-    timecreated: z.number(),
+    courseimage: z.url().nullable(),
   }),
 );
 
