@@ -1,6 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
 import { fetchAccountRequests } from "../services/fetchListAccountRequest";
@@ -18,14 +20,21 @@ export default function AccountRequestList({
   institute,
 }: AccountRequestListProps) {
   const { statusFilter, setStatusFilter } = useFilterStore();
-  const userToken = localStorage.getItem("token");
+  const [userToken, setUserToken] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setUserToken(token);
+    setIsLoaded(true);
+  }, []);
 
   const {
     data: accountRequests,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["accountRequests", course_id, institute, statusFilter],
+    queryKey: ["accountRequests", course_id, institute, statusFilter, userToken],
     queryFn: () =>
       fetchAccountRequests({
         course_id,
@@ -33,7 +42,10 @@ export default function AccountRequestList({
         status: statusFilter || undefined,
         userToken,
       }),
+    enabled: !!userToken,
   });
+
+  if (isLoaded && !userToken) notFound();
 
   if (isLoading) {
     return <Banner message="Cargando solicitudes..." />;

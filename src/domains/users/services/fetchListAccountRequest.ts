@@ -32,10 +32,10 @@ export async function fetchAccountRequests({
   );
 
   const [error, listAccountRequests] = await processFetch(listAccountRequestPromise);
-  if (error) return undefined;
+  if (error) return [];
 
   const parsedListAccountRequests = listAccountsSchema.safeParse(listAccountRequests);
-  if (!parsedListAccountRequests.success) return undefined;
+  if (!parsedListAccountRequests.success) return [];
 
   return parsedListAccountRequests.data;
 }
