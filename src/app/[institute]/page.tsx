@@ -1,6 +1,5 @@
-import Link from "next/dist/client/link";
 import { notFound } from "next/navigation";
-import CourseCard from "@/domains/courses/components/CourseCard";
+import ListInstituteCourses from "@/domains/courses/components/ListInstituteCourses";
 import { institutes } from "@/shared/config/institutes";
 
 interface InstitutePageProps {
@@ -8,6 +7,8 @@ interface InstitutePageProps {
     institute: string;
   };
 }
+
+export const revalidate = 43200; // 12 horas en segundos
 
 export async function generateStaticParams(): Promise<InstitutePageProps["params"][]> {
   return Object.keys(institutes).map((institute) => ({
@@ -43,22 +44,7 @@ export default async function InstitutePage({ params }: InstitutePageProps) {
         </div>
       </div>
 
-      <div className="grid gap-4">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <CourseCard
-            key={`course-${index + 1}`}
-            title={`Curso ${index + 1}`}
-            description={`Descripción del curso ${index + 1}`}
-          >
-            <Link
-              href={`/${institute}/curso/${index + 1}`}
-              className="px-4 py-2 bg-blue-500 text-white text-sm rounded"
-            >
-              Ir al curso
-            </Link>
-          </CourseCard>
-        ))}
-      </div>
+      <ListInstituteCourses institute={institute} />
     </>
   );
 }
