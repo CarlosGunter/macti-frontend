@@ -29,8 +29,8 @@ export default async function ListInstituteCourses({
           description={course.summary || course.shortname}
         >
           <Link
-            href={`/${institute}/solicitudes/${course.id}`}
-            className="px-4 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+            href=""
+            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
           >
             Ver curso
           </Link>
