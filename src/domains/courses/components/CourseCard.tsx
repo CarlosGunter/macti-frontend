@@ -1,7 +1,8 @@
 interface CourseCardProps {
   children?: React.ReactNode;
+  courseId: number;
   title: string;
-  description: string;
+  description?: string | null;
 }
 
 export default function CourseCard({ children, title, description }: CourseCardProps) {
