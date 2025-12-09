@@ -31,13 +31,13 @@ export default async function InstitutePage({ params }: InstitutePageProps) {
         <div className="flex justify-center gap-4 py-4">
           <a
             href="http://jupyter.org"
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
           >
             Jupyter
           </a>
           <a
             href="http://moodle.org"
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
           >
             Moodle
           </a>
