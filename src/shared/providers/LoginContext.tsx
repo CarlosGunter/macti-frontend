@@ -1,6 +1,6 @@
 "use client";
 
-import Keycloak, { type KeycloakInitOptions } from "keycloak-js";
+import Keycloak, { type KeycloakInitOptions, type KeycloakProfile } from "keycloak-js";
 import { useParams } from "next/navigation";
 import type React from "react";
 import {
@@ -14,12 +14,17 @@ import {
 import { keycloakConfigs } from "@/shared/config/kcConfig";
 import { tryCatch } from "@/shared/utils/try-catch";
 
+type KeycloakProfileExtended = Omit<KeycloakProfile, "totp"> & {
+  name?: string;
+};
+
 type AuthContextType = {
   authenticated: boolean;
   token?: string;
   isLoading: boolean;
   login: () => Promise<void>;
   logout: () => void;
+  userInfo: KeycloakProfileExtended;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => {},
   logout: () => {},
+  userInfo: {},
 });
 
 const TOKEN_MIN_VALIDITY_SECONDS = 60;
@@ -267,7 +273,14 @@ export function LoginProvider({
 
   return (
     <AuthContext.Provider
-      value={{ authenticated, token, isLoading: isAuthLoading, login, logout }}
+      value={{
+        authenticated,
+        token,
+        isLoading: isAuthLoading,
+        login,
+        logout,
+        userInfo: keycloak.tokenParsed as KeycloakProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>
