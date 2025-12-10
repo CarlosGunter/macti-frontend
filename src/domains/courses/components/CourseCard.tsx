@@ -7,10 +7,10 @@ interface CourseCardProps {
 
 export default function CourseCard({ children, title, description }: CourseCardProps) {
   return (
-    <section className="flex justify-between w-full p-4 border rounded-lg shadow">
-      <div>
-        <h1>{title}</h1>
-        <p>{description}</p>
+    <section className="flex justify-between w-full rounded-3xl bg-black border border-white/5 p-8 text-white shadow-[0_30px_60px_rgba(0,0,0,0.45)]">
+      <div className="grid gap-2">
+        <h2 className="font-semibold text-lg">{title}</h2>
+        <p className="text-sm text-white/60">{description || "Curso de MACTI"}</p>
       </div>
       <div className="flex gap-2 items-center">{children}</div>
     </section>

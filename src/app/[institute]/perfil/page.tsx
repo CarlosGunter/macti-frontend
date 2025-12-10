@@ -15,7 +15,7 @@ export default async function PerfilPage({ params }: PerfilPageProps) {
       <ProfileCard />
 
       <div className="grid gap-4">
-        <h2>Cursos administrados:</h2>
+        <h1 className="font-bold text-2xl">Mis cursos</h1>
         <ListEnrolledCourses institute={institute} />
       </div>
     </div>
