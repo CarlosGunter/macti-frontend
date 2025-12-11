@@ -8,7 +8,7 @@ import type { AccountRequestPayload } from "../schemas/accountRequestSchema";
 export async function createAccountRequest(userRequestData: AccountRequestPayload) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
-  const accountRequestPromise = fetch(`${apiURLBase}/auth/request-account`, {
+  const accountRequestPromise = fetch(`${apiURLBase}/auth/request-account/alumno`, {
     method: "POST",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
