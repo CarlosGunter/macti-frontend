@@ -1,7 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { notFound } from "next/navigation";
 import Banner from "@/shared/components/feedback/Banner";
+import { useLogin } from "@/shared/providers/LoginContext";
 import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
 import { fetchAccountRequests } from "../services/fetchListAccountRequest";
 import { useFilterStore } from "../stores/filterStore";
@@ -18,6 +20,7 @@ export default function AccountRequestList({
   institute,
 }: AccountRequestListProps) {
   const { statusFilter, setStatusFilter } = useFilterStore();
+  const { token, authenticated, isLoading: isAuthLoading } = useLogin();
 
   const {
     data: accountRequests,
@@ -25,9 +28,30 @@ export default function AccountRequestList({
     error,
   } = useQuery({
     queryKey: ["accountRequests", course_id, institute, statusFilter],
-    queryFn: () =>
-      fetchAccountRequests({ course_id, institute, status: statusFilter || undefined }),
+    queryFn: async () => {
+      const currentToken = localStorage.getItem("token");
+      if (!currentToken) {
+        throw new Error("No token available");
+      }
+      return fetchAccountRequests({
+        course_id,
+        institute,
+        status: statusFilter || undefined,
+        userToken: currentToken,
+      });
+    },
+    enabled: authenticated && !!token,
   });
+
+  // Esperar a que termine de cargar la autenticación antes de decidir
+  if (isAuthLoading) {
+    return <Banner message="Verificando autenticación..." />;
+  }
+
+  // Solo ejecutar notFound después de confirmar que no hay autenticación
+  if (!authenticated || !token) {
+    notFound();
+  }
 
   if (isLoading) {
     return <Banner message="Cargando solicitudes..." />;

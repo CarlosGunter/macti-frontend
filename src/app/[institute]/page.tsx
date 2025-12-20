@@ -1,6 +1,5 @@
-import Link from "next/dist/client/link";
 import { notFound } from "next/navigation";
-import CourseCard from "@/domains/courses/components/CourseCard";
+import ListInstituteCourses from "@/domains/courses/components/ListInstituteCourses";
 import { institutes } from "@/shared/config/institutes";
 
 interface InstitutePageProps {
@@ -8,6 +7,8 @@ interface InstitutePageProps {
     institute: string;
   };
 }
+
+export const revalidate = 43200; // 12 horas en segundos
 
 export async function generateStaticParams(): Promise<InstitutePageProps["params"][]> {
   return Object.keys(institutes).map((institute) => ({
@@ -30,35 +31,20 @@ export default async function InstitutePage({ params }: InstitutePageProps) {
         <div className="flex justify-center gap-4 py-4">
           <a
             href="http://jupyter.org"
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
           >
             Jupyter
           </a>
           <a
             href="http://moodle.org"
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
           >
             Moodle
           </a>
         </div>
       </div>
 
-      <div className="grid gap-4">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <CourseCard
-            key={`course-${index + 1}`}
-            title={`Curso ${index + 1}`}
-            description={`Descripción del curso ${index + 1}`}
-          >
-            <Link
-              href={`/${institute}/curso/${index + 1}`}
-              className="px-4 py-2 bg-blue-500 text-white text-sm rounded"
-            >
-              Ir al curso
-            </Link>
-          </CourseCard>
-        ))}
-      </div>
+      <ListInstituteCourses institute={institute} />
     </>
   );
 }

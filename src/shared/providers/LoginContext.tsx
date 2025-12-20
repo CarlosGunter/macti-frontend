@@ -1,6 +1,6 @@
 "use client";
 
-import Keycloak, { type KeycloakInitOptions } from "keycloak-js";
+import Keycloak, { type KeycloakInitOptions, type KeycloakProfile } from "keycloak-js";
 import { useParams } from "next/navigation";
 import type React from "react";
 import {
@@ -14,17 +14,25 @@ import {
 import { keycloakConfigs } from "@/shared/config/kcConfig";
 import { tryCatch } from "@/shared/utils/try-catch";
 
+type KeycloakProfileExtended = Omit<KeycloakProfile, "totp"> & {
+  name?: string;
+};
+
 type AuthContextType = {
   authenticated: boolean;
   token?: string;
+  isLoading: boolean;
   login: () => Promise<void>;
   logout: () => void;
+  userInfo: KeycloakProfileExtended;
 };
 
 const AuthContext = createContext<AuthContextType>({
   authenticated: false,
+  isLoading: true,
   login: async () => {},
   logout: () => {},
+  userInfo: {},
 });
 
 const TOKEN_MIN_VALIDITY_SECONDS = 60;
@@ -54,6 +62,7 @@ export function LoginProvider({
 
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const persistTokens = useCallback(
     ({
@@ -93,6 +102,7 @@ export function LoginProvider({
     if (!storedToken) {
       setAuthenticated(false);
       setToken(undefined);
+      setIsAuthLoading(false);
       return;
     }
 
@@ -104,20 +114,26 @@ export function LoginProvider({
       if (!exp || now >= exp) {
         persistTokens();
         setAuthenticated(false);
+        setIsAuthLoading(false);
         return;
       }
 
       setToken(storedToken);
       setAuthenticated(true);
+      setIsAuthLoading(false);
     } catch (error) {
       console.error("No se pudo validar el token almacenado", error);
       persistTokens();
       setAuthenticated(false);
+      setIsAuthLoading(false);
     }
   }, [persistTokens]);
 
   const initializeKeycloak = useCallback(async () => {
-    if (!institute) return null;
+    if (!institute) {
+      setIsAuthLoading(false);
+      return null;
+    }
 
     const storedToken = localStorage.getItem(STORAGE_KEYS.token) ?? undefined;
     const storedRefreshToken =
@@ -140,12 +156,14 @@ export function LoginProvider({
       console.error("Error al inicializar Keycloak", error);
       persistTokens();
       setAuthenticated(false);
+      setIsAuthLoading(false);
       return null;
     }
 
     if (!keycloak.token || !keycloak.refreshToken) {
       persistTokens();
       setAuthenticated(false);
+      setIsAuthLoading(false);
       return auth ?? null;
     }
 
@@ -156,6 +174,7 @@ export function LoginProvider({
     });
 
     setAuthenticated(true);
+    setIsAuthLoading(false);
     return true;
   }, [institute, keycloak, persistTokens]);
 
@@ -253,7 +272,16 @@ export function LoginProvider({
   };
 
   return (
-    <AuthContext.Provider value={{ authenticated, token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        authenticated,
+        token,
+        isLoading: isAuthLoading,
+        login,
+        logout,
+        userInfo: keycloak.tokenParsed as KeycloakProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
