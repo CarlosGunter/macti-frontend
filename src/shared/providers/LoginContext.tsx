@@ -37,11 +37,12 @@ const AuthContext = createContext<AuthContextType>({
 
 const TOKEN_MIN_VALIDITY_SECONDS = 60;
 const REFRESH_INTERVAL_MS = 30_000;
-const STORAGE_KEYS = {
-  token: "token",
-  refreshToken: "refreshToken",
-  idToken: "idToken",
-};
+
+const getStorageKeys = (institute: string) => ({
+  token: `${institute}_token`,
+  refreshToken: `${institute}_refreshToken`,
+  idToken: `${institute}_idToken`,
+});
 
 interface LoginProviderProps {
   children: React.ReactNode;
@@ -76,6 +77,9 @@ export function LoginProvider({
     } = {}) => {
       setToken(tokenValue ?? undefined);
 
+      if (!institute) return;
+
+      const STORAGE_KEYS = getStorageKeys(institute);
       const entries: Array<[string, string | null | undefined]> = [
         [STORAGE_KEYS.token, tokenValue],
         [STORAGE_KEYS.refreshToken, refreshTokenValue],
@@ -94,10 +98,18 @@ export function LoginProvider({
         }
       }
     },
-    [],
+    [institute],
   );
 
   useEffect(() => {
+    if (!institute) {
+      setAuthenticated(false);
+      setToken(undefined);
+      setIsAuthLoading(false);
+      return;
+    }
+
+    const STORAGE_KEYS = getStorageKeys(institute);
     const storedToken = localStorage.getItem(STORAGE_KEYS.token);
     if (!storedToken) {
       setAuthenticated(false);
@@ -127,7 +139,7 @@ export function LoginProvider({
       setAuthenticated(false);
       setIsAuthLoading(false);
     }
-  }, [persistTokens]);
+  }, [institute, persistTokens]);
 
   const initializeKeycloak = useCallback(async () => {
     if (!institute) {
@@ -135,6 +147,7 @@ export function LoginProvider({
       return null;
     }
 
+    const STORAGE_KEYS = getStorageKeys(institute);
     const storedToken = localStorage.getItem(STORAGE_KEYS.token) ?? undefined;
     const storedRefreshToken =
       localStorage.getItem(STORAGE_KEYS.refreshToken) ?? undefined;
@@ -184,6 +197,10 @@ export function LoginProvider({
 
   const refreshToken = useCallback(
     async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
+      if (!institute) return false;
+
+      const STORAGE_KEYS = getStorageKeys(institute);
+
       if (!keycloak.token) {
         const storedToken = localStorage.getItem(STORAGE_KEYS.token);
         if (storedToken) keycloak.token = storedToken;
@@ -232,7 +249,7 @@ export function LoginProvider({
 
       return Boolean(refreshed);
     },
-    [keycloak, persistTokens],
+    [institute, keycloak, persistTokens],
   );
 
   useEffect(() => {
