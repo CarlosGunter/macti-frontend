@@ -18,7 +18,7 @@ interface AccountRequestTeacherActionResult {
 export async function accountRequestTeacherAction(
   _prevState: unknown,
   formData: FormData,
-) {
+): Promise<AccountRequestTeacherActionResult> {
   const getData: Record<string, unknown> = Object.fromEntries(formData.entries());
   getData.groups = formData.getAll("groups");
 
@@ -36,7 +36,7 @@ export async function accountRequestTeacherAction(
       success: false,
       errors: tree,
       data: getData,
-    } as AccountRequestTeacherActionResult;
+    };
   }
 
   const accountRequestResult = await createAccountRequestTeacher(validation.data);
@@ -49,12 +49,12 @@ export async function accountRequestTeacherAction(
           errors: ["Error al solicitar la cuenta. Inténtalo de nuevo más tarde."],
         },
       },
-    } as AccountRequestTeacherActionResult;
+    };
   }
 
   return {
     success: true,
     data: validation.data,
     errors: {},
-  } as AccountRequestTeacherActionResult;
+  };
 }
