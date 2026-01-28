@@ -10,7 +10,7 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
   const { institute } = await searchParams;
 
   return (
-    <div className="grid gap-8 p-4 place-items-center content-center min-h-dvh">
+    <div className="grid gap-8 p-4 place-items-center content-center min-h-vh">
       <div className="text-center grid gap-2">
         <h1 className="text-2xl font-bold">Solicitar Registro para MACTI</h1>
         <p className="text-sm">
