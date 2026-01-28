@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const EnrolledCourseSchema = z.array(
+export const enrolledCoursesSchema = z.array(
   z.object({
     id: z.number().int(),
     shortname: z.string(),
