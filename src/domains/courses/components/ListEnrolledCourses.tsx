@@ -5,7 +5,7 @@ import Link from "next/link";
 import Banner from "@/shared/components/feedback/Banner";
 import { useLogin } from "@/shared/providers/LoginContext";
 import { fetchEnrolledCourses } from "../services/fetchEnrolledCourses";
-import CourseCard from "./CourseCard";
+import CourseCard from "./ui/CourseCard";
 
 interface ListEnrolledCoursesProps {
   institute: string;
