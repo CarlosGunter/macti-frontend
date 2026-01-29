@@ -1,7 +1,6 @@
 "use client";
 
 import Keycloak, { type KeycloakInitOptions, type KeycloakProfile } from "keycloak-js";
-import { useParams } from "next/navigation";
 import type React from "react";
 import {
   createContext,
@@ -9,6 +8,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { keycloakConfigs } from "@/shared/config/kcConfig";
@@ -53,17 +53,17 @@ export function LoginProvider({
   children,
   institute: propInstitute,
 }: LoginProviderProps) {
-  const { institute: paramInstitute } = useParams();
-  // Esto permite usar el provider tanto con prop como en rutas dinámicas
-  const institute = propInstitute || (paramInstitute as string);
+  const institute = propInstitute;
   const keycloak = useMemo(
-    () => new Keycloak(keycloakConfigs[institute] || keycloakConfigs.principal),
+    () => new Keycloak(keycloakConfigs[institute ?? "principal"]),
     [institute],
   );
 
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const initializedRef = useRef(false);
+  const refreshingRef = useRef(false);
 
   const persistTokens = useCallback(
     ({
@@ -192,62 +192,69 @@ export function LoginProvider({
   }, [institute, keycloak, persistTokens]);
 
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
     initializeKeycloak();
   }, [initializeKeycloak]);
 
   const refreshToken = useCallback(
     async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
-      if (!institute) return false;
+      if (!institute || refreshingRef.current) return false;
 
-      const STORAGE_KEYS = getStorageKeys(institute);
+      refreshingRef.current = true;
+      try {
+        const STORAGE_KEYS = getStorageKeys(institute);
 
-      if (!keycloak.token) {
-        const storedToken = localStorage.getItem(STORAGE_KEYS.token);
-        if (storedToken) keycloak.token = storedToken;
+        if (!keycloak.token) {
+          const storedToken = localStorage.getItem(STORAGE_KEYS.token);
+          if (storedToken) keycloak.token = storedToken;
+        }
+
+        if (!keycloak.refreshToken) {
+          const storedRefreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken);
+          if (storedRefreshToken) keycloak.refreshToken = storedRefreshToken;
+        }
+
+        if (!keycloak.idToken) {
+          const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken);
+          if (storedIdToken) keycloak.idToken = storedIdToken;
+        }
+
+        if (!keycloak.token || !keycloak.refreshToken) {
+          console.warn("Keycloak: no se encontraron tokens suficientes para refrescar.");
+          persistTokens();
+          setAuthenticated(false);
+          return false;
+        }
+
+        const { data: refreshed, error } = await tryCatch(
+          keycloak.updateToken(minValidity),
+        );
+        if (error) {
+          console.error("Keycloak: no se pudo refrescar el token", error);
+          keycloak.clearToken();
+          persistTokens();
+          setAuthenticated(false);
+          return false;
+        }
+
+        if (refreshed) {
+          console.info("Keycloak: token refrescado correctamente");
+        } else {
+          console.debug("Keycloak: token vigente, no fue necesario refrescar");
+        }
+
+        persistTokens({
+          token: keycloak.token ?? null,
+          refreshToken: keycloak.refreshToken ?? null,
+          idToken: keycloak.idToken ?? null,
+        });
+        setAuthenticated(Boolean(keycloak.token));
+
+        return Boolean(refreshed);
+      } finally {
+        refreshingRef.current = false;
       }
-
-      if (!keycloak.refreshToken) {
-        const storedRefreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken);
-        if (storedRefreshToken) keycloak.refreshToken = storedRefreshToken;
-      }
-
-      if (!keycloak.idToken) {
-        const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken);
-        if (storedIdToken) keycloak.idToken = storedIdToken;
-      }
-
-      if (!keycloak.token || !keycloak.refreshToken) {
-        console.warn("Keycloak: no se encontraron tokens suficientes para refrescar.");
-        persistTokens();
-        setAuthenticated(false);
-        return false;
-      }
-
-      const { data: refreshed, error } = await tryCatch(
-        keycloak.updateToken(minValidity),
-      );
-      if (error) {
-        console.error("Keycloak: no se pudo refrescar el token", error);
-        keycloak.clearToken();
-        persistTokens();
-        setAuthenticated(false);
-        return false;
-      }
-
-      if (refreshed) {
-        console.info("Keycloak: token refrescado correctamente");
-      } else {
-        console.debug("Keycloak: token vigente, no fue necesario refrescar");
-      }
-
-      persistTokens({
-        token: keycloak.token ?? null,
-        refreshToken: keycloak.refreshToken ?? null,
-        idToken: keycloak.idToken ?? null,
-      });
-      setAuthenticated(Boolean(keycloak.token));
-
-      return Boolean(refreshed);
     },
     [institute, keycloak, persistTokens],
   );
