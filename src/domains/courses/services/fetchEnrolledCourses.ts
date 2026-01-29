@@ -1,5 +1,5 @@
 import { processFetch } from "@/shared/utils/process-fetch";
-import { EnrolledCourseSchema } from "../schemas/enrolledCourses";
+import { enrolledCoursesSchema } from "../schemas/enrolledCoursesSchema";
 
 export async function fetchEnrolledCourses({
   institute,
@@ -29,7 +29,7 @@ export async function fetchEnrolledCourses({
   const [error, enrolledCourses] = await processFetch(enrolledCoursesPromise);
   if (error) return [];
 
-  const parsedEnrolledCourses = EnrolledCourseSchema.safeParse(enrolledCourses);
+  const parsedEnrolledCourses = enrolledCoursesSchema.safeParse(enrolledCourses);
   if (!parsedEnrolledCourses.success) return [];
 
   return parsedEnrolledCourses.data;

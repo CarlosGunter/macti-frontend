@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { fetchCourses } from "@/shared/services/fetchCourses";
-import CourseCard from "./CourseCard";
+import CourseCard from "./ui/CourseCard";
 
 interface ListInstituteCoursesProps {
   institute: string;
