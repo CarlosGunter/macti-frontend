@@ -25,7 +25,7 @@ export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesPr
   } = useQuery({
     queryKey: ["enrolledCourses", institute],
     queryFn: async () => {
-      const currentToken = localStorage.getItem("token");
+      const currentToken = localStorage.getItem(`${institute}_token`);
       if (!currentToken) throw new Error("No token available");
 
       return fetchEnrolledCourses({
@@ -33,7 +33,7 @@ export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesPr
         token: currentToken,
       });
     },
-    enabled: authenticated && !!token,
+    enabled: authenticated && !!token && !!institute,
   });
 
   if (isEnrolledCoursesLoading) {

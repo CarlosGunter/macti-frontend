@@ -29,7 +29,7 @@ export default function AccountRequestList({
   } = useQuery({
     queryKey: ["accountRequests", course_id, institute, statusFilter],
     queryFn: async () => {
-      const currentToken = localStorage.getItem("token");
+      const currentToken = localStorage.getItem(`${institute}_token`);
       if (!currentToken) {
         throw new Error("No token available");
       }
@@ -40,7 +40,7 @@ export default function AccountRequestList({
         userToken: currentToken,
       });
     },
-    enabled: authenticated && !!token,
+    enabled: authenticated && !!token && !!institute,
   });
 
   // Esperar a que termine de cargar la autenticación antes de decidir
@@ -49,7 +49,7 @@ export default function AccountRequestList({
   }
 
   // Solo ejecutar notFound después de confirmar que no hay autenticación
-  if (!authenticated || !token) {
+  if (!authenticated || !token || !institute) {
     notFound();
   }
 
