@@ -46,18 +46,11 @@ const getStorageKeys = (institute: string) => ({
 
 interface LoginProviderProps {
   children: React.ReactNode;
-  institute?: string;
+  institute: keyof typeof keycloakConfigs;
 }
 
-export function LoginProvider({
-  children,
-  institute: propInstitute,
-}: LoginProviderProps) {
-  const institute = propInstitute;
-  const keycloak = useMemo(
-    () => new Keycloak(keycloakConfigs[institute ?? "principal"]),
-    [institute],
-  );
+export function LoginProvider({ children, institute }: LoginProviderProps) {
+  const keycloak = useMemo(() => new Keycloak(keycloakConfigs[institute]), [institute]);
 
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
