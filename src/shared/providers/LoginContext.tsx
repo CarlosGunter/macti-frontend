@@ -38,7 +38,7 @@ const AuthContext = createContext<AuthContextType>({
 const TOKEN_MIN_VALIDITY_SECONDS = 60;
 const REFRESH_INTERVAL_MS = 30_000;
 
-const getStorageKeys = (institute: string) => ({
+const getStorageKeys = (institute: keyof typeof keycloakConfigs) => ({
   token: `${institute}_token`,
   refreshToken: `${institute}_refreshToken`,
   idToken: `${institute}_idToken`,
@@ -50,7 +50,10 @@ interface LoginProviderProps {
 }
 
 export function LoginProvider({ children, institute }: LoginProviderProps) {
-  const keycloak = useMemo(() => new Keycloak(keycloakConfigs[institute]), [institute]);
+  const keycloak = useMemo(() => {
+    const config = keycloakConfigs[institute] ?? keycloakConfigs.principal;
+    return new Keycloak(config);
+  }, [institute]);
 
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
