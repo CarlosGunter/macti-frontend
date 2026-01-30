@@ -16,7 +16,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
   return (
     <article className="">
       <Link
-        className="relative grid place-items-center h-48 rounded-2xl bg-black/50 bg-[image:var(--img)] bg-cover bg-center bg-no-repeat bg-blend-darken text-white group"
+        className="relative grid place-items-center h-48 rounded-2xl bg-black/50 bg-(image:--img) bg-cover bg-center bg-no-repeat bg-blend-darken text-white group"
         href={details}
         style={{ "--img": `url(${image.src})` } as React.CSSProperties}
       >
