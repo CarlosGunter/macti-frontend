@@ -36,7 +36,8 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${hindMadurai.variable} ${lora.variable} antialiased`}
       >
-        <QueryContextProvider>{children}</QueryContextProvider>
+        {/* <QueryContextProvider>{children}</QueryContextProvider> */}
+        {children}
       </body>
     </html>
   );
