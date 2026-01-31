@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import { keycloakConfigs } from "@/shared/config/kcConfig";
+import { usePageVisibility } from "@/shared/hooks/usePageVisibility";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 type KeycloakProfileExtended = Omit<KeycloakProfile, "totp"> & {
@@ -60,6 +61,8 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const initializedRef = useRef(false);
   const refreshingRef = useRef(false);
+  const isVisible = usePageVisibility();
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const persistTokens = useCallback(
     ({
@@ -150,8 +153,9 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken) ?? undefined;
 
     const initOptions: KeycloakInitOptions = {
-      checkLoginIframe: false,
+      checkLoginIframe: false, // Deshabilitado: navegadores modernos bloquean cookies de terceros
       redirectUri: `${window.location.origin}/${institute}`,
+      enableLogging: process.env.NODE_ENV === "development",
     };
 
     if (storedToken && storedRefreshToken) {
@@ -192,6 +196,147 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     initializedRef.current = true;
     initializeKeycloak();
   }, [initializeKeycloak]);
+
+  // Broadcast Channel API para sincronización moderna entre pestañas
+  useEffect(() => {
+    if (!institute || typeof BroadcastChannel === "undefined") return;
+
+    const channelName = `keycloak_${institute}`;
+    const channel = new BroadcastChannel(channelName);
+    broadcastChannelRef.current = channel;
+
+    channel.onmessage = (event) => {
+      const { type, payload } = event.data;
+
+      switch (type) {
+        case "TOKEN_UPDATED":
+          console.info("Keycloak: token actualizado en otra pestaña (BC)");
+          if (payload.token) {
+            setToken(payload.token);
+            keycloak.token = payload.token;
+            keycloak.refreshToken = payload.refreshToken;
+            keycloak.idToken = payload.idToken;
+            setAuthenticated(true);
+          }
+          break;
+
+        case "LOGOUT":
+          console.info("Keycloak: logout recibido de otra pestaña (BC)");
+          keycloak.clearToken();
+          setToken(undefined);
+          setAuthenticated(false);
+          break;
+
+        case "LOGIN":
+          console.info("Keycloak: login recibido de otra pestaña (BC)");
+          if (payload.token) {
+            setToken(payload.token);
+            keycloak.token = payload.token;
+            keycloak.refreshToken = payload.refreshToken;
+            keycloak.idToken = payload.idToken;
+            setAuthenticated(true);
+          }
+          break;
+      }
+    };
+
+    return () => {
+      channel.close();
+      broadcastChannelRef.current = null;
+    };
+  }, [institute, keycloak]);
+
+  // Storage Events como fallback para navegadores sin Broadcast Channel
+  useEffect(() => {
+    if (!institute) return;
+
+    const STORAGE_KEYS = getStorageKeys(institute);
+
+    const handleStorageChange = (event: StorageEvent) => {
+      // Solo procesar eventos de este instituto
+      if (!event.key || !Object.values(STORAGE_KEYS).includes(event.key)) {
+        return;
+      }
+
+      // Si el token fue removido en otra pestaña, cerrar sesión aquí también
+      if (event.key === STORAGE_KEYS.token && !event.newValue) {
+        console.info("Keycloak: sesión cerrada en otra pestaña (Storage)");
+        keycloak.clearToken();
+        setToken(undefined);
+        setAuthenticated(false);
+        return;
+      }
+
+      // Si se actualizó el token en otra pestaña, sincronizar
+      if (event.key === STORAGE_KEYS.token && event.newValue) {
+        console.info("Keycloak: token actualizado en otra pestaña (Storage)");
+        setToken(event.newValue);
+        keycloak.token = event.newValue;
+        setAuthenticated(true);
+      }
+
+      if (event.key === STORAGE_KEYS.refreshToken && event.newValue) {
+        keycloak.refreshToken = event.newValue;
+      }
+
+      if (event.key === STORAGE_KEYS.idToken && event.newValue) {
+        keycloak.idToken = event.newValue;
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [institute, keycloak]);
+
+  // Manejo de eventos de Keycloak para sincronización
+  useEffect(() => {
+    const notifyOtherTabs = (type: string, payload?: any) => {
+      if (broadcastChannelRef.current) {
+        broadcastChannelRef.current.postMessage({ type, payload });
+      }
+    };
+
+    const handleAuthSuccess = () => {
+      console.info("Keycloak: autenticación exitosa");
+      const tokens = {
+        token: keycloak.token,
+        refreshToken: keycloak.refreshToken,
+        idToken: keycloak.idToken,
+      };
+      persistTokens(tokens);
+      setAuthenticated(true);
+      notifyOtherTabs("LOGIN", tokens);
+    };
+
+    const handleAuthError = () => {
+      console.warn("Keycloak: error de autenticación");
+      keycloak.clearToken();
+      persistTokens();
+      setAuthenticated(false);
+      notifyOtherTabs("LOGOUT");
+    };
+
+    const handleAuthLogout = () => {
+      console.info("Keycloak: sesión cerrada");
+      keycloak.clearToken();
+      persistTokens();
+      setAuthenticated(false);
+      notifyOtherTabs("LOGOUT");
+    };
+
+    keycloak.onAuthSuccess = handleAuthSuccess;
+    keycloak.onAuthError = handleAuthError;
+    keycloak.onAuthLogout = handleAuthLogout;
+
+    return () => {
+      keycloak.onAuthSuccess = undefined;
+      keycloak.onAuthError = undefined;
+      keycloak.onAuthLogout = undefined;
+    };
+  }, [keycloak, persistTokens]);
 
   const refreshToken = useCallback(
     async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
@@ -240,12 +385,21 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
           console.debug("Keycloak: token vigente, no fue necesario refrescar");
         }
 
-        persistTokens({
+        const tokens = {
           token: keycloak.token ?? null,
           refreshToken: keycloak.refreshToken ?? null,
           idToken: keycloak.idToken ?? null,
-        });
+        };
+        persistTokens(tokens);
         setAuthenticated(Boolean(keycloak.token));
+
+        // Notificar a otras pestañas sobre el token actualizado
+        if (refreshed && broadcastChannelRef.current) {
+          broadcastChannelRef.current.postMessage({
+            type: "TOKEN_UPDATED",
+            payload: tokens,
+          });
+        }
 
         return Boolean(refreshed);
       } finally {
@@ -266,19 +420,26 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     };
   }, [keycloak, refreshToken]);
 
+  // Validar token cuando la pestaña se vuelve visible
   useEffect(() => {
-    if (!authenticated) return;
+    if (isVisible && authenticated) {
+      // Revalidar token inmediatamente cuando la pestaña se vuelve visible
+      void refreshToken();
+    }
+  }, [isVisible, authenticated, refreshToken]);
+
+  // Actualización periódica de tokens solo en pestañas visibles
+  useEffect(() => {
+    if (!authenticated || !isVisible) return;
 
     const intervalId = window.setInterval(() => {
       void refreshToken();
     }, REFRESH_INTERVAL_MS);
 
-    void refreshToken();
-
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [authenticated, refreshToken]);
+  }, [authenticated, isVisible, refreshToken]);
 
   const login = async () => {
     await keycloak.login();
@@ -289,6 +450,11 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     keycloak.clearToken();
     persistTokens();
     setAuthenticated(false);
+
+    // Notificar a otras pestañas
+    if (broadcastChannelRef.current) {
+      broadcastChannelRef.current.postMessage({ type: "LOGOUT" });
+    }
   };
 
   return (
