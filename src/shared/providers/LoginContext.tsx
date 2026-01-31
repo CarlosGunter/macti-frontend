@@ -293,7 +293,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
 
   // Manejo de eventos de Keycloak para sincronización
   useEffect(() => {
-    const notifyOtherTabs = (type: string, payload?: any) => {
+    const notifyOtherTabs = (type: string, payload?: unknown) => {
       if (broadcastChannelRef.current) {
         broadcastChannelRef.current.postMessage({ type, payload });
       }
