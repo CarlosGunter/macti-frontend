@@ -2,9 +2,9 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/shared/components/ui/Button";
-import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../constants";
-import { useAccountStatus } from "../hooks/useAccountStatus";
-import type { ListAccountsProps } from "../schemas/listAccountsSchema";
+import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../../constants";
+import { useAccountStatus } from "../../hooks/useAccountStatus";
+import type { ListAccountsProps } from "../../schemas/listAccountsSchema";
 
 type UserType = ListAccountsProps[number];
 interface UserStatusUpdateCardProps extends UserType {}

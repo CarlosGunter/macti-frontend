@@ -8,7 +8,7 @@ import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
 import { fetchAccountRequests } from "../services/fetchListAccountRequest";
 import { useFilterStore } from "../stores/filterStore";
 import type { UserStatus } from "../types";
-import UserStatusUpdateCard from "./UserAccountRequestCard";
+import UserStatusUpdateCard from "./ui/UserAccountRequestCard";
 
 interface AccountRequestListProps {
   course_id: string;

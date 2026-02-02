@@ -1,5 +1,5 @@
 import ListEnrolledCourses from "@/domains/courses/components/ListEnrolledCourses";
-import { ProfileCard } from "@/domains/users/components/ProfileCard";
+import { ProfileCard } from "@/domains/users/components/ui/ProfileCard";
 
 interface PerfilPageProps {
   params: {
