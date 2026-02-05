@@ -1,5 +1,8 @@
 import { processFetch } from "@/shared/utils/process-fetch";
-import { listAccountsSchema } from "../schemas/listAccountsSchema";
+import {
+  accountsRequestSchema,
+  type ListAccountsRequestProps,
+} from "../schemas/listAccountsSchema";
 import type { AccountRequestPayload } from "../types";
 
 export async function fetchAccountRequests({
@@ -7,7 +10,7 @@ export async function fetchAccountRequests({
   institute,
   status,
   userToken,
-}: AccountRequestPayload) {
+}: AccountRequestPayload): Promise<ListAccountsRequestProps> {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const queryParams = new URLSearchParams({
@@ -32,10 +35,10 @@ export async function fetchAccountRequests({
   );
 
   const [error, listAccountRequests] = await processFetch(listAccountRequestPromise);
-  if (error) return [];
+  if (error) return { alumno: [], docente: [] };
 
-  const parsedListAccountRequests = listAccountsSchema.safeParse(listAccountRequests);
-  if (!parsedListAccountRequests.success) return [];
+  const parsedListAccountRequests = accountsRequestSchema.safeParse(listAccountRequests);
+  if (!parsedListAccountRequests.success) return { alumno: [], docente: [] };
 
   return parsedListAccountRequests.data;
 }
