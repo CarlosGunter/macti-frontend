@@ -1,91 +1,110 @@
 "use client";
 
+import Form from "next/form";
 import { useActionState, useState } from "react";
 import VisibilityIcon from "@/assets/svg/visibility";
 import VisibilityOffIcon from "@/assets/svg/visibilityOff";
-import Banner from "@/shared/components/feedback/Banner";
-import Button from "@/shared/components/ui/Button";
-import { useAutoDismissBanner } from "@/shared/hooks/useAutoDismissBanner";
+import { Button } from "@/shared/shadcn/components/ui/button";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/shared/shadcn/components/ui/field";
+import { Input } from "@/shared/shadcn/components/ui/input";
 import { createAccountAction } from "../actions/createAccountAction";
 import type { CreateAccountResponse } from "../schemas/createAccountSchema";
 
 export default function CreateAccount({ userData }: { userData: CreateAccountResponse }) {
-  const [state, dispatch, isLoading] = useActionState(createAccountAction, null);
+  const [state, formAction, isPending] = useActionState(createAccountAction, null);
 
-  const [password, setPassword] = useState(state?.data?.new_password || "");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isVisiblePass, setIsVisiblePass] = useState(false);
   const [isVisibleConfirmPass, setIsVisibleConfirmPass] = useState(false);
 
-  const passwordsMatch = password === confirmPassword;
-
-  const isBannerVisible = useAutoDismissBanner(state?.message || null);
+  const passwordsMatch = password === confirmPassword || confirmPassword === "";
 
   return (
-    <>
-      <form
-        action={dispatch}
-        className="flex flex-col items-center gap-6 w-full max-w-80 place-self-center"
-      >
-        <input type="hidden" name="user_id" defaultValue={userData.id} />
+    <Form action={formAction} disabled={isPending}>
+      <FieldGroup>
+        <FieldSet>
+          <FieldLegend>Crear Cuenta</FieldLegend>
+          <FieldDescription>
+            Establece una contraseña segura para tu cuenta.
+          </FieldDescription>
 
-        <label htmlFor="new_password" className="grid gap-1.5 w-full">
-          <span>Ingresa una nueva contraseña*</span>
-          <div className="grid place-items-center">
-            <input
-              name="new_password"
-              type={isVisiblePass ? "text" : "password"}
-              placeholder="Nueva contraseña"
-              className={`col-start-1 col-end-1 row-start-1 -row-end-1 w-full ${!passwordsMatch && confirmPassword ? "border-red-500" : "border-none"}`}
-              defaultValue={state?.data?.new_password || ""}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              className="col-start-1 -col-end-1 row-start-1 -row-end-1 place-self-end self-center px-2 py-1.5"
-              onClick={() => setIsVisiblePass(!isVisiblePass)}
-            >
-              {isVisiblePass ? <VisibilityOffIcon /> : <VisibilityIcon />}
-            </button>
-          </div>
-          <span className="text-xs">Ingresa una contraseña segura.</span>
-        </label>
+          <input type="hidden" name="user_id" defaultValue={userData.id} />
 
-        <label htmlFor="confirm_password" className="grid gap-1.5 w-full">
-          <span>Confirma tu nueva contraseña*</span>
-          <div className="grid place-items-center">
-            <input
-              name="confirm_password"
-              type={isVisibleConfirmPass ? "text" : "password"}
-              placeholder="Confirma tu nueva contraseña"
-              className={`col-start-1 col-end-1 row-start-1 -row-end-1 w-full ${!passwordsMatch && confirmPassword ? "border-red-500" : "border-none"}`}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              className="col-start-1 -col-end-1 row-start-1 -row-end-1 place-self-end self-center px-2 py-1.5"
-              onClick={() => setIsVisibleConfirmPass(!isVisibleConfirmPass)}
-            >
-              {isVisibleConfirmPass ? <VisibilityOffIcon /> : <VisibilityIcon />}
-            </button>
-          </div>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Nueva Contraseña</FieldLabel>
+              <FieldContent>
+                <div className="relative">
+                  <Input
+                    name="new_password"
+                    type={isVisiblePass ? "text" : "password"}
+                    placeholder="Ingresa tu contraseña"
+                    defaultValue={state?.data?.new_password as string}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setIsVisiblePass(!isVisiblePass)}
+                    tabIndex={-1}
+                  >
+                    {isVisiblePass ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </button>
+                </div>
+              </FieldContent>
+              <FieldDescription>Ingresa una contraseña segura.</FieldDescription>
+              <FieldError>{state?.errors.new_password?.errors[0]}</FieldError>
+            </Field>
 
-          {!passwordsMatch && confirmPassword && (
-            <span className="text-xs text-red-500">Las contraseñas no coinciden.</span>
-          )}
-        </label>
+            <Field>
+              <FieldLabel>Confirmar Contraseña</FieldLabel>
+              <FieldContent>
+                <div className="relative">
+                  <Input
+                    name="confirm_password"
+                    type={isVisibleConfirmPass ? "text" : "password"}
+                    placeholder="Confirma tu contraseña"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setIsVisibleConfirmPass(!isVisibleConfirmPass)}
+                    tabIndex={-1}
+                  >
+                    {isVisibleConfirmPass ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </button>
+                </div>
+              </FieldContent>
+              <FieldError>
+                {!passwordsMatch
+                  ? "Las contraseñas no coinciden."
+                  : state?.errors.confirm_password?.errors[0]}
+              </FieldError>
+            </Field>
 
-        <Button type="submit" className="w-full" isLoading={isLoading}>
-          <span>Crear cuenta</span>
-        </Button>
-      </form>
+            {state?.errors.general && (
+              <FieldError>{state.errors.general.errors[0]}</FieldError>
+            )}
 
-      {isBannerVisible && state && (
-        <Banner
-          message={state.message || "Error al crear la cuenta."}
-          isError={!state.message}
-        />
-      )}
-    </>
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? "Creando cuenta..." : "Crear cuenta"}
+            </Button>
+          </FieldGroup>
+        </FieldSet>
+      </FieldGroup>
+    </Form>
   );
 }
