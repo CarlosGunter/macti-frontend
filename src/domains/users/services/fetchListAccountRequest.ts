@@ -1,12 +1,16 @@
 import { processFetch } from "@/shared/utils/process-fetch";
-import { listAccountsSchema } from "../schemas/listAccountsSchema";
+import {
+  type ListAccountsProps,
+  listAccountsSchema,
+} from "../schemas/listAccountsSchema";
 import type { AccountRequestPayload } from "../types";
 
 export async function fetchAccountRequests({
   course_id,
   institute,
   status,
-}: AccountRequestPayload) {
+  userToken,
+}: AccountRequestPayload): Promise<ListAccountsProps> {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const queryParams = new URLSearchParams({
@@ -19,19 +23,22 @@ export async function fetchAccountRequests({
   }
 
   const listAccountRequestPromise = fetch(
-    `${apiURLBase}/auth/list-account-requests?${queryParams.toString()}`,
+    `${apiURLBase}/auth/list-account-requests/students?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken || ""}`,
+      },
     },
   );
 
   const [error, listAccountRequests] = await processFetch(listAccountRequestPromise);
-  if (error) return undefined;
+  if (error) return [];
 
   const parsedListAccountRequests = listAccountsSchema.safeParse(listAccountRequests);
-  if (!parsedListAccountRequests.success) return undefined;
+  if (!parsedListAccountRequests.success) return [];
 
   return parsedListAccountRequests.data;
 }

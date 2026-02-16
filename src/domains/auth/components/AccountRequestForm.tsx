@@ -1,137 +1,185 @@
 "use client";
 
-import { useActionState } from "react";
-import Banner from "@/shared/components/feedback/Banner";
-import Button from "@/shared/components/ui/Button";
+import { useQuery } from "@tanstack/react-query";
+import Form from "next/form";
+import { useActionState, useState } from "react";
 import { institutes } from "@/shared/config/institutes";
-import { useAutoDismissBanner } from "@/shared/hooks/useAutoDismissBanner";
+import { fetchCourses } from "@/shared/services/fetchCourses";
+import { Button } from "@/shared/shadcn/components/ui/button";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+} from "@/shared/shadcn/components/ui/field";
+import { Input } from "@/shared/shadcn/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/shadcn/components/ui/select";
 import { accountRequestAction } from "../actions/accountRequestAction";
 
 export default function AccountRequestForm({ institute }: { institute: string }) {
-  const [state, dispatch, isLoading] = useActionState(accountRequestAction, null);
-  const { success, message, data, errors } = state || {};
+  const [state, formAction, isPending] = useActionState(accountRequestAction, null);
 
-  const isBannerVisible = useAutoDismissBanner(message || null);
+  const [selectedInstitute, setSelectedInstitute] = useState(
+    institute || (state?.data?.institute as string) || "",
+  );
+
+  const {
+    data: courses,
+    isLoading: coursesLoading,
+    error: coursesError,
+  } = useQuery({
+    queryKey: ["courses", selectedInstitute],
+    queryFn: async () => {
+      const result = await fetchCourses({ institute: selectedInstitute });
+      if (!result) throw new Error("No se pudieron cargar los cursos");
+      return result;
+    },
+    enabled: !!selectedInstitute,
+  });
 
   return (
-    <>
-      <form
-        action={dispatch}
-        className="flex flex-col gap-6 w-full max-w-80 place-self-center"
-      >
-        <label htmlFor="institute" className="grid gap-1.5">
-          <span>Instituto*</span>
-
-          <select
-            name="institute"
-            id="institute"
-            defaultValue={institute || data?.institute || ""}
-          >
-            {Object.keys(institutes).map((key) => (
-              <option key={key} value={key}>
-                {institutes[key].name}
-              </option>
-            ))}
-          </select>
-
-          <span className="text-xs">
+    <Form action={formAction} disabled={isPending} className="w-full">
+      <FieldGroup>
+        <FieldSet>
+          <FieldLegend>Solicitud de Cuenta de Estudiante</FieldLegend>
+          <FieldDescription>
             Cada instituto tiene su propio proceso de solicitud.
-          </span>
-        </label>
+          </FieldDescription>
 
-        <label htmlFor="email" className="grid gap-1.5">
-          <span>Correo electrónico*</span>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Escuela/Facultad/Instituto</FieldLabel>
+              <Select
+                name="institute"
+                value={selectedInstitute}
+                onValueChange={setSelectedInstitute}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecciona un instituto" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(institutes).map(([key, institute]) => (
+                    <SelectItem key={key} value={key}>
+                      {institute.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldError>{state?.errors.institute?.errors[0]}</FieldError>
+            </Field>
 
-          <input
-            type="email"
-            id="email"
-            name="email"
-            className={`${Array.isArray(errors?.email?.errors) ? "border-red-500" : ""}`}
-            defaultValue={data?.email || ""}
-            placeholder="ejemplo@dominio.com"
-            onChange={(e) => {
-              e.target.value = e.target.value.toLowerCase();
-            }}
-          />
+            <Field>
+              <FieldLabel>Curso</FieldLabel>
+              <Select
+                name="course_id"
+                defaultValue={state?.data?.course_id as string}
+                disabled={!selectedInstitute || coursesLoading}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue
+                    placeholder={
+                      coursesLoading
+                        ? "Cargando cursos..."
+                        : coursesError
+                          ? "Error al cargar cursos"
+                          : !selectedInstitute
+                            ? "Selecciona primero un instituto"
+                            : courses && courses.length > 0
+                              ? "Selecciona un curso"
+                              : "No hay cursos disponibles"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses && courses.length > 0 ? (
+                    courses.map((course) => (
+                      <SelectItem key={course.id} value={String(course.id)}>
+                        {course.displayname}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="__empty__" disabled>
+                      No hay cursos disponibles
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              <FieldDescription>
+                Selecciona el curso al que deseas inscribirte.
+              </FieldDescription>
+              <FieldError>{state?.errors.course_id?.errors[0]}</FieldError>
+            </Field>
 
-          {Array.isArray(errors?.email?.errors) ? (
-            <span className="text-red-500 text-xs">{errors.email.errors[0]}</span>
-          ) : (
-            <span className="text-xs">Proporciona un correo electrónico válido.</span>
-          )}
-        </label>
+            <FieldSeparator />
 
-        <label htmlFor="name" className="grid gap-1.5">
-          <span>Nombre(s)*</span>
+            <Field>
+              <FieldLabel>Correo Electrónico</FieldLabel>
+              <FieldContent>
+                <Input
+                  type="email"
+                  name="email"
+                  placeholder="ejemplo@dominio.com"
+                  defaultValue={state?.data?.email as string}
+                  onChange={(e) => {
+                    e.target.value = e.target.value.toLowerCase();
+                  }}
+                />
+              </FieldContent>
+              <FieldDescription>
+                Proporciona un correo electrónico válido.
+              </FieldDescription>
+              <FieldError>{state?.errors.email?.errors[0]}</FieldError>
+            </Field>
 
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className={`${Array.isArray(errors?.name?.errors) ? "border-red-500" : ""}`}
-            defaultValue={data?.name || ""}
-            placeholder="Juan"
-          />
+            <Field>
+              <FieldLabel>Nombre(s)</FieldLabel>
+              <FieldContent>
+                <Input
+                  type="text"
+                  name="name"
+                  placeholder="Juan"
+                  defaultValue={state?.data?.name as string}
+                />
+              </FieldContent>
+              <FieldDescription>Ingresa tu nombre o nombres.</FieldDescription>
+              <FieldError>{state?.errors.name?.errors[0]}</FieldError>
+            </Field>
 
-          {Array.isArray(errors?.name?.errors) ? (
-            <span className="text-red-500 text-xs">{errors.name.errors[0]}</span>
-          ) : (
-            <span className="text-xs">Ingresa tu nombre o nombres.</span>
-          )}
-        </label>
+            <Field>
+              <FieldLabel>Apellidos</FieldLabel>
+              <FieldContent>
+                <Input
+                  type="text"
+                  name="last_name"
+                  placeholder="Pérez López"
+                  defaultValue={state?.data?.last_name as string}
+                />
+              </FieldContent>
+              <FieldDescription>Ingresa tus apellidos.</FieldDescription>
+              <FieldError>{state?.errors.last_name?.errors[0]}</FieldError>
+            </Field>
 
-        <label htmlFor="last_name" className="grid gap-1.5">
-          <span>Apellidos*</span>
+            {state?.errors.general && (
+              <FieldError>{state.errors.general.errors[0]}</FieldError>
+            )}
 
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            className={`${Array.isArray(errors?.last_name?.errors) ? "border-red-500" : ""}`}
-            defaultValue={data?.last_name || ""}
-            placeholder="Pérez López"
-          />
-
-          {Array.isArray(errors?.last_name?.errors) ? (
-            <span className="text-red-500 text-xs">{errors.last_name.errors[0]}</span>
-          ) : (
-            <span className="text-xs">Ingresa tus apellidos.</span>
-          )}
-        </label>
-
-        <label htmlFor="course_id" className="grid gap-1.5">
-          <span>Curso*</span>
-
-          <select
-            name="course_id"
-            id="course_id"
-            defaultValue={data?.course_id}
-            className={`${Array.isArray(errors?.course_id?.errors) ? "border-red-500" : ""}`}
-          >
-            <optgroup label={"Cursos del instituto seleccionado"}>
-              {Array.from({ length: 6 }, (_, i) => i).map((num) => (
-                <option key={num} value={num} className="">
-                  Curso {num}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-
-          {Array.isArray(errors?.course_id?.errors) ? (
-            <span className="text-red-500 text-xs">{errors.course_id.errors[0]}</span>
-          ) : (
-            <span className="text-xs">
-              Selecciona el curso al que deseas inscribirte.
-            </span>
-          )}
-        </label>
-
-        <Button type="submit" isLoading={isLoading}>
-          <span>Solicitar</span>
-        </Button>
-      </form>
-
-      {isBannerVisible && message && <Banner message={message} isError={!success} />}
-    </>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Enviando..." : "Solicitar"}
+            </Button>
+          </FieldGroup>
+        </FieldSet>
+      </FieldGroup>
+    </Form>
   );
 }

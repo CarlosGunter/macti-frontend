@@ -1,5 +1,5 @@
-import Link from "next/link";
-import CourseCard from "@/domains/courses/components/CourseCard";
+import { ProfileCard } from "@/domains/users/components/ui/ProfileCard";
+import ProfileTabs from "@/shared/components/common/ProfileTabs";
 
 interface PerfilPageProps {
   params: {
@@ -12,32 +12,9 @@ export default async function PerfilPage({ params }: PerfilPageProps) {
 
   return (
     <div className="grid gap-8">
-      <h1 className="text-2xl font-bold">Perfil de usuario</h1>
-      <div>
-        <p>Nombre de usuario</p>
-        <p className="text-sm">Email del usuario</p>
-        <p className="text-sm">Institución: Nombre de la institución</p>
-      </div>
+      <ProfileCard />
 
-      <div className="grid gap-4">
-        <h2>Cursos administrados:</h2>
-        <div className="grid grid-cols-1 gap-4">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CourseCard
-              key={`course-${index + 1}`}
-              title={`Curso ${index + 1}`}
-              description={`Descripción del curso ${index + 1}`}
-            >
-              <Link
-                href={`/${institute}/solicitudes/${index + 1}`}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Solicitudes
-              </Link>
-            </CourseCard>
-          ))}
-        </div>
-      </div>
+      <ProfileTabs institute={institute} />
     </div>
   );
 }

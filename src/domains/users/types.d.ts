@@ -6,6 +6,13 @@ export type AccountRequestPayload = {
   course_id: string;
   institute: string;
   status?: UserStatus;
+  userToken?: string | null;
+};
+
+export type AccountRequestTeacherPayload = {
+  institute: string;
+  status?: UserStatus;
+  userToken?: string | null;
 };
 
 export type AccountStatusPayload = {

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Hind_Madurai, Lora, Montserrat } from "next/font/google";
-import { QueryContextProvider } from "@/shared/providers/QueryProvider";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -36,7 +35,7 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${hindMadurai.variable} ${lora.variable} antialiased`}
       >
-        <QueryContextProvider>{children}</QueryContextProvider>
+        {children}
       </body>
     </html>
   );

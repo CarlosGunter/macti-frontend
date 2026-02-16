@@ -10,4 +10,5 @@ export const listAccountsSchema = z.array(
     status: z.enum(Object.values(USER_STATUSES)),
   }),
 );
+
 export interface ListAccountsProps extends z.infer<typeof listAccountsSchema> {}

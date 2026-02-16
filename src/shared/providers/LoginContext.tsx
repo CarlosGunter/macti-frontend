@@ -1,7 +1,6 @@
 "use client";
 
-import Keycloak, { type KeycloakInitOptions } from "keycloak-js";
-import { useParams } from "next/navigation";
+import Keycloak, { type KeycloakInitOptions, type KeycloakProfile } from "keycloak-js";
 import type React from "react";
 import {
   createContext,
@@ -9,51 +8,61 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { keycloakConfigs } from "@/shared/config/kcConfig";
+import { usePageVisibility } from "@/shared/hooks/usePageVisibility";
 import { tryCatch } from "@/shared/utils/try-catch";
+
+type KeycloakProfileExtended = Omit<KeycloakProfile, "totp"> & {
+  name?: string;
+};
 
 type AuthContextType = {
   authenticated: boolean;
   token?: string;
+  isLoading: boolean;
   login: () => Promise<void>;
   logout: () => void;
+  userInfo: KeycloakProfileExtended;
 };
 
 const AuthContext = createContext<AuthContextType>({
   authenticated: false,
+  isLoading: true,
   login: async () => {},
   logout: () => {},
+  userInfo: {},
 });
 
 const TOKEN_MIN_VALIDITY_SECONDS = 60;
 const REFRESH_INTERVAL_MS = 30_000;
-const STORAGE_KEYS = {
-  token: "token",
-  refreshToken: "refreshToken",
-  idToken: "idToken",
-};
+
+const getStorageKeys = (institute: keyof typeof keycloakConfigs) => ({
+  token: `${institute}_token`,
+  refreshToken: `${institute}_refreshToken`,
+  idToken: `${institute}_idToken`,
+});
 
 interface LoginProviderProps {
   children: React.ReactNode;
-  institute?: string;
+  institute: keyof typeof keycloakConfigs;
 }
 
-export function LoginProvider({
-  children,
-  institute: propInstitute,
-}: LoginProviderProps) {
-  const { institute: paramInstitute } = useParams();
-  // Esto permite usar el provider tanto con prop como en rutas dinámicas
-  const institute = propInstitute || (paramInstitute as string);
-  const keycloak = useMemo(
-    () => new Keycloak(keycloakConfigs[institute] || keycloakConfigs.principal),
-    [institute],
-  );
+export function LoginProvider({ children, institute }: LoginProviderProps) {
+  const keycloak = useMemo(() => {
+    const config = keycloakConfigs[institute] ?? keycloakConfigs.principal;
+    return new Keycloak(config);
+  }, [institute]);
 
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const initializedRef = useRef(false);
+  const refreshingRef = useRef(false);
+  const isVisible = usePageVisibility();
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const persistTokens = useCallback(
     ({
@@ -67,6 +76,9 @@ export function LoginProvider({
     } = {}) => {
       setToken(tokenValue ?? undefined);
 
+      if (!institute) return;
+
+      const STORAGE_KEYS = getStorageKeys(institute);
       const entries: Array<[string, string | null | undefined]> = [
         [STORAGE_KEYS.token, tokenValue],
         [STORAGE_KEYS.refreshToken, refreshTokenValue],
@@ -85,14 +97,23 @@ export function LoginProvider({
         }
       }
     },
-    [],
+    [institute],
   );
 
   useEffect(() => {
+    if (!institute) {
+      setAuthenticated(false);
+      setToken(undefined);
+      setIsAuthLoading(false);
+      return;
+    }
+
+    const STORAGE_KEYS = getStorageKeys(institute);
     const storedToken = localStorage.getItem(STORAGE_KEYS.token);
     if (!storedToken) {
       setAuthenticated(false);
       setToken(undefined);
+      setIsAuthLoading(false);
       return;
     }
 
@@ -104,29 +125,37 @@ export function LoginProvider({
       if (!exp || now >= exp) {
         persistTokens();
         setAuthenticated(false);
+        setIsAuthLoading(false);
         return;
       }
 
       setToken(storedToken);
       setAuthenticated(true);
+      setIsAuthLoading(false);
     } catch (error) {
       console.error("No se pudo validar el token almacenado", error);
       persistTokens();
       setAuthenticated(false);
+      setIsAuthLoading(false);
     }
-  }, [persistTokens]);
+  }, [institute, persistTokens]);
 
   const initializeKeycloak = useCallback(async () => {
-    if (!institute) return null;
+    if (!institute) {
+      setIsAuthLoading(false);
+      return null;
+    }
 
+    const STORAGE_KEYS = getStorageKeys(institute);
     const storedToken = localStorage.getItem(STORAGE_KEYS.token) ?? undefined;
     const storedRefreshToken =
       localStorage.getItem(STORAGE_KEYS.refreshToken) ?? undefined;
     const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken) ?? undefined;
 
     const initOptions: KeycloakInitOptions = {
-      checkLoginIframe: false,
+      checkLoginIframe: false, // Deshabilitado: navegadores modernos bloquean cookies de terceros
       redirectUri: `${window.location.origin}/${institute}`,
+      enableLogging: process.env.NODE_ENV === "development",
     };
 
     if (storedToken && storedRefreshToken) {
@@ -140,12 +169,14 @@ export function LoginProvider({
       console.error("Error al inicializar Keycloak", error);
       persistTokens();
       setAuthenticated(false);
+      setIsAuthLoading(false);
       return null;
     }
 
     if (!keycloak.token || !keycloak.refreshToken) {
       persistTokens();
       setAuthenticated(false);
+      setIsAuthLoading(false);
       return auth ?? null;
     }
 
@@ -156,64 +187,226 @@ export function LoginProvider({
     });
 
     setAuthenticated(true);
+    setIsAuthLoading(false);
     return true;
   }, [institute, keycloak, persistTokens]);
 
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
     initializeKeycloak();
   }, [initializeKeycloak]);
 
+  // Broadcast Channel API para sincronización moderna entre pestañas
+  useEffect(() => {
+    if (!institute || typeof BroadcastChannel === "undefined") return;
+
+    const channelName = `keycloak_${institute}`;
+    const channel = new BroadcastChannel(channelName);
+    broadcastChannelRef.current = channel;
+
+    channel.onmessage = (event) => {
+      const { type, payload } = event.data;
+
+      switch (type) {
+        case "TOKEN_UPDATED":
+          console.info("Keycloak: token actualizado en otra pestaña (BC)");
+          if (payload.token) {
+            setToken(payload.token);
+            keycloak.token = payload.token;
+            keycloak.refreshToken = payload.refreshToken;
+            keycloak.idToken = payload.idToken;
+            setAuthenticated(true);
+          }
+          break;
+
+        case "LOGOUT":
+          console.info("Keycloak: logout recibido de otra pestaña (BC)");
+          keycloak.clearToken();
+          setToken(undefined);
+          setAuthenticated(false);
+          break;
+
+        case "LOGIN":
+          console.info("Keycloak: login recibido de otra pestaña (BC)");
+          if (payload.token) {
+            setToken(payload.token);
+            keycloak.token = payload.token;
+            keycloak.refreshToken = payload.refreshToken;
+            keycloak.idToken = payload.idToken;
+            setAuthenticated(true);
+          }
+          break;
+      }
+    };
+
+    return () => {
+      channel.close();
+      broadcastChannelRef.current = null;
+    };
+  }, [institute, keycloak]);
+
+  // Storage Events como fallback para navegadores sin Broadcast Channel
+  useEffect(() => {
+    if (!institute) return;
+
+    const STORAGE_KEYS = getStorageKeys(institute);
+
+    const handleStorageChange = (event: StorageEvent) => {
+      // Solo procesar eventos de este instituto
+      if (!event.key || !Object.values(STORAGE_KEYS).includes(event.key)) {
+        return;
+      }
+
+      // Si el token fue removido en otra pestaña, cerrar sesión aquí también
+      if (event.key === STORAGE_KEYS.token && !event.newValue) {
+        console.info("Keycloak: sesión cerrada en otra pestaña (Storage)");
+        keycloak.clearToken();
+        setToken(undefined);
+        setAuthenticated(false);
+        return;
+      }
+
+      // Si se actualizó el token en otra pestaña, sincronizar
+      if (event.key === STORAGE_KEYS.token && event.newValue) {
+        console.info("Keycloak: token actualizado en otra pestaña (Storage)");
+        setToken(event.newValue);
+        keycloak.token = event.newValue;
+        setAuthenticated(true);
+      }
+
+      if (event.key === STORAGE_KEYS.refreshToken && event.newValue) {
+        keycloak.refreshToken = event.newValue;
+      }
+
+      if (event.key === STORAGE_KEYS.idToken && event.newValue) {
+        keycloak.idToken = event.newValue;
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [institute, keycloak]);
+
+  // Manejo de eventos de Keycloak para sincronización
+  useEffect(() => {
+    const notifyOtherTabs = (type: string, payload?: unknown) => {
+      if (broadcastChannelRef.current) {
+        broadcastChannelRef.current.postMessage({ type, payload });
+      }
+    };
+
+    const handleAuthSuccess = () => {
+      console.info("Keycloak: autenticación exitosa");
+      const tokens = {
+        token: keycloak.token,
+        refreshToken: keycloak.refreshToken,
+        idToken: keycloak.idToken,
+      };
+      persistTokens(tokens);
+      setAuthenticated(true);
+      notifyOtherTabs("LOGIN", tokens);
+    };
+
+    const handleAuthError = () => {
+      console.warn("Keycloak: error de autenticación");
+      keycloak.clearToken();
+      persistTokens();
+      setAuthenticated(false);
+      notifyOtherTabs("LOGOUT");
+    };
+
+    const handleAuthLogout = () => {
+      console.info("Keycloak: sesión cerrada");
+      keycloak.clearToken();
+      persistTokens();
+      setAuthenticated(false);
+      notifyOtherTabs("LOGOUT");
+    };
+
+    keycloak.onAuthSuccess = handleAuthSuccess;
+    keycloak.onAuthError = handleAuthError;
+    keycloak.onAuthLogout = handleAuthLogout;
+
+    return () => {
+      keycloak.onAuthSuccess = undefined;
+      keycloak.onAuthError = undefined;
+      keycloak.onAuthLogout = undefined;
+    };
+  }, [keycloak, persistTokens]);
+
   const refreshToken = useCallback(
     async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
-      if (!keycloak.token) {
-        const storedToken = localStorage.getItem(STORAGE_KEYS.token);
-        if (storedToken) keycloak.token = storedToken;
+      if (!institute || refreshingRef.current) return false;
+
+      refreshingRef.current = true;
+      try {
+        const STORAGE_KEYS = getStorageKeys(institute);
+
+        if (!keycloak.token) {
+          const storedToken = localStorage.getItem(STORAGE_KEYS.token);
+          if (storedToken) keycloak.token = storedToken;
+        }
+
+        if (!keycloak.refreshToken) {
+          const storedRefreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken);
+          if (storedRefreshToken) keycloak.refreshToken = storedRefreshToken;
+        }
+
+        if (!keycloak.idToken) {
+          const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken);
+          if (storedIdToken) keycloak.idToken = storedIdToken;
+        }
+
+        if (!keycloak.token || !keycloak.refreshToken) {
+          console.warn("Keycloak: no se encontraron tokens suficientes para refrescar.");
+          persistTokens();
+          setAuthenticated(false);
+          return false;
+        }
+
+        const { data: refreshed, error } = await tryCatch(
+          keycloak.updateToken(minValidity),
+        );
+        if (error) {
+          console.error("Keycloak: no se pudo refrescar el token", error);
+          keycloak.clearToken();
+          persistTokens();
+          setAuthenticated(false);
+          return false;
+        }
+
+        if (refreshed) {
+          console.info("Keycloak: token refrescado correctamente");
+        } else {
+          console.debug("Keycloak: token vigente, no fue necesario refrescar");
+        }
+
+        const tokens = {
+          token: keycloak.token ?? null,
+          refreshToken: keycloak.refreshToken ?? null,
+          idToken: keycloak.idToken ?? null,
+        };
+        persistTokens(tokens);
+        setAuthenticated(Boolean(keycloak.token));
+
+        // Notificar a otras pestañas sobre el token actualizado
+        if (refreshed && broadcastChannelRef.current) {
+          broadcastChannelRef.current.postMessage({
+            type: "TOKEN_UPDATED",
+            payload: tokens,
+          });
+        }
+
+        return Boolean(refreshed);
+      } finally {
+        refreshingRef.current = false;
       }
-
-      if (!keycloak.refreshToken) {
-        const storedRefreshToken = localStorage.getItem(STORAGE_KEYS.refreshToken);
-        if (storedRefreshToken) keycloak.refreshToken = storedRefreshToken;
-      }
-
-      if (!keycloak.idToken) {
-        const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken);
-        if (storedIdToken) keycloak.idToken = storedIdToken;
-      }
-
-      if (!keycloak.token || !keycloak.refreshToken) {
-        console.warn("Keycloak: no se encontraron tokens suficientes para refrescar.");
-        persistTokens();
-        setAuthenticated(false);
-        return false;
-      }
-
-      const { data: refreshed, error } = await tryCatch(
-        keycloak.updateToken(minValidity),
-      );
-      if (error) {
-        console.error("Keycloak: no se pudo refrescar el token", error);
-        keycloak.clearToken();
-        persistTokens();
-        setAuthenticated(false);
-        return false;
-      }
-
-      if (refreshed) {
-        console.info("Keycloak: token refrescado correctamente");
-      } else {
-        console.debug("Keycloak: token vigente, no fue necesario refrescar");
-      }
-
-      persistTokens({
-        token: keycloak.token ?? null,
-        refreshToken: keycloak.refreshToken ?? null,
-        idToken: keycloak.idToken ?? null,
-      });
-      setAuthenticated(Boolean(keycloak.token));
-
-      return Boolean(refreshed);
     },
-    [keycloak, persistTokens],
+    [institute, keycloak, persistTokens],
   );
 
   useEffect(() => {
@@ -227,19 +420,26 @@ export function LoginProvider({
     };
   }, [keycloak, refreshToken]);
 
+  // Validar token cuando la pestaña se vuelve visible
   useEffect(() => {
-    if (!authenticated) return;
+    if (isVisible && authenticated) {
+      // Revalidar token inmediatamente cuando la pestaña se vuelve visible
+      void refreshToken();
+    }
+  }, [isVisible, authenticated, refreshToken]);
+
+  // Actualización periódica de tokens solo en pestañas visibles
+  useEffect(() => {
+    if (!authenticated || !isVisible) return;
 
     const intervalId = window.setInterval(() => {
       void refreshToken();
     }, REFRESH_INTERVAL_MS);
 
-    void refreshToken();
-
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [authenticated, refreshToken]);
+  }, [authenticated, isVisible, refreshToken]);
 
   const login = async () => {
     await keycloak.login();
@@ -250,10 +450,24 @@ export function LoginProvider({
     keycloak.clearToken();
     persistTokens();
     setAuthenticated(false);
+
+    // Notificar a otras pestañas
+    if (broadcastChannelRef.current) {
+      broadcastChannelRef.current.postMessage({ type: "LOGOUT" });
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ authenticated, token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        authenticated,
+        token,
+        isLoading: isAuthLoading,
+        login,
+        logout,
+        userInfo: keycloak.tokenParsed as KeycloakProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

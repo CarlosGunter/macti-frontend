@@ -1,4 +1,5 @@
 import AccountRequestForm from "@/domains/auth/components/AccountRequestForm";
+import { QueryContextProvider } from "@/shared/providers/QueryProvider";
 
 interface RegistroPageProps {
   searchParams: {
@@ -10,16 +11,10 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
   const { institute } = await searchParams;
 
   return (
-    <div className="grid gap-8 p-4 place-items-center content-center min-h-dvh">
-      <div className="text-center grid gap-2">
-        <h1 className="text-2xl font-bold">Solicitar Registro para MACTI</h1>
-        <p className="text-sm">
-          Nota: Cada instituto tiene su propio Registro. Asegúrate de estar en el
-          correcto.
-        </p>
-      </div>
-
-      <AccountRequestForm institute={institute} />
+    <div className="w-full max-w-md mx-auto py-10 px-4">
+      <QueryContextProvider>
+        <AccountRequestForm institute={institute} />
+      </QueryContextProvider>
     </div>
   );
 }
