@@ -171,7 +171,9 @@ export default function AccountRequestForm({ institute }: { institute: string })
             </Field>
 
             {state?.errors.general && (
-              <FieldError>{state.errors.general.errors[0]}</FieldError>
+              <FieldError className="text-red-500 text-center">
+                {state.errors.general.errors[0]}
+              </FieldError>
             )}
 
             <Button type="submit" disabled={isPending}>
