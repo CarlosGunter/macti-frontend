@@ -9,6 +9,12 @@ export type AccountRequestPayload = {
   userToken?: string | null;
 };
 
+export type AccountRequestTeacherPayload = {
+  institute: string;
+  status?: UserStatus;
+  userToken?: string | null;
+};
+
 export type AccountStatusPayload = {
   user_id: number;
   newStatus: UserStatus;
