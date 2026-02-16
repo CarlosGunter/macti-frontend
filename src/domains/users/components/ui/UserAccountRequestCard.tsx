@@ -38,8 +38,14 @@ export default function UserStatusUpdateCard({
               updateStatus({
                 user_id: id,
                 newStatus: USER_STATUSES.REJECTED,
-                onSuccess: () =>
-                  queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
+                onSuccess: () => {
+                  queryClient.invalidateQueries({
+                    queryKey: ["accountRequests"],
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["accountRequestsTeachers"],
+                  });
+                },
               });
             }}
             isLoading={isPending}
@@ -60,8 +66,14 @@ export default function UserStatusUpdateCard({
                   updateStatus({
                     user_id: id,
                     newStatus: userStatus,
-                    onSuccess: () =>
-                      queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
+                    onSuccess: () => {
+                      queryClient.invalidateQueries({
+                        queryKey: ["accountRequests"],
+                      });
+                      queryClient.invalidateQueries({
+                        queryKey: ["accountRequestsTeachers"],
+                      });
+                    },
                   });
                 }}
                 isLoading={isPending}
