@@ -27,7 +27,7 @@ export function AutenticatedHeader({ institute }: AutenticatedHeaderProps) {
       <div className="hidden absolute right-0 pt-2.5 w-max shadow-lg z-10 group-hover:block">
         <div className="text-gray-400 p-1.5 shadow-lg z-10 ring ring-gray-700 rounded-md">
           <a
-            href={`${institute}/perfil`}
+            href={`/${institute}/perfil`}
             className="block px-4 py-2 text-sm hover:text-white transition-colors hover:bg-gray-900 rounded-sm"
           >
             Perfil
