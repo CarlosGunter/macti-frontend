@@ -2,12 +2,14 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/shared/components/ui/Button";
-import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../constants";
-import { useAccountStatus } from "../hooks/useAccountStatus";
-import type { ListAccountsProps } from "../schemas/listAccountsSchema";
+import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../../constants";
+import { useAccountStatus } from "../../hooks/useAccountStatus";
+import type { ListAccountsProps } from "../../schemas/listAccountsSchema";
 
 type UserType = ListAccountsProps[number];
-interface UserStatusUpdateCardProps extends UserType {}
+interface UserStatusUpdateCardProps extends UserType {
+  requestType?: "students" | "teachers";
+}
 
 export default function UserStatusUpdateCard({
   id,
@@ -15,9 +17,16 @@ export default function UserStatusUpdateCard({
   last_name,
   email,
   status,
+  requestType = "students",
 }: UserStatusUpdateCardProps) {
   const queryClient = useQueryClient();
   const { isPending, updateStatus } = useAccountStatus();
+
+  const invalidateQueries = () => {
+    const queryKey =
+      requestType === "teachers" ? ["accountRequestsTeachers"] : ["accountRequests"];
+    queryClient.invalidateQueries({ queryKey });
+  };
 
   return (
     <article className="flex justify-between items-center w-full p-4 border rounded-lg shadow gap-2 transition-all">
@@ -38,8 +47,7 @@ export default function UserStatusUpdateCard({
               updateStatus({
                 user_id: id,
                 newStatus: USER_STATUSES.REJECTED,
-                onSuccess: () =>
-                  queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
+                onSuccess: invalidateQueries,
               });
             }}
             isLoading={isPending}
@@ -60,8 +68,7 @@ export default function UserStatusUpdateCard({
                   updateStatus({
                     user_id: id,
                     newStatus: userStatus,
-                    onSuccess: () =>
-                      queryClient.invalidateQueries({ queryKey: ["accountRequests"] }),
+                    onSuccess: invalidateQueries,
                   });
                 }}
                 isLoading={isPending}

@@ -1,5 +1,5 @@
-import ListEnrolledCourses from "@/domains/courses/components/ListEnrolledCourses";
-import { ProfileCard } from "@/domains/users/components/ProfileCard";
+import { ProfileCard } from "@/domains/users/components/ui/ProfileCard";
+import ProfileTabs from "@/shared/components/common/ProfileTabs";
 
 interface PerfilPageProps {
   params: {
@@ -14,10 +14,7 @@ export default async function PerfilPage({ params }: PerfilPageProps) {
     <div className="grid gap-8">
       <ProfileCard />
 
-      <div className="grid gap-4">
-        <h1 className="font-bold text-2xl">Mis cursos</h1>
-        <ListEnrolledCourses institute={institute} />
-      </div>
+      <ProfileTabs institute={institute} />
     </div>
   );
 }

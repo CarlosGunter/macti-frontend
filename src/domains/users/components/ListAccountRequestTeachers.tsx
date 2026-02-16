@@ -5,20 +5,18 @@ import { notFound } from "next/navigation";
 import Banner from "@/shared/components/feedback/Banner";
 import { useLogin } from "@/shared/providers/LoginContext";
 import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
-import { fetchAccountRequests } from "../services/fetchListAccountRequest";
+import { fetchAccountRequests } from "../services/fetchListAccountRquestTeachers";
 import { useFilterStore } from "../stores/filterStore";
 import type { UserStatus } from "../types";
 import UserStatusUpdateCard from "./ui/UserAccountRequestCard";
 
-interface AccountRequestListProps {
-  course_id: string;
+interface AccountRequestTeachersListProps {
   institute: string;
 }
 
-export default function AccountRequestList({
-  course_id,
+export default function AccountRequestTeachersList({
   institute,
-}: AccountRequestListProps) {
+}: AccountRequestTeachersListProps) {
   const { statusFilter, setStatusFilter } = useFilterStore();
   const { token, authenticated, isLoading: isAuthLoading } = useLogin();
 
@@ -27,14 +25,13 @@ export default function AccountRequestList({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["accountRequests", course_id, institute, statusFilter],
+    queryKey: ["accountRequestsTeachers", institute, statusFilter],
     queryFn: async () => {
       const currentToken = localStorage.getItem(`${institute}_token`);
       if (!currentToken) {
         throw new Error("No token available");
       }
       return fetchAccountRequests({
-        course_id,
         institute,
         status: statusFilter || undefined,
         userToken: currentToken,
@@ -90,7 +87,7 @@ export default function AccountRequestList({
           last_name={user.last_name}
           email={user.email}
           status={user.status}
-          requestType="students"
+          requestType="teachers"
         />
       ))}
     </section>

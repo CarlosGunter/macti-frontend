@@ -3,18 +3,16 @@ import {
   type ListAccountsProps,
   listAccountsSchema,
 } from "../schemas/listAccountsSchema";
-import type { AccountRequestPayload } from "../types";
+import type { AccountRequestTeacherPayload } from "../types";
 
 export async function fetchAccountRequests({
-  course_id,
   institute,
   status,
   userToken,
-}: AccountRequestPayload): Promise<ListAccountsProps> {
+}: AccountRequestTeacherPayload): Promise<ListAccountsProps> {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
   const queryParams = new URLSearchParams({
-    course_id: parseInt(course_id, 10).toString(),
     institute,
   });
 
@@ -23,7 +21,7 @@ export async function fetchAccountRequests({
   }
 
   const listAccountRequestPromise = fetch(
-    `${apiURLBase}/auth/list-account-requests/students?${queryParams.toString()}`,
+    `${apiURLBase}/auth/list-account-requests/teachers?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
