@@ -87,6 +87,7 @@ export default function AccountRequestTeachersList({
           last_name={user.last_name}
           email={user.email}
           status={user.status}
+          requestType="teachers"
         />
       ))}
     </section>
