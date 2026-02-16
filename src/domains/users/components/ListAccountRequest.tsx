@@ -61,11 +61,8 @@ export default function AccountRequestList({
     return <Banner message="Ocurrió un error al cargar las solicitudes" isError />;
   }
 
-  const hasStudents = accountRequests?.alumno && accountRequests.alumno.length > 0;
-  const hasTeachers = accountRequests?.docente && accountRequests.docente.length > 0;
-
   return (
-    <section className="grid gap-6">
+    <section className="grid gap-4">
       <div className="flex items-center justify-end gap-2">
         <label htmlFor="status-filter" className="block text-sm font-medium">
           Filtrar por estado:
@@ -85,41 +82,16 @@ export default function AccountRequestList({
         </select>
       </div>
 
-      {hasStudents && (
-        <div className="grid gap-4">
-          <h2 className="text-lg font-semibold">Solicitudes de Alumnos</h2>
-          {accountRequests.alumno.map((user) => (
-            <UserStatusUpdateCard
-              key={user.id}
-              id={user.id}
-              name={user.name}
-              last_name={user.last_name}
-              email={user.email}
-              status={user.status}
-            />
-          ))}
-        </div>
-      )}
-
-      {hasTeachers && (
-        <div className="grid gap-4">
-          <h2 className="text-lg font-semibold">Solicitudes de Docentes</h2>
-          {accountRequests.docente.map((user) => (
-            <UserStatusUpdateCard
-              key={user.id}
-              id={user.id}
-              name={user.name}
-              last_name={user.last_name}
-              email={user.email}
-              status={user.status}
-            />
-          ))}
-        </div>
-      )}
-
-      {!hasStudents && !hasTeachers && (
-        <Banner message="No hay solicitudes de cuenta para mostrar" />
-      )}
+      {accountRequests?.map((user) => (
+        <UserStatusUpdateCard
+          key={user.id}
+          id={user.id}
+          name={user.name}
+          last_name={user.last_name}
+          email={user.email}
+          status={user.status}
+        />
+      ))}
     </section>
   );
 }
