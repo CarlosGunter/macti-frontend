@@ -41,7 +41,10 @@ export async function accountRequestAction(
       data: validation.data,
       errors: {
         general: {
-          errors: ["Error al solicitar la cuenta. Inténtalo de nuevo más tarde."],
+          errors: [
+            accountRequestResult.error?.message ||
+              "Hubo un error al enviar la solicitud. Inténtalo de nuevo más tarde.",
+          ],
         },
       },
     };
