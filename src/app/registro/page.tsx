@@ -15,7 +15,7 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
       <QueryContextProvider>
         <AccountRequestForm institute={institute} />
       </QueryContextProvider>
-      <p className="text-gray-300 font-medium text-center text-sm">
+      <p className="text-foreground font-medium text-center text-sm">
         ¿Eres Profesor?{" "}
         <a href="/registro/profesor" className="text-blue-500 hover:underline">
           Regístrate aquí
