@@ -19,23 +19,23 @@ export function AutenticatedHeader({ institute }: AutenticatedHeaderProps) {
     <div className="relative inline-block group aspect-square">
       <button
         type="button"
-        className="bg-foreground text-primary-self size-12 text-lg font-semibold grid place-items-center rounded-full p-2 hover:bg-foreground/80 transition-colors"
+        className="bg-primary text-primary-foreground border size-12 text-lg font-semibold grid place-items-center rounded-full p-2 hover:bg-primary/90 transition-colors"
       >
         {initials || "Sin nombre"}
       </button>
 
       <div className="hidden absolute right-0 pt-2.5 w-max shadow-lg z-10 group-hover:block">
-        <div className="text-gray-400 p-1.5 shadow-lg z-10 ring ring-gray-700 rounded-md">
+        <div className="bg-card text-card-foreground p-1.5 shadow-lg z-10 ring ring-gray-700 rounded-md">
           <a
             href={`/${institute}/perfil`}
-            className="block px-4 py-2 text-sm hover:text-white transition-colors hover:bg-gray-900 rounded-sm"
+            className="block px-4 py-2 text-sm hover:text-accent-foreground transition-colors hover:bg-accent rounded-sm"
           >
             Perfil
           </a>
           <button
             type="button"
             onClick={logout}
-            className="block w-full text-left px-4 py-2 text-sm hover:text-white transition-colors hover:bg-gray-900 rounded-sm"
+            className="block w-full text-left px-4 py-2 text-sm hover:text-accent-foreground transition-colors hover:bg-accent rounded-sm"
           >
             Cerrar sesión
           </button>

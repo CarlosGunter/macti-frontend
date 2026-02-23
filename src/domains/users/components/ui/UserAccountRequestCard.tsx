@@ -29,13 +29,13 @@ export default function UserStatusUpdateCard({
   };
 
   return (
-    <article className="flex justify-between items-center w-full p-4 border rounded-lg shadow gap-2 transition-all">
+    <article className="flex justify-between items-center w-full p-4 border border-border bg-card text-card-foreground rounded-lg gap-2 transition-all">
       <div className="flex place-items-center gap-4">
         <div>
           <h1 className="text-sm">{`${name} ${last_name}`}</h1>
           <p className="text-xs">{email}</p>
         </div>
-        <span className="px-2 py-1 text-xs font-medium rounded-full bg-foreground/10 text-foreground/70">
+        <span className="px-2 py-1 text-xs font-medium rounded-full bg-primary text-primary-foreground">
           {STATUS_BADGE_LABELS[status]}
         </span>
       </div>
