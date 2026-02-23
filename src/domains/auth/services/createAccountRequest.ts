@@ -15,8 +15,8 @@ export async function createAccountRequest(userRequestData: AccountRequestPayloa
     body: JSON.stringify(userRequestData),
   });
 
-  const [error, _getAccountRequests] = await processFetch(accountRequestPromise);
-  if (error) return { success: false };
+  const [error, getAccountRequests] = await processFetch(accountRequestPromise);
+  if (error) return { success: false, error: getAccountRequests };
 
-  return { success: true };
+  return { success: true, error: null };
 }

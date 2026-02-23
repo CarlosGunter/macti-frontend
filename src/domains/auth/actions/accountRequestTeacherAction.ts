@@ -46,7 +46,10 @@ export async function accountRequestTeacherAction(
       data: validation.data,
       errors: {
         general: {
-          errors: ["Error al solicitar la cuenta. Inténtalo de nuevo más tarde."],
+          errors: [
+            accountRequestResult.error?.message ||
+              "Error al enviar la solicitud de cuenta. Inténtalo de nuevo más tarde.",
+          ],
         },
       },
     };

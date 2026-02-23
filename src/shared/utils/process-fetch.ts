@@ -1,7 +1,10 @@
 import { tryCatch } from "./try-catch";
 
 type Success = [error: false, data: unknown];
-type Failure = [error: true, data: null | undefined];
+type Failure = [
+  error: true,
+  data: null | undefined | { error_code?: string; message?: string },
+];
 type FetchResult = Success | Failure;
 
 /**
@@ -13,13 +16,14 @@ export async function processFetch(
   fetchPromise: Promise<Response>,
 ): Promise<FetchResult> {
   const fetchResponse = await tryCatch(fetchPromise);
-  if (fetchResponse.error || (fetchResponse.data && !fetchResponse.data.ok)) {
+  if (fetchResponse.error) {
     return [true, undefined];
   }
 
   const fetchData = await tryCatch(fetchResponse.data.json());
-  if (fetchData.error) {
-    return [true, null];
+  if (fetchData.error) return [true, null];
+  if (!fetchResponse.data.ok) {
+    return [true, fetchData.data.detail];
   }
 
   return [false, fetchData.data];

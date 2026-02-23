@@ -13,8 +13,8 @@ export async function createAccountRequestTeacher(
     body: JSON.stringify(userRequestData),
   });
 
-  const [error, _accountRequestResult] = await processFetch(accountRequestPromise);
-  if (error) return { success: false };
+  const [error, accountRequestResult] = await processFetch(accountRequestPromise);
+  if (error) return { success: false, error: accountRequestResult };
 
-  return { success: true };
+  return { success: true, error: null };
 }
