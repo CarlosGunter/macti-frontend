@@ -35,7 +35,7 @@ export default function UserStatusUpdateCard({
           <h1 className="text-sm">{`${name} ${last_name}`}</h1>
           <p className="text-xs">{email}</p>
         </div>
-        <span className="px-2 py-1 text-xs font-medium bg-accent text-black rounded-full">
+        <span className="px-2 py-1 text-xs font-medium rounded-full bg-foreground/10 text-foreground/70">
           {STATUS_BADGE_LABELS[status]}
         </span>
       </div>

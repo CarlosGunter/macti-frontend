@@ -19,7 +19,7 @@ export function AutenticatedHeader({ institute }: AutenticatedHeaderProps) {
     <div className="relative inline-block group aspect-square">
       <button
         type="button"
-        className="bg-white text-black size-12 text-lg font-semibold grid place-items-center rounded-full p-2 hover:bg-gray-200 transition-colors"
+        className="bg-foreground text-primary-self size-12 text-lg font-semibold grid place-items-center rounded-full p-2 hover:bg-foreground/80 transition-colors"
       >
         {initials || "Sin nombre"}
       </button>
