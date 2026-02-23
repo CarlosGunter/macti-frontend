@@ -22,13 +22,26 @@
 
 @theme inline {
   /* self */
-  --color-background: light-dark(#fff, #0a0a0a);
-  --color-foreground: light-dark(#171717, #ededed);
-  --color-primary-self: light-dark(#ffffff, #151515);
-  --color-primary-self-hv: light-dark(#f5f5f5, #1c1c1c);
-  --color-accent: light-dark(#0070f3, #79ffe1);
-  --color-border-primary: light-dark(#b9b9b9, #2c2c2c);
-  --color-border-secondary: light-dark(#eeeeee, #3c3c3c);
+  --color-primary-self: light-dark(
+    oklch(100% 0.00011 271.152),
+    oklch(19.574% 0.00002 271.152)
+  );
+  --color-primary-self-hv: light-dark(
+    oklch(97.015% 0.00011 271.152),
+    oklch(22.645% 0.00003 271.152)
+  );
+  --color-accent-self: light-dark(
+    oklch(57.311% 0.21458 258.263),
+    oklch(91.631% 0.12634 176.585)
+  );
+  --color-border-primary: light-dark(
+    oklch(78.577% 0.00009 271.152),
+    oklch(29.313% 0.00003 271.152)
+  );
+  --color-border-secondary: light-dark(
+    oklch(94.912% 0.00011 271.152),
+    oklch(35.618% 0.00004 271.152)
+  );
 
   --font-headers: var(--font-montserrat);
   --font-text: var(--font-hind-madurai);
@@ -75,6 +88,7 @@
 }
 
 :root {
+  /* shadcn */
   --radius: 0.625rem;
   --background: light-dark(oklch(1 0 0), oklch(0.145 0 0));
   --foreground: light-dark(oklch(0.145 0 0), oklch(0.985 0 0));
