@@ -120,7 +120,21 @@ export default function AccountRequestTeacherForm() {
               error={state?.errors.groups?.errors[0]}
             />
 
-            <Button type="submit">Enviar Solicitud</Button>
+            {state?.errors.general && (
+              <FieldError className="text-red-500 text-center">
+                {state.errors.general.errors[0]}
+              </FieldError>
+            )}
+
+            {state?.success && (
+              <FieldContent className="text-green-600 text-center text-sm">
+                Solicitud enviada exitosamente.
+              </FieldContent>
+            )}
+
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Enviando..." : "Solicitar"}
+            </Button>
           </FieldGroup>
         </FieldSet>
       </FieldGroup>

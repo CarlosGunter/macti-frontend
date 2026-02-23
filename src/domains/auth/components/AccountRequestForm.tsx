@@ -171,7 +171,15 @@ export default function AccountRequestForm({ institute }: { institute: string })
             </Field>
 
             {state?.errors.general && (
-              <FieldError>{state.errors.general.errors[0]}</FieldError>
+              <FieldError className="text-red-500 text-center">
+                {state.errors.general.errors[0]}
+              </FieldError>
+            )}
+
+            {state?.success && (
+              <FieldContent className="text-green-600 text-center text-sm">
+                Solicitud enviada exitosamente.
+              </FieldContent>
             )}
 
             <Button type="submit" disabled={isPending}>
