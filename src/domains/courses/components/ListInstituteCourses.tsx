@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Anchor } from "@/shared/components/ui/Anchor";
 import { fetchCourses } from "@/shared/services/fetchCourses";
 import CourseCard from "./ui/CourseCard";
 
@@ -28,12 +28,7 @@ export default async function ListInstituteCourses({
           title={course.displayname || course.fullname}
           description={course.summary || course.shortname}
         >
-          <Link
-            href=""
-            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
-          >
-            Ver curso
-          </Link>
+          <Anchor href={`/courses/${course.id}`}>Ver curso</Anchor>
         </CourseCard>
       ))}
     </div>

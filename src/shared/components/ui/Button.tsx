@@ -13,8 +13,7 @@ interface ButtonProps {
 const variants = {
   recommended: "bg-green-700 text-white hover:bg-green-600",
   danger: "bg-red-700 text-white hover:bg-red-600",
-  default:
-    "bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current",
+  default: "bg-primary text-primary-foreground hover:bg-primary/90",
 };
 
 export default function Button({
