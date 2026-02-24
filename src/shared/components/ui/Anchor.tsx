@@ -8,10 +8,9 @@ interface AnchorProps {
 }
 
 const variants = {
-  default:
-    "bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current",
+  default: "bg-primary text-primary-foreground hover:bg-primary/90",
   secondary:
-    "bg-transparent border border-gray-400 text-gray-700 dark:hover:ring-offset-1 hover:ring-1 hover:ring-gray-500 dark:text-gray-300 dark:border-gray-600 dark:hover:ring-1 dark:hover:ring-gray-500",
+    "bg-secondary text-secondary-foreground border border-gray-300 dark:border-gray-600 hover:bg-secondary/80",
 };
 
 export function Anchor({

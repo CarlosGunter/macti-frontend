@@ -60,15 +60,15 @@ export default function AccountRequestTeachersList({
 
   return (
     <section className="grid gap-4">
-      <div className="flex items-center justify-end gap-2">
-        <label htmlFor="status-filter" className="block text-sm font-medium">
+      <div className="flex items-center justify-end gap-2 h-full">
+        <label htmlFor="status-filter" className="text-sm font-medium">
           Filtrar por estado:
         </label>
         <select
           id="status-filter"
           value={statusFilter || ""}
           onChange={(e) => setStatusFilter((e.target.value as UserStatus) || null)}
-          className="mt-1 border-gray-500"
+          className="mt-1 border border-border bg-secondary text-secondary-foreground rounded-md px-2 py-1 text-sm focus:outline-none focus:border focus:border-primary"
         >
           <option value="">Todos</option>
           {Object.values(USER_STATUSES).map((status) => (

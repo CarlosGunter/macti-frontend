@@ -21,7 +21,7 @@ export function ProfileCard() {
 
   return (
     // <section className="relative isolate w-full max-w-2xl rounded-3xl border border-white/5 bg-gradient-to-b from-white/10 via-black/70 to-black p-8 text-white shadow-[0_30px_60px_rgba(0,0,0,0.45)]">
-    <section className="relative isolate w-full max-w-2xl rounded-3xl text-white py-4">
+    <section className="relative isolate w-full max-w-2xl rounded-3xl py-4">
       {/* <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 opacity-40 blur-3xl"
@@ -30,14 +30,14 @@ export function ProfileCard() {
       </div> */}
 
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-2xl font-semibold uppercase text-white">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-gray-400 bg-gray-200 dark:border-white/20 dark:bg-white/10 text-2xl font-semibold uppercase">
           {initials}
         </div>
 
         <div className="flex-1">
-          <p className="text-xs uppercase tracking-[0.35em] text-white/50">Perfil</p>
-          <h1 className="text-3xl font-semibold text-white">{displayName}</h1>
-          <p className="text-sm text-white/60">{email}</p>
+          <p className="text-xs uppercase tracking-[0.35em] text-foreground/70">Perfil</p>
+          <h1 className="text-3xl font-semibold text-foreground">{displayName}</h1>
+          <p className="text-sm text-foreground/70">{email}</p>
         </div>
 
         {/* <span

@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import Banner from "@/shared/components/feedback/Banner";
+import { Anchor } from "@/shared/components/ui/Anchor";
 import { privilegeRoles } from "@/shared/config/rolesMap";
 import { useLogin } from "@/shared/providers/LoginContext";
 import { fetchEnrolledCourses } from "../services/fetchEnrolledCourses";
@@ -55,12 +55,7 @@ export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesPr
             description={course.summary}
           >
             {course.role.some((r) => privilegeRoles.high.includes(r)) && (
-              <Link
-                href={`./${course.id}/solicitudes`}
-                className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
-              >
-                Solicitudes
-              </Link>
+              <Anchor href={`./${course.id}/solicitudes`}>Solicitudes</Anchor>
             )}
           </CourseCard>
         ))
