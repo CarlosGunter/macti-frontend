@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import ListInstituteCourses from "@/domains/courses/components/ListInstituteCourses";
+import { Anchor } from "@/shared/components/ui/Anchor";
 import { institutes } from "@/shared/config/institutes";
 
 interface InstitutePageProps {
@@ -29,18 +30,8 @@ export default async function InstitutePage({ params }: InstitutePageProps) {
         <p>Bienvenido al portal del instituto {currentInstitute.name}.</p>
 
         <div className="flex justify-center gap-4 py-4">
-          <a
-            href="http://jupyter.org"
-            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
-          >
-            Jupyter
-          </a>
-          <a
-            href="http://moodle.org"
-            className="flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 bg-black text-white hover:ring-2 hover:ring-gray-900 dark:bg-gray-200 dark:text-black dark:hover:ring-offset-2 dark:hover:ring-current"
-          >
-            Moodle
-          </a>
+          <Anchor href={currentInstitute.moodle}>Moodle</Anchor>
+          <Anchor href={currentInstitute.jupyter}>Jupyter</Anchor>
         </div>
       </div>
 
