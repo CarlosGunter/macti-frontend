@@ -14,7 +14,6 @@ export async function createAccountRequestTeacher(
   });
 
   const [error, accountRequestResult] = await processFetch(accountRequestPromise);
-  console.log({ userRequestData, accountRequestResult });
   if (error) return { success: false, error: accountRequestResult };
 
   return { success: true, error: null };
