@@ -6,7 +6,7 @@ export async function createAccountRequestTeacher(
 ) {
   const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
 
-  const accountRequestPromise = fetch(`${apiURLBase}/auth/account-request/teacher`, {
+  const accountRequestPromise = fetch(`${apiURLBase}/auth/request-account/teacher`, {
     method: "POST",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
@@ -14,6 +14,7 @@ export async function createAccountRequestTeacher(
   });
 
   const [error, accountRequestResult] = await processFetch(accountRequestPromise);
+  console.log({ userRequestData, accountRequestResult });
   if (error) return { success: false, error: accountRequestResult };
 
   return { success: true, error: null };
