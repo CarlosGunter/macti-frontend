@@ -107,12 +107,12 @@ export default function AccountRequestTeacherForm() {
               <FieldContent>
                 <Input
                   type="text"
-                  name="course"
+                  name="course_full_name"
                   placeholder="Introducción a la Programación"
-                  defaultValue={state?.data?.course as string}
+                  defaultValue={state?.data?.course_full_name as string}
                 />
               </FieldContent>
-              <FieldError>{state?.errors.course?.errors[0]}</FieldError>
+              <FieldError>{state?.errors.course_full_name?.errors[0]}</FieldError>
             </Field>
 
             <GroupInput

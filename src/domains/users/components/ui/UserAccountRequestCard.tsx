@@ -29,11 +29,11 @@ export default function UserStatusUpdateCard({
   };
 
   return (
-    <article className="flex justify-between items-center w-full p-4 border border-border bg-card text-card-foreground rounded-lg gap-2 transition-all">
-      <div className="flex place-items-center gap-4">
-        <div>
-          <h1 className="text-sm">{`${name} ${last_name}`}</h1>
-          <p className="text-xs">{email}</p>
+    <article className="flex flex-col gap-4 min-w-full p-4 border border-border bg-card text-card-foreground rounded-lg transition-all md:flex-row md:items-center md:justify-between">
+      <div className="flex place-items-center gap-2 md:gap-4 w-full md:w-auto">
+        <div className="flex flex-col gap-1 wrap-anywhere">
+          <h1 className="text-lg font-semibold">{`${name} ${last_name}`}</h1>
+          <p className="text-sm text-card-foreground/70">{email}</p>
         </div>
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-primary text-primary-foreground">
           {STATUS_BADGE_LABELS[status]}
@@ -52,6 +52,7 @@ export default function UserStatusUpdateCard({
             }}
             isLoading={isPending}
             variant="danger"
+            className="text-sm md:text-base"
           >
             <span>Eliminar</span>
           </Button>
@@ -75,6 +76,7 @@ export default function UserStatusUpdateCard({
                 variant={
                   userStatus === USER_STATUSES.APPROVED ? "recommended" : "default"
                 }
+                className="text-sm md:text-base"
               >
                 <span>
                   {STATUS_BTN_LABELS[userStatus as keyof typeof STATUS_BTN_LABELS]}
