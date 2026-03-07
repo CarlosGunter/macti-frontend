@@ -14,12 +14,13 @@ interface Institute {
 
 export default function InstituteCard({ id, name, details, image }: Institute) {
   return (
-    <article className="">
+    <article className="relative grid group rounded-2xl overflow-hidden">
       <Link
-        className="relative grid place-items-center h-48 rounded-2xl bg-black/50 bg-(image:--img) bg-cover bg-center bg-no-repeat bg-blend-darken text-white group"
+        className="h-48 rounded-2xl bg-black/50 bg-(image:--img) bg-cover bg-center bg-no-repeat bg-blend-darken text-white row-start-1 row-end-2 col-start-1 col-end-2"
         href={details}
         style={{ "--img": `url(${image.src})` } as React.CSSProperties}
-      >
+      />
+      <div className="grid place-items-center h-48 pointer-events-none grid-rows-1 grid-cols-1 row-start-1 row-end-2 col-start-1 col-end-2">
         <h2 className="text-center font-bold text-lg transition-[translate] group-hover:-translate-y-11">
           {name}
         </h2>
@@ -27,20 +28,18 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
           <LoginProvider institute={id}>
             <LoginCardButton />
           </LoginProvider>
-          {/* No se puede poner un botón dentro de un anchor */}
-          {/* biome-ignore lint: false positive */}
-          <span
-            role="button"
-            className="px-4 py-2 rounded-sm bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer"
+          <button
+            type="button"
+            className="px-4 py-2 rounded-sm bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer pointer-events-auto"
             onClick={(e) => {
               e.preventDefault();
               window.open(`/registro?institute=${id}`, "_self");
             }}
           >
             Registro
-          </span>
+          </button>
         </div>
-      </Link>
+      </div>
     </article>
   );
 }
