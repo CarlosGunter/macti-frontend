@@ -29,14 +29,16 @@ export function ProfileCard() {
         <div className="h-full w-full bg-[radial-gradient(circle_at_top,var(--tw-gradient-from),transparent_60%)] from-gray-500" />
       </div> */}
 
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-gray-400 bg-gray-200 dark:border-white/20 dark:bg-white/10 text-2xl font-semibold uppercase">
+      <div className="flex gap-4 items-center md:gap-6">
+        <div className="flex size-18 items-center justify-center rounded-2xl border border-gray-400 bg-gray-200 dark:border-white/20 dark:bg-white/10 text-2xl font-semibold uppercase md:size-20">
           {initials}
         </div>
 
         <div className="flex-1">
           <p className="text-xs uppercase tracking-[0.35em] text-foreground/70">Perfil</p>
-          <h1 className="text-3xl font-semibold text-foreground">{displayName}</h1>
+          <h1 className="text-2xl font-semibold text-foreground md:text-3xl">
+            {displayName}
+          </h1>
           <p className="text-sm text-foreground/70">{email}</p>
         </div>
 
