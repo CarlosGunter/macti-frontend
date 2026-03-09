@@ -4,14 +4,18 @@ import { Anchor } from "@/shared/components/ui/Anchor";
 import { institutes } from "@/shared/config/institutes";
 
 interface InstitutePageProps {
-  params: {
+  params: Promise<{
     institute: string;
-  };
+  }>;
 }
+
+type InstituteStaticParams = {
+  institute: string;
+};
 
 export const revalidate = 43200; // 12 horas en segundos
 
-export async function generateStaticParams(): Promise<InstitutePageProps["params"][]> {
+export async function generateStaticParams(): Promise<InstituteStaticParams[]> {
   return Object.keys(institutes).map((institute) => ({
     institute,
   }));

@@ -2,10 +2,10 @@ import AccountRequestList from "@/domains/users/components/ListAccountRequest";
 import { fetchCourses } from "@/shared/services/fetchCourses";
 
 interface SolicitudesPageProps {
-  params: {
+  params: Promise<{
     course_id: string;
     institute: string;
-  };
+  }>;
 }
 
 export default async function SolicitudesPage({ params }: SolicitudesPageProps) {
