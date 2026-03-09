@@ -4,7 +4,7 @@ import { LoginProvider } from "@/shared/providers/LoginContext";
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: { institute: string };
+  params: Promise<{ institute: string }>;
 }
 
 export default async function Layout({ children, params }: LayoutProps) {
