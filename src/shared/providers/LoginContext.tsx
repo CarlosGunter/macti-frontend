@@ -64,6 +64,11 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   const isVisible = usePageVisibility();
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
+  const getRedirectUri = useCallback(() => {
+    if (!institute) return window.location.origin;
+    return `${window.location.origin}/${institute}`;
+  }, [institute]);
+
   const persistTokens = useCallback(
     ({
       token: tokenValue,
@@ -154,7 +159,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
 
     const initOptions: KeycloakInitOptions = {
       checkLoginIframe: false, // Deshabilitado: navegadores modernos bloquean cookies de terceros
-      redirectUri: `${window.location.origin}/${institute}`,
+      redirectUri: getRedirectUri(),
       enableLogging: process.env.NODE_ENV === "development",
     };
 
@@ -189,13 +194,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     setAuthenticated(true);
     setIsAuthLoading(false);
     return true;
-  }, [institute, keycloak, persistTokens]);
-
-  useEffect(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
-    initializeKeycloak();
-  }, [initializeKeycloak]);
+  }, [getRedirectUri, institute, keycloak, persistTokens]);
 
   // Broadcast Channel API para sincronización moderna entre pestañas
   useEffect(() => {
@@ -311,8 +310,8 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
       notifyOtherTabs("LOGIN", tokens);
     };
 
-    const handleAuthError = () => {
-      console.warn("Keycloak: error de autenticación");
+    const handleAuthError = (errorData?: unknown) => {
+      console.warn("Keycloak: error de autenticación", errorData);
       keycloak.clearToken();
       persistTokens();
       setAuthenticated(false);
@@ -337,6 +336,12 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
       keycloak.onAuthLogout = undefined;
     };
   }, [keycloak, persistTokens]);
+
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+    initializeKeycloak();
+  }, [initializeKeycloak]);
 
   const refreshToken = useCallback(
     async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
@@ -442,11 +447,11 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   }, [authenticated, isVisible, refreshToken]);
 
   const login = async () => {
-    await keycloak.login();
+    await keycloak.login({ redirectUri: getRedirectUri() });
   };
 
   const logout = () => {
-    keycloak.logout();
+    void keycloak.logout({ redirectUri: getRedirectUri() });
     keycloak.clearToken();
     persistTokens();
     setAuthenticated(false);
