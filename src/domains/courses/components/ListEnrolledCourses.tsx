@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import { Anchor } from "@/shared/components/ui/Anchor";
 import { privilegeRoles } from "@/shared/config/rolesMap";
@@ -15,8 +16,11 @@ interface ListEnrolledCoursesProps {
 export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesProps) {
   const { token, authenticated, isLoading, login } = useLogin();
 
-  // if (isLoading && !token) notFound();
-  if (!isLoading && !authenticated) login();
+  useEffect(() => {
+    if (!isLoading && !authenticated) {
+      void login();
+    }
+  }, [authenticated, isLoading, login]);
 
   const {
     data: enrolledCourses,

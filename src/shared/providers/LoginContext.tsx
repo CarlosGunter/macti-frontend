@@ -64,11 +64,6 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   const isVisible = usePageVisibility();
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
-  const getRedirectUri = useCallback(() => {
-    if (!institute) return window.location.origin;
-    return `${window.location.origin}/${institute}`;
-  }, [institute]);
-
   const persistTokens = useCallback(
     ({
       token: tokenValue,
@@ -118,7 +113,6 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     if (!storedToken) {
       setAuthenticated(false);
       setToken(undefined);
-      setIsAuthLoading(false);
       return;
     }
 
@@ -130,18 +124,15 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
       if (!exp || now >= exp) {
         persistTokens();
         setAuthenticated(false);
-        setIsAuthLoading(false);
         return;
       }
 
       setToken(storedToken);
       setAuthenticated(true);
-      setIsAuthLoading(false);
     } catch (error) {
       console.error("No se pudo validar el token almacenado", error);
       persistTokens();
       setAuthenticated(false);
-      setIsAuthLoading(false);
     }
   }, [institute, persistTokens]);
 
@@ -159,7 +150,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
 
     const initOptions: KeycloakInitOptions = {
       checkLoginIframe: false, // Deshabilitado: navegadores modernos bloquean cookies de terceros
-      redirectUri: getRedirectUri(),
+      // redirectUri: getRedirectUri(),
       enableLogging: process.env.NODE_ENV === "development",
     };
 
@@ -194,7 +185,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     setAuthenticated(true);
     setIsAuthLoading(false);
     return true;
-  }, [getRedirectUri, institute, keycloak, persistTokens]);
+  }, [institute, keycloak, persistTokens]);
 
   // Broadcast Channel API para sincronización moderna entre pestañas
   useEffect(() => {
@@ -447,11 +438,13 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   }, [authenticated, isVisible, refreshToken]);
 
   const login = async () => {
-    await keycloak.login({ redirectUri: getRedirectUri() });
+    await keycloak.login({
+      redirectUri: `${window.location.origin}/${institute}/perfil`,
+    });
   };
 
   const logout = () => {
-    void keycloak.logout({ redirectUri: getRedirectUri() });
+    void keycloak.logout({ redirectUri: window.location.origin });
     keycloak.clearToken();
     persistTokens();
     setAuthenticated(false);
