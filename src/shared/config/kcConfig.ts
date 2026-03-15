@@ -11,8 +11,13 @@ export const keycloakConfigs: Record<string, KeycloakConfig> = {
     clientId: "next-login",
   },
   cuantico: {
-    url: "https://sso.lamod.unam.mx/auth/",
+    url: "https://keycloakmacti1.duckdns.org:8443/",
     realm: "macti3dev",
+    clientId: "next-login",
+  },
+  ciencias: {
+    url: "https://keycloakmacti2.duckdns.org:8444/",
+    realm: "macti4dev",
     clientId: "next-login",
   },
   ingenieria: {
