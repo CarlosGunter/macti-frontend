@@ -14,13 +14,13 @@ interface ListEnrolledCoursesProps {
 }
 
 export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesProps) {
-  const { token, authenticated, isLoading, login } = useLogin();
+  const { token, authenticated, isLoading, isLoggingOut, login } = useLogin();
 
   useEffect(() => {
-    if (!isLoading && !authenticated) {
+    if (!isLoading && !authenticated && !isLoggingOut) {
       void login();
     }
-  }, [authenticated, isLoading, login]);
+  }, [authenticated, isLoading, isLoggingOut, login]);
 
   const {
     data: enrolledCourses,
