@@ -23,6 +23,7 @@ type AuthContextType = {
   authenticated: boolean;
   token?: string;
   isLoading: boolean;
+  isLoggingOut: boolean;
   login: () => Promise<void>;
   logout: () => void;
   userInfo: KeycloakProfileExtended;
@@ -31,6 +32,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   authenticated: false,
   isLoading: true,
+  isLoggingOut: false,
   login: async () => {},
   logout: () => {},
   userInfo: {},
@@ -59,6 +61,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   const [authenticated, setAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>();
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const initializedRef = useRef(false);
   const refreshingRef = useRef(false);
   const isVisible = usePageVisibility();
@@ -113,7 +116,6 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     if (!storedToken) {
       setAuthenticated(false);
       setToken(undefined);
-      setIsAuthLoading(false);
       return;
     }
 
@@ -125,18 +127,15 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
       if (!exp || now >= exp) {
         persistTokens();
         setAuthenticated(false);
-        setIsAuthLoading(false);
         return;
       }
 
       setToken(storedToken);
       setAuthenticated(true);
-      setIsAuthLoading(false);
     } catch (error) {
       console.error("No se pudo validar el token almacenado", error);
       persistTokens();
       setAuthenticated(false);
-      setIsAuthLoading(false);
     }
   }, [institute, persistTokens]);
 
@@ -153,8 +152,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     const storedIdToken = localStorage.getItem(STORAGE_KEYS.idToken) ?? undefined;
 
     const initOptions: KeycloakInitOptions = {
-      checkLoginIframe: false, // Deshabilitado: navegadores modernos bloquean cookies de terceros
-      redirectUri: `${window.location.origin}/${institute}`,
+      checkLoginIframe: false, // Los navegadores modernos bloquean cookies de terceros
       enableLogging: process.env.NODE_ENV === "development",
     };
 
@@ -190,12 +188,6 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     setIsAuthLoading(false);
     return true;
   }, [institute, keycloak, persistTokens]);
-
-  useEffect(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
-    initializeKeycloak();
-  }, [initializeKeycloak]);
 
   // Broadcast Channel API para sincronización moderna entre pestañas
   useEffect(() => {
@@ -307,14 +299,16 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
         idToken: keycloak.idToken,
       };
       persistTokens(tokens);
+      setIsLoggingOut(false);
       setAuthenticated(true);
       notifyOtherTabs("LOGIN", tokens);
     };
 
-    const handleAuthError = () => {
-      console.warn("Keycloak: error de autenticación");
+    const handleAuthError = (errorData?: unknown) => {
+      console.warn("Keycloak: error de autenticación", errorData);
       keycloak.clearToken();
       persistTokens();
+      setIsLoggingOut(false);
       setAuthenticated(false);
       notifyOtherTabs("LOGOUT");
     };
@@ -323,6 +317,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
       console.info("Keycloak: sesión cerrada");
       keycloak.clearToken();
       persistTokens();
+      setIsLoggingOut(false);
       setAuthenticated(false);
       notifyOtherTabs("LOGOUT");
     };
@@ -338,9 +333,15 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     };
   }, [keycloak, persistTokens]);
 
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+    initializeKeycloak();
+  }, [initializeKeycloak]);
+
   const refreshToken = useCallback(
     async (minValidity: number = TOKEN_MIN_VALIDITY_SECONDS) => {
-      if (!institute || refreshingRef.current) return false;
+      if (!institute || refreshingRef.current || isLoggingOut) return false;
 
       refreshingRef.current = true;
       try {
@@ -406,11 +407,12 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
         refreshingRef.current = false;
       }
     },
-    [institute, keycloak, persistTokens],
+    [institute, isLoggingOut, keycloak, persistTokens],
   );
 
   useEffect(() => {
     keycloak.onTokenExpired = () => {
+      if (isLoggingOut) return;
       console.warn("Keycloak: token reportado como expirado, intentando refrescar");
       void refreshToken(-1);
     };
@@ -418,7 +420,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
     return () => {
       keycloak.onTokenExpired = undefined;
     };
-  }, [keycloak, refreshToken]);
+  }, [isLoggingOut, keycloak, refreshToken]);
 
   // Validar token cuando la pestaña se vuelve visible
   useEffect(() => {
@@ -442,19 +444,29 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
   }, [authenticated, isVisible, refreshToken]);
 
   const login = async () => {
-    await keycloak.login();
+    await keycloak.login({
+      redirectUri: `${window.location.origin}/${institute}/perfil`,
+    });
   };
 
   const logout = () => {
-    keycloak.logout();
+    setIsLoggingOut(true);
+    setIsAuthLoading(true);
     keycloak.clearToken();
     persistTokens();
     setAuthenticated(false);
 
-    // Notificar a otras pestañas
     if (broadcastChannelRef.current) {
       broadcastChannelRef.current.postMessage({ type: "LOGOUT" });
     }
+
+    void keycloak
+      .logout({ redirectUri: `${window.location.origin}/${institute}` })
+      .catch((error) => {
+        console.error("Keycloak: error durante logout", error);
+        setIsLoggingOut(false);
+        setIsAuthLoading(false);
+      });
   };
 
   return (
@@ -463,6 +475,7 @@ export function LoginProvider({ children, institute }: LoginProviderProps) {
         authenticated,
         token,
         isLoading: isAuthLoading,
+        isLoggingOut,
         login,
         logout,
         userInfo: keycloak.tokenParsed as KeycloakProfile,
