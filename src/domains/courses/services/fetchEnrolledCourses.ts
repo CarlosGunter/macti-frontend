@@ -1,3 +1,4 @@
+import { apiURLBase } from "@/shared/config/api";
 import { processFetch } from "@/shared/utils/process-fetch";
 import { enrolledCoursesSchema } from "../schemas/enrolledCoursesSchema";
 
@@ -8,8 +9,6 @@ export async function fetchEnrolledCourses({
   institute: string;
   token: string;
 }) {
-  const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
-
   const queryParams = new URLSearchParams({
     institute,
   });

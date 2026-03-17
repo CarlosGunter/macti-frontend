@@ -1,3 +1,4 @@
+import { apiURLBase } from "@/shared/config/api";
 import { processFetch } from "@/shared/utils/process-fetch";
 import type { AccountRequestPayload } from "../schemas/accountRequestSchema";
 
@@ -6,8 +7,6 @@ import type { AccountRequestPayload } from "../schemas/accountRequestSchema";
  * @returns resultado del servicio
  */
 export async function createAccountRequest(userRequestData: AccountRequestPayload) {
-  const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
-
   const accountRequestPromise = fetch(`${apiURLBase}/auth/request-account/student`, {
     method: "POST",
     cache: "no-store",
