@@ -12,7 +12,7 @@ export const keycloakConfigs: Record<string, KeycloakConfig> = {
   },
   cuantico: {
     url: "https://keycloakmacti1.duckdns.org:8443/",
-    realm: "macti3dev",
+    realm: "macti4dev",
     clientId: "next-login",
   },
   ciencias: {
