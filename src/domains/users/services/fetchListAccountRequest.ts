@@ -1,3 +1,4 @@
+import { apiURLBase } from "@/shared/config/api";
 import { processFetch } from "@/shared/utils/process-fetch";
 import {
   type ListAccountsProps,
@@ -11,8 +12,6 @@ export async function fetchAccountRequests({
   status,
   userToken,
 }: AccountRequestPayload): Promise<ListAccountsProps> {
-  const apiURLBase = process.env.API_URL_BASE || "http://localhost:8000";
-
   const queryParams = new URLSearchParams({
     course_id: parseInt(course_id, 10).toString(),
     institute,
