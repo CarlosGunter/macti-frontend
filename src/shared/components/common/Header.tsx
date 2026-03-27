@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import MactiLogo from "@/assets/image/logos/macti_logo.png";
 import { useLogin } from "@/shared/providers/LoginContext";
 import { AutenticatedHeader } from "./AutenticatedHeader";
@@ -15,7 +16,9 @@ export default function Header({ institute }: HeaderProps) {
 
   return (
     <header className="w-full p-4 flex justify-between items-center mb-4">
-      <Image src={MactiLogo.src} alt="Macti Logo" width={80} height={80} />
+      <Link href="/" aria-label="Ir a la página principal">
+        <Image src={MactiLogo.src} alt="Macti Logo" width={86} height={40} />
+      </Link>
       {authenticated ? (
         <AutenticatedHeader institute={institute} />
       ) : (
