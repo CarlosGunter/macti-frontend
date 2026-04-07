@@ -14,13 +14,7 @@ interface ListEnrolledCoursesProps {
 }
 
 export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesProps) {
-  const { token, authenticated, isLoading, isLoggingOut, login } = useLogin();
-
-  useEffect(() => {
-    if (!isLoading && !authenticated && !isLoggingOut) {
-      void login();
-    }
-  }, [authenticated, isLoading, isLoggingOut, login]);
+  // const { token, authenticated, isLoading, isLoggingOut, login } = useLogin();
 
   const {
     data: enrolledCourses,
@@ -29,15 +23,11 @@ export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesPr
   } = useQuery({
     queryKey: ["enrolledCourses", institute],
     queryFn: async () => {
-      const currentToken = localStorage.getItem(`${institute}_token`);
-      if (!currentToken) throw new Error("No token available");
-
       return fetchEnrolledCourses({
         institute,
-        token: currentToken,
       });
     },
-    enabled: authenticated && !!token && !!institute,
+    enabled: !!institute,
   });
 
   if (isEnrolledCoursesLoading) {
