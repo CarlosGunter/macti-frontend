@@ -25,9 +25,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
           {name}
         </h2>
         <div className="absolute flex gap-2 bottom-7 md:opacity-0 md:translate-y-7 transition-[opacity,translate] md:group-hover:opacity-100 md:group-hover:translate-y-0">
-          <LoginProvider institute={id}>
-            <LoginCardButton />
-          </LoginProvider>
+          <LoginCardButton />
           <button
             type="button"
             className="px-4 py-2 rounded-sm bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer pointer-events-auto"
