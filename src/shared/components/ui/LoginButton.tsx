@@ -1,20 +1,21 @@
 "use client";
 
-import { useLogin } from "@/shared/providers/LoginContext";
+import { getAuthClient } from "@/shared/lib/auth-client";
 import Button from "./Button";
 
-export function LoginButton() {
-  const { authenticated, login, logout } = useLogin();
-
+export function LoginButton({ institute }: { institute: string }) {
   return (
     <Button
       type="button"
       onClick={async () => {
-        console.log(authenticated);
-        authenticated ? logout() : await login();
+        const authClient = getAuthClient(institute);
+        await authClient.signIn.oauth2({
+          providerId: "keycloak",
+          callbackURL: `/${institute}/perfil`,
+        });
       }}
     >
-      {authenticated ? "Logout" : "Login"}
+      Iniciar sesión
     </Button>
   );
 }

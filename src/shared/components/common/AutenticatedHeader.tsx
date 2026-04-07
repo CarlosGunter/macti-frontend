@@ -1,7 +1,8 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
-import { useLogin } from "@/shared/providers/LoginContext";
+import { useRouter } from "next/navigation";
+import type { getAuthClient } from "@/shared/lib/auth-client";
 import { Avatar, AvatarFallback } from "@/shared/shadcn/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,12 +13,25 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/shadcn/components/ui/dropdown-menu";
 
+type AuthSession = NonNullable<
+  ReturnType<ReturnType<typeof getAuthClient>["useSession"]>["data"]
+>;
+
 interface AutenticatedHeaderProps {
   institute: string;
+  authClient: ReturnType<typeof getAuthClient>;
+  session: AuthSession;
+  isPending: boolean;
 }
 
-export function AutenticatedHeader({ institute }: AutenticatedHeaderProps) {
-  const { userInfo, logout } = useLogin();
+export function AutenticatedHeader({
+  institute,
+  authClient,
+  session,
+  isPending,
+}: AutenticatedHeaderProps) {
+  const router = useRouter();
+  const userInfo = session?.user;
   const initials = userInfo?.name
     ? userInfo.name
         .split(" ")
@@ -25,6 +39,8 @@ export function AutenticatedHeader({ institute }: AutenticatedHeaderProps) {
         .slice(0, 2)
         .join("")
     : "?";
+
+  if (isPending) return <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />;
 
   return (
     <DropdownMenu>
@@ -62,7 +78,19 @@ export function AutenticatedHeader({ institute }: AutenticatedHeaderProps) {
           </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout} className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={() =>
+            authClient.signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  router.push(`/${institute}/sign-in`);
+                  router.refresh();
+                },
+              },
+            })
+          }
+          className="cursor-pointer"
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar sesión</span>
         </DropdownMenuItem>
