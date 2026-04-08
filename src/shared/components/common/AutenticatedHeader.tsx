@@ -83,7 +83,7 @@ export function AutenticatedHeader({
             authClient.signOut({
               fetchOptions: {
                 onSuccess: () => {
-                  router.push(`/${institute}/sign-in`);
+                  router.push(`/${institute}`);
                   router.refresh();
                 },
               },
