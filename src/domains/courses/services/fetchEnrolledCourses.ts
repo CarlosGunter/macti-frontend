@@ -18,7 +18,6 @@ export async function fetchEnrolledCourses({ institute }: { institute: string })
   );
 
   const [error, enrolledCourses] = await processFetch(enrolledCoursesPromise);
-  console.log({ enrolledCourses });
   if (error) return [];
 
   const parsedEnrolledCourses = enrolledCoursesSchema.safeParse(enrolledCourses);
