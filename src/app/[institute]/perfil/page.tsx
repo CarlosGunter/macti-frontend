@@ -12,7 +12,7 @@ export default async function PerfilPage({ params }: PerfilPageProps) {
 
   return (
     <div className="grid gap-8">
-      <ProfileCard />
+      <ProfileCard institute={institute} />
 
       <ProfileTabs institute={institute} />
     </div>

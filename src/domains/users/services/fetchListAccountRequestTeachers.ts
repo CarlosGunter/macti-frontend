@@ -1,4 +1,3 @@
-import { apiURLBase } from "@/shared/config/api";
 import { processFetch } from "@/shared/utils/process-fetch";
 import {
   type ListAccountsProps,
@@ -9,7 +8,6 @@ import type { AccountRequestTeacherPayload } from "../types";
 export async function fetchAccountRequests({
   institute,
   status,
-  userToken,
 }: AccountRequestTeacherPayload): Promise<ListAccountsProps> {
   const queryParams = new URLSearchParams({
     institute,
@@ -20,13 +18,12 @@ export async function fetchAccountRequests({
   }
 
   const listAccountRequestPromise = fetch(
-    `${apiURLBase}/auth/list-account-requests/teachers?${queryParams.toString()}`,
+    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/auth/list-account-requests/teachers?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${userToken || ""}`,
       },
     },
   );

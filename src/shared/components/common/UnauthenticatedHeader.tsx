@@ -11,7 +11,7 @@ export function UnauthenticatedHeader({ institute }: UnauthenticatedHeaderProps)
       <Anchor href={`./registro?institute=${institute}`} variant="secondary">
         Registro
       </Anchor>
-      <LoginButton />
+      <LoginButton institute={institute} />
     </div>
   );
 }

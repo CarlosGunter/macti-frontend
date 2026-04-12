@@ -91,3 +91,5 @@ export const institutes: Record<string, Institute> = {
     image: enes_jur,
   },
 };
+
+export type InstitutesType = keyof typeof institutes;

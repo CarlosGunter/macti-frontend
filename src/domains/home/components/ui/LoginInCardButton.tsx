@@ -1,9 +1,10 @@
 "use client";
 
-import { useLogin } from "@/shared/providers/LoginContext";
+import type { InstitutesType } from "@/shared/config/institutes";
+import { getAuthClient } from "@/shared/lib/auth-client";
 
-export function LoginCardButton() {
-  const { authenticated, login, logout } = useLogin();
+export function LoginCardButton({ institute }: { institute: InstitutesType }) {
+  const authClient = getAuthClient(institute);
 
   return (
     <button
@@ -11,10 +12,13 @@ export function LoginCardButton() {
       className="px-4 py-2 rounded-sm bg-black/40 hover:bg-black/70 active:bg-black/90 transition-colors duration-200 cursor-pointer pointer-events-auto"
       onClick={(e) => {
         e.preventDefault();
-        authenticated ? logout() : login();
+        authClient.signIn.oauth2({
+          providerId: "keycloak",
+          callbackURL: `/${institute}/perfil`,
+        });
       }}
     >
-      {authenticated ? "Logout" : "Login"}
+      Iniciar sesión
     </button>
   );
 }

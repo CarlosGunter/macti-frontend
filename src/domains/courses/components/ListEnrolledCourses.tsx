@@ -1,11 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import Banner from "@/shared/components/feedback/Banner";
 import { Anchor } from "@/shared/components/ui/Anchor";
 import { privilegeRoles } from "@/shared/config/rolesMap";
-import { useLogin } from "@/shared/providers/LoginContext";
 import { fetchEnrolledCourses } from "../services/fetchEnrolledCourses";
 import CourseCard from "./ui/CourseCard";
 
@@ -14,14 +12,6 @@ interface ListEnrolledCoursesProps {
 }
 
 export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesProps) {
-  const { token, authenticated, isLoading, isLoggingOut, login } = useLogin();
-
-  useEffect(() => {
-    if (!isLoading && !authenticated && !isLoggingOut) {
-      void login();
-    }
-  }, [authenticated, isLoading, isLoggingOut, login]);
-
   const {
     data: enrolledCourses,
     isLoading: isEnrolledCoursesLoading,
@@ -29,15 +19,11 @@ export default function ListEnrolledCourses({ institute }: ListEnrolledCoursesPr
   } = useQuery({
     queryKey: ["enrolledCourses", institute],
     queryFn: async () => {
-      const currentToken = localStorage.getItem(`${institute}_token`);
-      if (!currentToken) throw new Error("No token available");
-
       return fetchEnrolledCourses({
         institute,
-        token: currentToken,
       });
     },
-    enabled: authenticated && !!token && !!institute,
+    enabled: !!institute,
   });
 
   if (isEnrolledCoursesLoading) {

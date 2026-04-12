@@ -8,10 +8,12 @@ import type { ListAccountsProps } from "../../schemas/listAccountsSchema";
 
 type UserType = ListAccountsProps[number];
 interface UserStatusUpdateCardProps extends UserType {
+  institute: string;
   requestType?: "students" | "teachers";
 }
 
 export default function UserStatusUpdateCard({
+  institute,
   id,
   name,
   last_name,
@@ -45,6 +47,7 @@ export default function UserStatusUpdateCard({
           <Button
             onClick={() => {
               updateStatus({
+                institute,
                 user_id: id,
                 newStatus: USER_STATUSES.REJECTED,
                 onSuccess: invalidateQueries,
@@ -67,6 +70,7 @@ export default function UserStatusUpdateCard({
                 key={userStatus}
                 onClick={() => {
                   updateStatus({
+                    institute,
                     user_id: id,
                     newStatus: userStatus,
                     onSuccess: invalidateQueries,
