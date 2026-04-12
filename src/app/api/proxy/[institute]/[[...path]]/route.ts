@@ -11,15 +11,7 @@ interface RequestParams {
   }>;
 }
 
-export async function GET(req: NextRequest, { params }: RequestParams) {
-  return await proxyHandler(req, params);
-}
-
-export async function POST(req: NextRequest, { params }: RequestParams) {
-  return await proxyHandler(req, params);
-}
-
-async function proxyHandler(req: NextRequest, params: RequestParams["params"]) {
+async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   const { institute, path } = await params;
 
   const auth = getAuthInstance(institute);
@@ -95,3 +87,12 @@ async function proxyHandler(req: NextRequest, params: RequestParams["params"]) {
 
   return NextResponse.json(responseData.data, { status: response.data.status });
 }
+
+export {
+  proxyHandler as POST,
+  proxyHandler as GET,
+  proxyHandler as PUT,
+  proxyHandler as DELETE,
+  proxyHandler as PATCH,
+  proxyHandler as OPTIONS,
+};
