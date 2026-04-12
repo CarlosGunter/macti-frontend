@@ -1,14 +1,13 @@
 "use client";
 
-import { useLogin } from "@/shared/providers/LoginContext";
+import { getAuthClient } from "@/shared/lib/auth-client";
 
 export default function UserDetailsBanner({ institute }: { institute: string }) {
-  const { userInfo } = useLogin();
+  const authClient = getAuthClient(institute);
+  const session = authClient.useSession();
+  const userInfo = session?.data?.user;
 
-  const preferredUsername = (
-    userInfo as typeof userInfo & { preferred_username?: string }
-  )?.preferred_username;
-  const identifier = preferredUsername || userInfo?.username || "Usuario pendiente";
+  const identifier = userInfo?.name || "Usuario pendiente";
   const email = userInfo?.email || "Correo no disponible";
   const isVerified = Boolean(userInfo?.email);
 

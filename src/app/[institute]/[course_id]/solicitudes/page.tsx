@@ -1,5 +1,5 @@
+import { fetchCoursesServer } from "@/domains/courses/services/fetchCoursesServer";
 import AccountRequestList from "@/domains/users/components/ListAccountRequest";
-import { fetchCourses } from "@/shared/services/fetchCourses";
 
 interface SolicitudesPageProps {
   params: Promise<{
@@ -10,15 +10,18 @@ interface SolicitudesPageProps {
 
 export default async function SolicitudesPage({ params }: SolicitudesPageProps) {
   const { course_id, institute } = await params;
-  const instituteData =
-    (await fetchCourses({ institute, ids: [parseInt(course_id, 10)] })) ?? [];
+  const currentCourse =
+    (
+      await fetchCoursesServer({
+        institute,
+        ids: [parseInt(course_id, 10)],
+      })
+    )?.[0] ?? null;
 
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="text-2xl font-bold">
-          {instituteData[0]?.fullname ?? "Sin nombre"}
-        </h1>
+        <h1 className="text-2xl font-bold">{currentCourse?.fullname ?? "Sin nombre"}</h1>
         <h2 className="text-xl">Solicitudes de cuenta</h2>
       </div>
 

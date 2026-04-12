@@ -1,40 +1,30 @@
+import type { InstitutesType } from "./institutes";
+
 interface KeycloakConfig {
-  url: string;
-  realm: string;
   clientId: string;
+  clientSecret: string;
+  issuer: string;
 }
 
-export const keycloakConfigs: Record<string, KeycloakConfig> = {
+export const keycloakConfigs: Record<InstitutesType, KeycloakConfig> = {
   principal: {
-    url: "https://sso.lamod.unam.mx/auth/",
-    realm: "macti3dev",
-    clientId:
-      process.env.NEXT_PUBLIC_NODE_ENV === "development"
-        ? "local-next-login"
-        : "next-login",
+    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientSecret: process.env.PRINCIPAL_KEYCLOAK_CLIENT_SECRET || "",
+    issuer: process.env.PRINCIPAL_KEYCLOAK_ISSUER || "",
   },
   cuantico: {
-    url: "https://keycloakmacti1.duckdns.org:8443/",
-    realm: "macti4dev",
-    clientId:
-      process.env.NEXT_PUBLIC_NODE_ENV === "development"
-        ? "local-next-login"
-        : "next-login",
+    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientSecret: process.env.CUANTICO_KEYCLOAK_CLIENT_SECRET || "",
+    issuer: process.env.CUANTICO_KEYCLOAK_ISSUER || "",
   },
   ciencias: {
-    url: "https://keycloakmacti2.duckdns.org:8444/",
-    realm: "macti4dev",
-    clientId:
-      process.env.NEXT_PUBLIC_NODE_ENV === "development"
-        ? "local-next-login"
-        : "next-login",
+    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientSecret: process.env.CIENCIAS_KEYCLOAK_CLIENT_SECRET || "",
+    issuer: process.env.CIENCIAS_KEYCLOAK_ISSUER || "",
   },
   ingenieria: {
-    url: "https://keycloakmacti3.duckdns.org:8445/",
-    realm: "macti4dev",
-    clientId:
-      process.env.NEXT_PUBLIC_NODE_ENV === "development"
-        ? "local-next-login"
-        : "next-login",
+    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientSecret: process.env.INGENIERIA_KEYCLOAK_CLIENT_SECRET || "",
+    issuer: process.env.INGENIERIA_KEYCLOAK_ISSUER || "",
   },
 };

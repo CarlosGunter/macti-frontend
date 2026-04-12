@@ -1,10 +1,9 @@
-import { apiURLBase } from "@/shared/config/api";
 import { processFetch } from "@/shared/utils/process-fetch";
 import { createAccountResponseSchema } from "../schemas/createAccountSchema";
 
 export async function fetchAccountInfo(token: string) {
   const verifyTokenPromise = fetch(
-    `${apiURLBase}/auth/user-info-by-token?token=${token}`,
+    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/auth/user-info-by-token?token=${token}`,
     {
       method: "GET",
       cache: "no-store",

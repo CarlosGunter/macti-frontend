@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import Form from "next/form";
 import { useActionState, useState } from "react";
 import { institutes } from "@/shared/config/institutes";
-import { fetchCourses } from "@/shared/services/fetchCourses";
 import { Button } from "@/shared/shadcn/components/ui/button";
 import {
   Field,
@@ -26,6 +25,7 @@ import {
   SelectValue,
 } from "@/shared/shadcn/components/ui/select";
 import { accountRequestAction } from "../actions/accountRequestAction";
+import { fetchCoursesClient } from "../services/fetchCoursesClient";
 
 export default function AccountRequestForm({ institute }: { institute: string }) {
   const [state, formAction, isPending] = useActionState(accountRequestAction, null);
@@ -41,7 +41,7 @@ export default function AccountRequestForm({ institute }: { institute: string })
   } = useQuery({
     queryKey: ["courses", selectedInstitute],
     queryFn: async () => {
-      const result = await fetchCourses({ institute: selectedInstitute });
+      const result = await fetchCoursesClient({ institute: selectedInstitute });
       if (!result) throw new Error("No se pudieron cargar los cursos");
       return result;
     },

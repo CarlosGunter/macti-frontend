@@ -1,14 +1,21 @@
 "use client";
 
-import { useLogin } from "@/shared/providers/LoginContext";
+import type { InstitutesType } from "@/shared/config/institutes";
+import { getAuthClient } from "@/shared/lib/auth-client";
 
-export function ProfileCard() {
-  const { userInfo } = useLogin();
+interface ProfileCardProps {
+  institute: InstitutesType;
+}
+
+export function ProfileCard({ institute }: ProfileCardProps) {
+  const authClient = getAuthClient(institute);
+  const { data: session, isPending } = authClient.useSession();
+  const userInfo = session?.user;
 
   const preferredUsername = (
     userInfo as typeof userInfo & { preferred_username?: string }
   )?.preferred_username;
-  const identifier = preferredUsername || userInfo?.username || "Usuario pendiente";
+  const identifier = preferredUsername || userInfo?.name || "Usuario pendiente";
   const displayName = userInfo?.name || identifier || "Usuario sin nombre";
   const email = userInfo?.email || "Correo no disponible";
   const initials =

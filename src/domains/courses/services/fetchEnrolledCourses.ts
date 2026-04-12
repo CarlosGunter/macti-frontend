@@ -1,26 +1,18 @@
-import { apiURLBase } from "@/shared/config/api";
 import { processFetch } from "@/shared/utils/process-fetch";
 import { enrolledCoursesSchema } from "../schemas/enrolledCoursesSchema";
 
-export async function fetchEnrolledCourses({
-  institute,
-  token,
-}: {
-  institute: string;
-  token: string;
-}) {
+export async function fetchEnrolledCourses({ institute }: { institute: string }) {
   const queryParams = new URLSearchParams({
     institute,
   });
 
   const enrolledCoursesPromise = fetch(
-    `${apiURLBase}/courses/enrolled?${queryParams.toString()}`,
+    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/courses/enrolled?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     },
   );
