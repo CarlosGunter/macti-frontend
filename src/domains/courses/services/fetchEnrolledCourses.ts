@@ -7,7 +7,7 @@ export async function fetchEnrolledCourses({ institute }: { institute: string })
   });
 
   const enrolledCoursesPromise = fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/${institute}/courses/enrolled?${queryParams.toString()}`,
+    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/courses/enrolled?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
