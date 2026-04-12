@@ -1,4 +1,3 @@
-import { apiURLBase } from "../config/api";
 import { listCoursesSchema } from "../schemas/listCoursesShema";
 import type { ListCoursesPayload } from "../types/listCoursesPayload";
 import { processFetch } from "../utils/process-fetch";
@@ -11,11 +10,14 @@ export async function fetchCourses({ institute, ids }: ListCoursesPayload) {
     });
   }
 
-  const listCoursesPromise = fetch(`${apiURLBase}/courses?${queryParams.toString()}`, {
-    method: "GET",
-    next: { revalidate: 300 },
-    headers: { "Content-Type": "application/json" },
-  });
+  const listCoursesPromise = fetch(
+    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/courses?${queryParams.toString()}`,
+    {
+      method: "GET",
+      next: { revalidate: 300 },
+      headers: { "Content-Type": "application/json" },
+    },
+  );
 
   const [error, listCourses] = await processFetch(listCoursesPromise);
   if (error) return undefined;
