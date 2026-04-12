@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Banner from "@/shared/components/feedback/Banner";
 import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
-import { fetchAccountRequests } from "../services/fetchListAccountRquestTeachers";
+import { fetchAccountRequests } from "../services/fetchListAccountRequestTeachers";
 import { useFilterStore } from "../stores/filterStore";
 import type { UserStatus } from "../types";
 import UserStatusUpdateCard from "./ui/UserAccountRequestCard";
