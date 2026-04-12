@@ -1,5 +1,5 @@
 import { Anchor } from "@/shared/components/ui/Anchor";
-import { fetchCourses } from "@/shared/services/fetchCourses";
+import { fetchCoursesServer } from "../services/fetchCoursesServer";
 import CourseCard from "./ui/CourseCard";
 
 interface ListInstituteCoursesProps {
@@ -9,7 +9,7 @@ interface ListInstituteCoursesProps {
 export default async function ListInstituteCourses({
   institute,
 }: ListInstituteCoursesProps) {
-  const courses = await fetchCourses({ institute });
+  const courses = await fetchCoursesServer({ institute });
 
   if (!courses || courses.length === 0) {
     return (

@@ -1,8 +1,12 @@
-import { listCoursesSchema } from "../schemas/listCoursesShema";
-import type { ListCoursesPayload } from "../types/listCoursesPayload";
-import { processFetch } from "../utils/process-fetch";
+import { processFetch } from "@/shared/utils/process-fetch";
+import { listCoursesSchema } from "../schemas/listCoursesSchema";
 
-export async function fetchCourses({ institute, ids }: ListCoursesPayload) {
+interface FetchCoursesServerPayload {
+  institute: string;
+  ids?: number[];
+}
+
+export async function fetchCoursesServer({ institute, ids }: FetchCoursesServerPayload) {
   const queryParams = new URLSearchParams({ institute });
   if (ids && Array.isArray(ids)) {
     ids.forEach((id) => {
