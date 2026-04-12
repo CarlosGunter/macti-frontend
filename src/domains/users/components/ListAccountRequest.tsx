@@ -3,7 +3,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 import Banner from "@/shared/components/feedback/Banner";
-import { useLogin } from "@/shared/providers/LoginContext";
 import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
 import { fetchAccountRequests } from "../services/fetchListAccountRequest";
 import { useFilterStore } from "../stores/filterStore";
@@ -20,7 +19,6 @@ export default function AccountRequestList({
   institute,
 }: AccountRequestListProps) {
   const { statusFilter, setStatusFilter } = useFilterStore();
-  const { token, authenticated, isLoading: isAuthLoading } = useLogin();
 
   const {
     data: accountRequests,
@@ -29,29 +27,16 @@ export default function AccountRequestList({
   } = useQuery({
     queryKey: ["accountRequests", course_id, institute, statusFilter],
     queryFn: async () => {
-      const currentToken = localStorage.getItem(`${institute}_token`);
-      if (!currentToken) {
-        throw new Error("No token available");
-      }
       return fetchAccountRequests({
         course_id,
         institute,
         status: statusFilter || undefined,
-        userToken: currentToken,
       });
     },
-    enabled: authenticated && !!token && !!institute,
+    enabled: !!institute,
   });
 
-  // Esperar a que termine de cargar la autenticación antes de decidir
-  if (isAuthLoading) {
-    return <Banner message="Verificando autenticación..." />;
-  }
-
-  // Solo ejecutar notFound después de confirmar que no hay autenticación
-  if (!authenticated || !token || !institute) {
-    notFound();
-  }
+  if (!institute) notFound();
 
   if (isLoading) {
     return <Banner message="Cargando solicitudes..." />;
@@ -85,6 +70,7 @@ export default function AccountRequestList({
       {accountRequests?.map((user) => (
         <UserStatusUpdateCard
           key={user.id}
+          institute={institute}
           id={user.id}
           name={user.name}
           last_name={user.last_name}
