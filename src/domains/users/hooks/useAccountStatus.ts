@@ -10,9 +10,14 @@ export function useAccountStatus() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const updateStatus = ({ user_id, newStatus, onSuccess }: AccountStatusHandler) => {
+  const updateStatus = ({
+    institute,
+    user_id,
+    newStatus,
+    onSuccess,
+  }: AccountStatusHandler) => {
     startTransition(async () => {
-      const result = await updateAccountStatus({ user_id, newStatus });
+      const result = await updateAccountStatus({ institute, user_id, newStatus });
       if (!result) {
         setError("Error al actualizar el estado del usuario");
         return;
