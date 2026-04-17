@@ -12,62 +12,75 @@ interface RequestParams {
   }>;
 }
 
-async function proxyHandler(req: NextRequest, { params }: RequestParams) {
-  const { institute, path } = await params;
+type AuthInstance = ReturnType<typeof getAuthInstance>;
 
-  const auth = getAuthInstance(institute);
+function getTargetPath(path?: string[]) {
+  return path?.join("/") || "";
+}
+
+async function tryHandleBetterAuthRoute(req: NextRequest, auth: AuthInstance) {
   const betterAuthHandlers = toNextJsHandler(auth);
-
   const betterAuthHandler =
     betterAuthHandlers[req.method as keyof typeof betterAuthHandlers];
 
-  if (betterAuthHandler) {
-    const betterAuthResponse = await betterAuthHandler(req.clone());
-
-    // Better Auth responde 404 cuando la ruta no pertenece a su router.
-    if (betterAuthResponse.status !== 404) {
-      return betterAuthResponse;
-    }
+  if (!betterAuthHandler) {
+    return null;
   }
 
+  const betterAuthResponse = await betterAuthHandler(req.clone());
+
+  if (betterAuthResponse.status !== 404) {
+    return betterAuthResponse;
+  }
+
+  return null;
+}
+
+async function getSessionWithAccessToken(auth: AuthInstance) {
   const incomingHeaders = await NextHeaders();
   const sessionData = await auth.api.getSession({ headers: incomingHeaders });
-  const keycloakAccessToken = sessionData?.session
-    ? await auth.api
-        .getAccessToken({
-          headers: incomingHeaders,
-          body: { providerId: "keycloak" },
-        })
-        .then((tokens) => tokens?.accessToken)
-        .catch(() => undefined)
-    : undefined;
 
-  const session = sessionData
-    ? {
-        ...sessionData,
-        session: {
-          ...sessionData.session,
-          token: keycloakAccessToken,
-        },
-      }
-    : null;
-
-  const targetPath = path?.join("/") || "";
-  const searchParams = req.nextUrl.searchParams.toString();
-  const resolvedApiEndpoint =
-    process.env.API_URL_BASE +
-    "/" +
-    targetPath +
-    (searchParams ? `?${searchParams}` : "");
-
-  const requestHeaders: Record<string, string> = { "Content-Type": "application/json" };
-  if (session?.session?.token) {
-    requestHeaders.Authorization = `Bearer ${session.session.token}`;
+  if (!sessionData?.session) {
+    return null;
   }
 
-  const requestPromise = fetch(resolvedApiEndpoint, {
+  const keycloakAccessToken = await auth.api
+    .getAccessToken({
+      headers: incomingHeaders,
+      body: { providerId: "keycloak" },
+    })
+    .then((tokens) => tokens?.accessToken)
+    .catch(() => undefined);
+
+  return {
+    ...sessionData,
+    session: {
+      ...sessionData.session,
+      token: keycloakAccessToken,
+    },
+  };
+}
+
+function buildResolvedApiEndpoint(req: NextRequest, targetPath: string) {
+  const searchParams = req.nextUrl.searchParams.toString();
+
+  return `${process.env.API_URL_BASE}/${targetPath}${searchParams ? `?${searchParams}` : ""}`;
+}
+
+function buildRequestHeaders(token?: string) {
+  const requestHeaders: Record<string, string> = { "Content-Type": "application/json" };
+
+  if (token) {
+    requestHeaders.Authorization = `Bearer ${token}`;
+  }
+
+  return requestHeaders;
+}
+
+async function proxyToApi(req: NextRequest, endpoint: string, token?: string) {
+  const requestPromise = fetch(endpoint, {
     method: req.method,
-    headers: requestHeaders,
+    headers: buildRequestHeaders(token),
     body: req.method !== "GET" ? await req.text() : undefined,
   });
 
@@ -88,6 +101,22 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   }
 
   return NextResponse.json(responseData.data, { status: response.data.status });
+}
+
+async function proxyHandler(req: NextRequest, { params }: RequestParams) {
+  const { institute, path } = await params;
+
+  const auth = getAuthInstance(institute);
+  const betterAuthResponse = await tryHandleBetterAuthRoute(req, auth);
+  if (betterAuthResponse) {
+    return betterAuthResponse;
+  }
+
+  const session = await getSessionWithAccessToken(auth);
+  const targetPath = getTargetPath(path);
+  const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
+
+  return proxyToApi(req, resolvedApiEndpoint, session?.session?.token);
 }
 
 export {
