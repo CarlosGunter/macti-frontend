@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import CreateAccount from "@/domains/auth/components/CreateAccoutForm";
-import { fetchAccountInfo } from "@/domains/auth/services/fetchAccountInfo";
+import CreateAccount from "@/domains/register/components/CreateAccoutForm";
+import { fetchAccountInfo } from "@/domains/register/services/fetchAccountInfo";
 
 interface ConfirmacionPageProps {
   searchParams: {
