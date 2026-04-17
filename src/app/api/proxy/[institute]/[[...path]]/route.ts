@@ -1,3 +1,4 @@
+import { toNextJsHandler } from "better-auth/next-js";
 import { headers as NextHeaders } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import type { InstitutesType } from "@/shared/config/institutes";
@@ -15,21 +16,21 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   const { institute, path } = await params;
 
   const auth = getAuthInstance(institute);
-  const targetPath = path?.join("/") || "";
-  const incomingHeaders = await NextHeaders();
+  const betterAuthHandlers = toNextJsHandler(auth);
 
-  // Si es ruta de auth → delegar a Better Auth
-  if (
-    targetPath.startsWith("sign-in") ||
-    targetPath.startsWith("sign-out") ||
-    targetPath.startsWith("session") ||
-    targetPath.startsWith("oauth2") ||
-    targetPath.startsWith("callback") ||
-    targetPath.startsWith("get-session")
-  ) {
-    return auth.handler(req);
+  const betterAuthHandler =
+    betterAuthHandlers[req.method as keyof typeof betterAuthHandlers];
+
+  if (betterAuthHandler) {
+    const betterAuthResponse = await betterAuthHandler(req.clone());
+
+    // Better Auth responde 404 cuando la ruta no pertenece a su router.
+    if (betterAuthResponse.status !== 404) {
+      return betterAuthResponse;
+    }
   }
 
+  const incomingHeaders = await NextHeaders();
   const sessionData = await auth.api.getSession({ headers: incomingHeaders });
   const keycloakAccessToken = sessionData?.session
     ? await auth.api
@@ -51,6 +52,7 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
       }
     : null;
 
+  const targetPath = path?.join("/") || "";
   const searchParams = req.nextUrl.searchParams.toString();
   const resolvedApiEndpoint =
     process.env.API_URL_BASE +
