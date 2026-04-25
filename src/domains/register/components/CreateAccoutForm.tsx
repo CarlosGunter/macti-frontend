@@ -1,6 +1,7 @@
 "use client";
 
 import Form from "next/form";
+import { useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
 import VisibilityIcon from "@/assets/svg/visibility";
 import VisibilityOffIcon from "@/assets/svg/visibilityOff";
@@ -20,6 +21,8 @@ import { createAccountAction } from "../actions/createAccountAction";
 import type { CreateAccountResponse } from "../schemas/createAccountSchema";
 
 export default function CreateAccount({ userData }: { userData: CreateAccountResponse }) {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const [state, formAction, isPending] = useActionState(createAccountAction, null);
 
   const [password, setPassword] = useState("");
@@ -39,6 +42,7 @@ export default function CreateAccount({ userData }: { userData: CreateAccountRes
           </FieldDescription>
 
           <input type="hidden" name="user_id" defaultValue={userData.id} />
+          <input type="hidden" name="token" defaultValue={token || ""} />
 
           <FieldGroup>
             <Field>
