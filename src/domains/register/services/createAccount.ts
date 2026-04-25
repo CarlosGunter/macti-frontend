@@ -3,7 +3,7 @@ import type { CreateAccountPayload } from "../schemas/createAccountSchema";
 
 export async function CreateAccount(accountCreationData: CreateAccountPayload) {
   const createAccountPromise = fetch(
-    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/auth/create-account`,
+    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/register/create-account`,
     {
       method: "POST",
       cache: "no-store",
