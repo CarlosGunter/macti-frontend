@@ -7,7 +7,7 @@ export async function updateAccountStatus({
   newStatus,
 }: AccountStatusPayload) {
   const submitNewStatusPromise = fetch(
-    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/auth/change-status`,
+    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/register/change-status`,
     {
       method: "PATCH",
       cache: "no-store",

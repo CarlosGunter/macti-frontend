@@ -7,7 +7,7 @@ import type { AccountRequestPayload } from "../schemas/accountRequestSchema";
  */
 export async function createAccountRequest(userRequestData: AccountRequestPayload) {
   const accountRequestPromise = fetch(
-    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/auth/request-account/student`,
+    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/register/request-account/student`,
     {
       method: "POST",
       cache: "no-store",
