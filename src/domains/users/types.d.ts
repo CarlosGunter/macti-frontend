@@ -1,6 +1,7 @@
-import type { USER_STATUSES } from "./constants";
+import type { USER_ROLES, USER_STATUSES } from "./constants";
 
 export type UserStatus = (typeof USER_STATUSES)[keyof typeof USER_STATUSES];
+export type InternalRoleType = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
 export type AccountRequestPayload = {
   course_id: string;
@@ -8,13 +9,14 @@ export type AccountRequestPayload = {
   status?: UserStatus;
 };
 
-export type AccountRequestTeacherPayload = {
+export type CourseRequestsTeachersPayload = {
   institute: string;
   status?: UserStatus;
 };
 
-export type AccountStatusPayload = {
+export type UpdateRequestStatusPayload = {
   institute: string;
-  user_id: number;
+  request_id: number;
   newStatus: UserStatus;
+  role: InternalRoleType;
 };

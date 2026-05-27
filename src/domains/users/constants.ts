@@ -9,6 +9,7 @@ export const STATUS_BTN_LABELS = Object.freeze({
   pending: "Pendiente",
   approved: "Aprobar",
   rejected: "Rechazar",
+  created: "Eliminar",
 });
 
 export const STATUS_BADGE_LABELS = Object.freeze({
@@ -16,4 +17,9 @@ export const STATUS_BADGE_LABELS = Object.freeze({
   approved: "Aprobada",
   rejected: "Rechazada",
   created: "Creada",
+});
+
+export const USER_ROLES = Object.freeze({
+  STUDENT: "alumno",
+  TEACHER: "docente",
 });

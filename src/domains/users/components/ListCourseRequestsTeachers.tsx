@@ -3,28 +3,28 @@
 import { useQuery } from "@tanstack/react-query";
 import Banner from "@/shared/components/feedback/Banner";
 import { STATUS_BADGE_LABELS, USER_STATUSES } from "../constants";
-import { fetchAccountRequests } from "../services/fetchListAccountRequestTeachers";
+import { fetchCourseRequestsTeachers } from "../services/fetchCourseRequestsTeachers";
 import { useFilterStore } from "../stores/filterStore";
 import type { UserStatus } from "../types";
-import UserStatusUpdateCard from "./ui/UserAccountRequestCard";
+import TeacherCourseRequestCard from "./ui/TeacherCourseRequestCard";
 
-interface AccountRequestTeachersListProps {
+interface ListCourseRequestsTeachersProps {
   institute: string;
 }
 
-export default function AccountRequestTeachersList({
+export default function ListCourseRequestsTeachers({
   institute,
-}: AccountRequestTeachersListProps) {
+}: ListCourseRequestsTeachersProps) {
   const { statusFilter, setStatusFilter } = useFilterStore();
 
   const {
-    data: accountRequests,
+    data: courseRequests,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["accountRequestsTeachers", institute, statusFilter],
+    queryKey: ["courseRequestsTeachers", institute, statusFilter],
     queryFn: async () => {
-      return fetchAccountRequests({
+      return fetchCourseRequestsTeachers({
         institute,
         status: statusFilter || undefined,
       });
@@ -44,7 +44,7 @@ export default function AccountRequestTeachersList({
     <section className="grid gap-4">
       <div className="flex items-center justify-end gap-2 h-full">
         <label htmlFor="status-filter" className="text-sm font-medium">
-          Filtrar por estado:
+          Filtrar por estado del curso:
         </label>
         <select
           id="status-filter"
@@ -61,16 +61,10 @@ export default function AccountRequestTeachersList({
         </select>
       </div>
 
-      {accountRequests?.map((user) => (
-        <UserStatusUpdateCard
-          key={user.id}
-          institute={institute}
-          id={user.id}
-          name={user.name}
-          last_name={user.last_name}
-          email={user.email}
-          status={user.status}
-          requestType="teachers"
+      {courseRequests?.map((request) => (
+        <TeacherCourseRequestCard
+          key={`${request.user.id}-${request.courses.id}`}
+          request={request}
         />
       ))}
     </section>
