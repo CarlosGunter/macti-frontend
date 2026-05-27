@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ListEnrolledCourses from "@/domains/courses/components/ListEnrolledCourses";
-import AccountRequestTeachersList from "@/domains/users/components/ListAccountRequestTeachers";
+import ListCourseRequestsTeachers from "@/domains/users/components/ListCourseRequestsTeachers";
 
 type TabType = "courses" | "teachers";
 
@@ -37,14 +37,14 @@ export default function ProfileTabs({ institute }: ProfileTabsProps) {
               : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           }`}
         >
-          Solicitudes de profesores
+          Solicitudes de cursos de profesores
         </button>
       </div>
 
       {/* Tab Content */}
       <div className="mt-4">
         {activeTab === "courses" && <ListEnrolledCourses institute={institute} />}
-        {activeTab === "teachers" && <AccountRequestTeachersList institute={institute} />}
+        {activeTab === "teachers" && <ListCourseRequestsTeachers institute={institute} />}
       </div>
     </div>
   );

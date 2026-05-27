@@ -1,5 +1,5 @@
 import { fetchCoursesServer } from "@/domains/courses/services/fetchCoursesServer";
-import AccountRequestList from "@/domains/users/components/ListAccountRequest";
+import ListCourseRequestsStudent from "@/domains/users/components/ListCourseRequestsStudents";
 
 interface SolicitudesPageProps {
   params: Promise<{
@@ -25,7 +25,7 @@ export default async function SolicitudesPage({ params }: SolicitudesPageProps) 
         <h2 className="text-xl">Solicitudes de cuenta</h2>
       </div>
 
-      <AccountRequestList course_id={course_id} institute={institute} />
+      <ListCourseRequestsStudent course_id={course_id} institute={institute} />
     </div>
   );
 }
