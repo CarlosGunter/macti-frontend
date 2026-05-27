@@ -13,7 +13,7 @@ export async function updateRequestStatus({
       method: "PATCH",
       cache: "no-store",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ request_id: request_id, status: newStatus, institute }),
+      body: JSON.stringify({ request_id, new_status: newStatus, institute }),
     },
   );
 
