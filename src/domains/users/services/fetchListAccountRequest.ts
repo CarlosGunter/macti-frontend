@@ -2,7 +2,7 @@ import { processFetch } from "@/shared/utils/process-fetch";
 import {
   type ListAccountsProps,
   listAccountsSchema,
-} from "../schemas/listAccountsSchema";
+} from "../schemas/listRequestsStudentSchema";
 import type { AccountRequestPayload } from "../types";
 
 export async function fetchAccountRequests({

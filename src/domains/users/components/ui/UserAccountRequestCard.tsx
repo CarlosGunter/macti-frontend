@@ -3,8 +3,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/shared/components/ui/Button";
 import { STATUS_BADGE_LABELS, STATUS_BTN_LABELS, USER_STATUSES } from "../../constants";
-import { useAccountStatus } from "../../hooks/useAccountStatus";
-import type { ListAccountsProps } from "../../schemas/listAccountsSchema";
+import { useRequestStatus } from "../../hooks/useRequestStatus";
+import type { ListAccountsProps } from "../../schemas/listRequestsStudentSchema";
 
 type UserType = ListAccountsProps[number];
 interface UserStatusUpdateCardProps extends UserType {
@@ -22,7 +22,7 @@ export default function UserStatusUpdateCard({
   requestType = "students",
 }: UserStatusUpdateCardProps) {
   const queryClient = useQueryClient();
-  const { isPending, updateStatus } = useAccountStatus();
+  const { isPending, updateStatus } = useRequestStatus();
 
   const invalidateQueries = () => {
     const queryKey =
