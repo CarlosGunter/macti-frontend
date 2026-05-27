@@ -1,10 +1,11 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { useId } from "react";
 import Button from "@/shared/components/ui/Button";
-import { STATUS_BTN_LABELS, USER_ROLES, USER_STATUSES } from "../../constants";
+import { STATUS_BTN_LABELS, USER_STATUSES } from "../../constants";
 import { useRequestStatus } from "../../hooks/useRequestStatus";
-import type { UserStatus } from "../../types";
+import type { InternalRoleType, UserStatus } from "../../types";
 
 type AllowedAction = {
   status: UserStatus;
@@ -24,33 +25,40 @@ const ALLOWED_TRANSITIONS: Record<UserStatus, AllowedAction[]> = {
   [USER_STATUSES.CREATED]: [{ status: USER_STATUSES.REJECTED, variant: "danger" }],
 };
 
-interface TeacherCourseRequestStatusActionsProps {
+interface CourseRequestStatusActionsProps {
   institute: string;
   requestId: number;
   currentStatus: UserStatus;
+  role: InternalRoleType;
+  queryKey: readonly [string, ...unknown[]];
+  title?: string;
 }
 
-export default function TeacherCourseRequestStatusActions({
+export default function CourseRequestStatusActions({
   institute,
   requestId,
   currentStatus,
-}: TeacherCourseRequestStatusActionsProps) {
+  role,
+  queryKey,
+  title = "Acciones",
+}: CourseRequestStatusActionsProps) {
   const queryClient = useQueryClient();
   const { isPending, updateStatus, error } = useRequestStatus();
+  const actionsId = useId();
 
   const actions = ALLOWED_TRANSITIONS[currentStatus];
 
   const invalidateRequests = () => {
-    queryClient.invalidateQueries({ queryKey: ["courseRequestsTeachers", institute] });
+    queryClient.invalidateQueries({ queryKey });
   };
 
   return (
-    <section aria-labelledby="teacher-request-actions" className="grid gap-2">
+    <section aria-labelledby={actionsId} className="grid gap-2">
       <h4
-        id="teacher-request-actions"
+        id={actionsId}
         className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-card-foreground/45"
       >
-        Acciones
+        {title}
       </h4>
 
       <ul
@@ -65,7 +73,7 @@ export default function TeacherCourseRequestStatusActions({
                   institute,
                   request_id: requestId,
                   newStatus: status,
-                  role: USER_ROLES.TEACHER,
+                  role,
                   onSuccess: invalidateRequests,
                 });
               }}

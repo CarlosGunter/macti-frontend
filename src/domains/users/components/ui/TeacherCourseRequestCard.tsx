@@ -1,7 +1,7 @@
 import { BookOpen, Users } from "lucide-react";
-import { STATUS_BADGE_LABELS } from "../../constants";
+import { STATUS_BADGE_LABELS, USER_ROLES } from "../../constants";
 import type { CourseRequestsTeachersProps } from "../../schemas/courseRequestsTeachersSchema";
-import TeacherCourseRequestStatusActions from "./TeacherCourseRequestStatusActions";
+import CourseRequestStatusActions from "./CourseRequestStatusActions";
 
 type TeacherCourseRequest = CourseRequestsTeachersProps[number];
 
@@ -64,10 +64,12 @@ export default function TeacherCourseRequestCard({
           ))}
         </ul>
 
-        <TeacherCourseRequestStatusActions
+        <CourseRequestStatusActions
           institute={user.institute}
           requestId={courses.id}
           currentStatus={courses.status}
+          role={USER_ROLES.TEACHER}
+          queryKey={["courseRequestsTeachers", user.institute]}
         />
       </div>
     </article>
