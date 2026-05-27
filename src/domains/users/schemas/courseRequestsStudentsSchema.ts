@@ -1,7 +1,7 @@
 import z from "zod";
 import { USER_STATUSES } from "@/domains/users/constants";
 
-export const listAccountsSchema = z.array(
+export const courseRequestsStudentsSchema = z.array(
   z.object({
     id: z.int(),
     name: z.string().min(1),
@@ -11,4 +11,5 @@ export const listAccountsSchema = z.array(
   }),
 );
 
-export interface ListAccountsProps extends z.infer<typeof listAccountsSchema> {}
+export type CourseRequestsStudentsProps = z.infer<typeof courseRequestsStudentsSchema>;
+export type CourseRequestStudent = CourseRequestsStudentsProps[number];

@@ -1,4 +1,4 @@
-import AccountRequestTeacherForm from "@/domains/auth/components/AccountRequestTeacherForm";
+import AccountRequestTeacherForm from "@/domains/register/components/AccountRequestTeacherForm";
 
 export default function AccountRequestTeacher() {
   return (

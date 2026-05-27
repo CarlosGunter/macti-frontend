@@ -5,7 +5,7 @@ export async function createAccountRequestTeacher(
   userRequestData: AccountRequestTeacherPayload,
 ) {
   const accountRequestPromise = fetch(
-    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/auth/request-account/teacher`,
+    `${process.env.NEXT_PUBLIC_EXTERNAL_API_URL}/register/request-account/teacher`,
     {
       method: "POST",
       cache: "no-store",

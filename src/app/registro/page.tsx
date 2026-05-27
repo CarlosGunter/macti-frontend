@@ -1,4 +1,4 @@
-import AccountRequestForm from "@/domains/auth/components/AccountRequestForm";
+import AccountRequestForm from "@/domains/register/components/AccountRequestForm";
 import { QueryContextProvider } from "@/shared/providers/QueryProvider";
 
 interface RegistroPageProps {

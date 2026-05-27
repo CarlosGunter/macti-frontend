@@ -1,28 +1,38 @@
 import { useState, useTransition } from "react";
-import { updateAccountStatus } from "../services/updateAccountStatus";
-import type { AccountStatusPayload } from "../types";
+import { updateRequestStatus } from "../services/updateAccountStatus";
+import type { UpdateRequestStatusPayload } from "../types";
 
-interface AccountStatusHandler extends AccountStatusPayload {
+interface UpdateRequestStatusHandler extends UpdateRequestStatusPayload {
   onSuccess: () => void;
 }
 
-export function useAccountStatus() {
+export function useRequestStatus() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const updateStatus = ({
     institute,
-    user_id,
+    request_id,
     newStatus,
+    role,
     onSuccess,
-  }: AccountStatusHandler) => {
+  }: UpdateRequestStatusHandler) => {
+    setError(null);
+
     startTransition(async () => {
-      const result = await updateAccountStatus({ institute, user_id, newStatus });
+      const result = await updateRequestStatus({
+        institute,
+        request_id,
+        newStatus,
+        role,
+      });
+
       if (!result) {
         setError("Error al actualizar el estado del usuario");
         return;
       }
 
+      setError(null);
       onSuccess();
     });
   };

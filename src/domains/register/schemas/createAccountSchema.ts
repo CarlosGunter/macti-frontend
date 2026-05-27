@@ -7,6 +7,7 @@ export const createAccountSchema = z.object({
     .min(0, "El ID debe tener al menos 7 dígitos.")
     .max(99999999, "El ID no puede tener más de 8 dígitos."),
   new_password: z.string().min(1, "La contraseña es requerida."),
+  token: z.uuidv4("El token no es válido."),
 });
 export type CreateAccountPayload = z.infer<typeof createAccountSchema>;
 
