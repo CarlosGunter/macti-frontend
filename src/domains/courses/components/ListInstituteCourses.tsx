@@ -1,9 +1,11 @@
 import { Anchor } from "@/shared/components/ui/Anchor";
+import type { InstitutesType } from "@/shared/config/institutes";
 import { fetchCoursesServer } from "../services/fetchCoursesServer";
 import CourseCard from "./ui/CourseCard";
+import RequestJoinCourseButton from "./ui/RequestJoinCourseButton";
 
 interface ListInstituteCoursesProps {
-  institute: string;
+  institute: InstitutesType;
 }
 
 export default async function ListInstituteCourses({
@@ -28,6 +30,7 @@ export default async function ListInstituteCourses({
           title={course.displayname || course.fullname}
           description={course.summary || course.shortname}
         >
+          <RequestJoinCourseButton institute={institute} courseId={course.id} />
           <Anchor href={`/courses/${course.id}`}>Ver curso</Anchor>
         </CourseCard>
       ))}
