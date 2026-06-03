@@ -22,7 +22,7 @@ const ALLOWED_TRANSITIONS: Record<UserStatus, AllowedAction[]> = {
     { status: USER_STATUSES.PENDING, variant: "default" },
     { status: USER_STATUSES.APPROVED, variant: "recommended" },
   ],
-  [USER_STATUSES.CREATED]: [{ status: USER_STATUSES.REJECTED, variant: "danger" }],
+  [USER_STATUSES.ENROLLED]: [{ status: USER_STATUSES.REJECTED, variant: "danger" }],
 };
 
 interface CourseRequestStatusActionsProps {
