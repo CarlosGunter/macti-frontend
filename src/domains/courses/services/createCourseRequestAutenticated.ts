@@ -11,19 +11,23 @@ interface CreateCourseRequestAutenticatedProps {
   courseRequestData:
     | StudentCourseRequestAutenticatedPayload
     | TeacherCourseRequestAutenticatedPayload;
+  headers?: HeadersInit;
 }
 
 export async function createCourseRequestAutenticated({
   institute,
   userRole,
   courseRequestData,
+  headers,
 }: CreateCourseRequestAutenticatedProps) {
+  const queryParams = new URLSearchParams({ institute });
+
   const courseRequestAutenticatedPromise = fetch(
-    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/register/request-account/${userRole}/authenticated?institute=${institute}`,
+    `${process.env.NEXT_PUBLIC_PROXY_API_URL}/${institute}/register/request-account/${userRole}/authenticated?${queryParams.toString()}`,
     {
       method: "POST",
       cache: "no-store",
-      headers: { "Content-Type": "application/json" },
+      headers: headers,
       body: JSON.stringify(courseRequestData),
     },
   );
