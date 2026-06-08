@@ -4,7 +4,7 @@ function getInstituteFromPath(pathname: string) {
   return pathname.split("/").filter(Boolean)[0];
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   const institute = getInstituteFromPath(pathname);
