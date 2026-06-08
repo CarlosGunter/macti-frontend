@@ -1,4 +1,6 @@
+import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { getAuthInstance } from "@/shared/lib/auth-factory";
 
 function getInstituteFromPath(pathname: string) {
   return pathname.split("/").filter(Boolean)[0];
@@ -12,30 +14,16 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const sessionUrl = new URL(`/api/proxy/${institute}/get-session`, request.url);
+  const auth = getAuthInstance(institute);
+  const session = await auth.api.getSession({ headers: await headers() });
 
-  const sessionResponse = await fetch(sessionUrl, {
-    method: "GET",
-    headers: {
-      cookie: request.headers.get("cookie") ?? "",
-      origin: request.nextUrl.origin,
-    },
-  });
-
-  if (sessionResponse.ok) {
-    const sessionData = (await sessionResponse.json()) as {
-      session?: unknown;
-      user?: unknown;
-    } | null;
-
-    if (sessionData?.session && sessionData?.user) {
-      return NextResponse.next();
-    }
+  if (session) {
+    return NextResponse.next();
   }
 
   const callbackURL = encodeURIComponent(`${pathname}${search}`);
   const loginUrl = new URL(
-    `/api/proxy/${institute}/keycloak?callbackURL=${callbackURL}`,
+    `/api/proxy/${institute}/keycloak/login?callbackURL=${callbackURL}`,
     request.url,
   );
 
