@@ -81,6 +81,7 @@ export function AutenticatedHeader({
         <DropdownMenuItem
           onClick={() => signOutFederatedSession({ authClient, institute })}
           className="cursor-pointer"
+          role="button"
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar sesión</span>
