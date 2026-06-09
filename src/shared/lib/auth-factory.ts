@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { nextCookies } from "better-auth/next-js";
 import { genericOAuth, keycloak } from "better-auth/plugins";
 import type { InstitutesType } from "../config/institutes";
 import { keycloakConfigs } from "../config/kcConfig";
@@ -34,6 +35,7 @@ export const getAuthInstance = (institute: InstitutesType) => {
           }),
         ],
       }),
+      nextCookies(),
     ],
   });
 };
