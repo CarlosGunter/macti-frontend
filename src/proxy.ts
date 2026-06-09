@@ -2,32 +2,33 @@ import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { getAuthInstance } from "@/shared/lib/auth-factory";
 
-function getInstituteFromPath(pathname: string) {
-  return pathname.split("/").filter(Boolean)[0];
-}
-
 export async function proxy(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-
-  const institute = getInstituteFromPath(pathname);
-  if (!institute) {
-    return NextResponse.next();
-  }
+  const institute = getInstituteFromPath(request.nextUrl.pathname);
+  if (!institute) return NextResponse.next();
 
   const auth = getAuthInstance(institute);
   const session = await auth.api.getSession({ headers: await headers() });
+  if (session) return NextResponse.next();
 
-  if (session) {
-    return NextResponse.next();
-  }
+  const loginUrl = buildRedirectURL(institute, request);
+  return NextResponse.redirect(loginUrl);
+}
 
-  const callbackURL = encodeURIComponent(`${pathname}${search}`);
-  const loginUrl = new URL(
+function getInstituteFromPath(pathname: string) {
+  const [institute] = pathname.split("/").filter(Boolean);
+  return institute;
+}
+
+function buildRedirectURL(institute: string, request: NextRequest) {
+  const callbackURL = encodeURIComponent(
+    `${request.nextUrl.pathname}${request.nextUrl.search}`,
+  );
+  const redirectUrl = new URL(
     `/api/proxy/${institute}/keycloak/login?callbackURL=${callbackURL}`,
-    request.url,
+    process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin,
   );
 
-  return NextResponse.redirect(loginUrl);
+  return redirectUrl;
 }
 
 export const config = {
