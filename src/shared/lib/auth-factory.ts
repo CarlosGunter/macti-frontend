@@ -1,23 +1,21 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { genericOAuth, keycloak } from "better-auth/plugins";
+import Database from "better-sqlite3";
 import type { InstitutesType } from "../config/institutes";
 import { keycloakConfigs } from "../config/kcConfig";
 
-const SESSION_IDLE_TIMEOUT_SECONDS = 30 * 60;
-const SESSION_REFRESH_WINDOW_SECONDS = 5 * 60;
+const SESSION_IDLE_TIMEOUT_SECONDS = 60 * 60 * 24; // 24 horas
+const SESSION_REFRESH_WINDOW_SECONDS = 5; // 5 minutos
 
 export const getAuthInstance = (institute: InstitutesType) => {
   const keycloakConfig = keycloakConfigs[institute];
 
   return betterAuth({
+    database: new Database("@/../data/auth.sqlite"),
     baseURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}`,
     advanced: {
       cookiePrefix: `auth-${institute}`,
-      // Sesión del navegador alineada con el tiempo de espera inactivo de Keycloak.
-      defaultCookieOptions: {
-        maxAge: SESSION_IDLE_TIMEOUT_SECONDS,
-      },
     },
     session: {
       // Coincide con la ventana de tiempo de espera inactivo de Keycloak.
