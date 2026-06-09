@@ -5,8 +5,8 @@ import Database from "better-sqlite3";
 import type { InstitutesType } from "../config/institutes";
 import { keycloakConfigs } from "../config/kcConfig";
 
-const SESSION_IDLE_TIMEOUT_SECONDS = 60 * 60 * 24; // 24 horas
-const SESSION_REFRESH_WINDOW_SECONDS = 5; // 5 minutos
+const SESSION_IDLE_TIMEOUT_SECONDS = 24 * 60 * 60; // 24 horas
+const SESSION_REFRESH_WINDOW_SECONDS = 15 * 60; // 15 minutos
 
 export const getAuthInstance = (institute: InstitutesType) => {
   const keycloakConfig = keycloakConfigs[institute];
