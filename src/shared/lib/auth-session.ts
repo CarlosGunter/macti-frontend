@@ -4,46 +4,31 @@ import type { getAuthClient } from "./auth-client";
 
 type AuthClient = ReturnType<typeof getAuthClient>;
 
-function buildKeycloakLogoutUrl(institute: InstitutesType, redirectUri: string) {
-  const issuer = keycloakConfigs[institute]?.issuer;
-
-  if (!issuer?.trim()) {
-    return null;
-  }
-
-  try {
-    const logoutEndpoint = issuer.endsWith("/")
-      ? `${issuer}protocol/openid-connect/logout`
-      : `${issuer}/protocol/openid-connect/logout`;
-    const logoutUrl = new URL(logoutEndpoint);
-
-    logoutUrl.searchParams.set("redirect_uri", redirectUri);
-
-    return logoutUrl.toString();
-  } catch {
-    return null;
-  }
+interface SignOutFederatedSessionParams {
+  authClient: AuthClient;
+  institute: InstitutesType;
+  redirectPath?: string;
 }
 
 export async function signOutFederatedSession({
   authClient,
   institute,
   redirectPath = `/${institute}`,
-}: {
-  authClient: AuthClient;
-  institute: InstitutesType;
-  redirectPath?: string;
-}) {
-  const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}${redirectPath}`;
-
+}: SignOutFederatedSessionParams) {
   await authClient.signOut();
 
-  const keycloakLogoutUrl = buildKeycloakLogoutUrl(institute, redirectUri);
+  const kcIssuer = keycloakConfigs[institute]?.issuer;
+  if (!kcIssuer) window.location.assign(redirectPath);
 
-  if (keycloakLogoutUrl) {
-    window.location.assign(keycloakLogoutUrl);
-    return;
-  }
+  const logoutUrl = new URL(`${kcIssuer}/protocol/openid-connect/logout`);
+  logoutUrl.searchParams.set(
+    "post_logout_redirect_uri",
+    `${window.location.origin}${redirectPath}`,
+  );
+  logoutUrl.searchParams.set(
+    "client_id",
+    process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "local-next-login",
+  );
 
-  window.location.assign(redirectPath);
+  window.location.assign(logoutUrl.toString());
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type { InstitutesType } from "@/shared/config/institutes";
 import type { getAuthClient } from "@/shared/lib/auth-client";
 import { Avatar, AvatarFallback } from "@/shared/shadcn/components/ui/avatar";
@@ -32,7 +31,6 @@ export function AutenticatedHeader({
   session,
   isPending,
 }: AutenticatedHeaderProps) {
-  const router = useRouter();
   const userInfo = session?.user;
   const initials = userInfo?.name
     ? userInfo.name
@@ -43,16 +41,6 @@ export function AutenticatedHeader({
     : "?";
 
   if (isPending) return <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />;
-
-  const handleLogout = async () => {
-    await signOutFederatedSession({
-      authClient,
-      institute,
-      redirectPath: `/${institute}`,
-    });
-
-    router.refresh();
-  };
 
   return (
     <DropdownMenu>
@@ -90,7 +78,10 @@ export function AutenticatedHeader({
           </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => signOutFederatedSession({ authClient, institute })}
+          className="cursor-pointer"
+        >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar sesión</span>
         </DropdownMenuItem>
