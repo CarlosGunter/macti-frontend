@@ -39,7 +39,7 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   const targetPath = getTargetPath(path);
   const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
 
-  return proxyToApi(req, resolvedApiEndpoint, session?.session?.token);
+  return proxyToApi(req, resolvedApiEndpoint, session?.session?.keycloakToken);
 }
 
 /**
@@ -82,7 +82,7 @@ async function tryHandleBetterAuthRoute(req: NextRequest, auth: AuthInstance) {
 }
 
 /**
- * Obtiene la sesión actual y adjunta el access token de Keycloak en `session.token`.
+ * Obtiene la sesión actual y adjunta el access token de Keycloak en `session`.
  *
  * @param auth Instancia de autenticación configurada para el instituto.
  * @returns Datos de sesión enriquecidos con token o `null` si no hay sesión activa.
@@ -100,16 +100,17 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
       headers: incomingHeaders,
       body: { providerId: "keycloak" },
     })
-    .then((tokens) => tokens?.accessToken)
-    .catch(() => undefined);
+    .then((tokens) => tokens.accessToken)
+    .catch(async () => {
+      await auth.api.signOut({ headers: incomingHeaders });
+      return undefined;
+    });
 
-  return {
-    ...sessionData,
-    session: {
-      ...sessionData.session,
-      token: keycloakAccessToken,
-    },
-  };
+  type SessionWithKCToken = typeof sessionData & { session: { keycloakToken?: string } };
+  const sessionDataWithKCToken: SessionWithKCToken = sessionData as SessionWithKCToken;
+  sessionDataWithKCToken.session.keycloakToken = keycloakAccessToken;
+
+  return sessionDataWithKCToken;
 }
 
 /**
