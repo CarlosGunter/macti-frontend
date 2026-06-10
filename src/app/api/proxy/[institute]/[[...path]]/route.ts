@@ -36,6 +36,15 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   }
 
   const session = await getSessionWithAccessToken(auth);
+  if (!session) {
+    const redirectURL = new URL(
+      `/api/proxy/${institute}/keycloak/login`,
+      req.nextUrl.origin,
+    );
+    redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
+    return NextResponse.redirect(redirectURL);
+  }
+
   const targetPath = getTargetPath(path);
   const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
 
@@ -101,10 +110,12 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
       body: { providerId: "keycloak" },
     })
     .then((tokens) => tokens.accessToken)
-    .catch(async () => {
-      await auth.api.signOut({ headers: incomingHeaders });
-      return undefined;
-    });
+    .catch(() => undefined);
+
+  if (!keycloakAccessToken) {
+    await auth.api.signOut({ headers: incomingHeaders });
+    return null;
+  }
 
   type SessionWithKCToken = typeof sessionData & { session: { keycloakToken?: string } };
   const sessionDataWithKCToken: SessionWithKCToken = sessionData as SessionWithKCToken;
