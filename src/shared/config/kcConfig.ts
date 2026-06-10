@@ -8,23 +8,23 @@ interface KeycloakConfig {
 
 export const keycloakConfigs: Record<InstitutesType, KeycloakConfig> = {
   principal: {
-    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "",
     clientSecret: process.env.PRINCIPAL_KEYCLOAK_CLIENT_SECRET || "",
-    issuer: process.env.PRINCIPAL_KEYCLOAK_ISSUER || "",
+    issuer: process.env.NEXT_PUBLIC_PRINCIPAL_KEYCLOAK_ISSUER || "",
   },
   cuantico: {
-    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "",
     clientSecret: process.env.CUANTICO_KEYCLOAK_CLIENT_SECRET || "",
-    issuer: process.env.CUANTICO_KEYCLOAK_ISSUER || "",
+    issuer: process.env.NEXT_PUBLIC_CUANTICO_KEYCLOAK_ISSUER || "",
   },
   ciencias: {
-    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "",
     clientSecret: process.env.CIENCIAS_KEYCLOAK_CLIENT_SECRET || "",
-    issuer: process.env.CIENCIAS_KEYCLOAK_ISSUER || "",
+    issuer: process.env.NEXT_PUBLIC_CIENCIAS_KEYCLOAK_ISSUER || "",
   },
   ingenieria: {
-    clientId: process.env.KEYCLOAK_CLIENT_ID || "",
+    clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || "",
     clientSecret: process.env.INGENIERIA_KEYCLOAK_CLIENT_SECRET || "",
-    issuer: process.env.INGENIERIA_KEYCLOAK_ISSUER || "",
+    issuer: process.env.NEXT_PUBLIC_INGENIERIA_KEYCLOAK_ISSUER || "",
   },
 };

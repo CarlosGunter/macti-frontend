@@ -1,8 +1,8 @@
 import { toNextJsHandler } from "better-auth/next-js";
 import { headers as NextHeaders } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 import type { InstitutesType } from "@/shared/config/institutes";
-import { getAuthInstance } from "@/shared/lib/auth-factory";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 interface RequestParams {
@@ -36,10 +36,19 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   }
 
   const session = await getSessionWithAccessToken(auth);
+  if (!session) {
+    const redirectURL = new URL(
+      `/api/proxy/${institute}/keycloak/login`,
+      req.nextUrl.origin,
+    );
+    redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
+    return NextResponse.redirect(redirectURL);
+  }
+
   const targetPath = getTargetPath(path);
   const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
 
-  return proxyToApi(req, resolvedApiEndpoint, session?.session?.token);
+  return proxyToApi(req, resolvedApiEndpoint, session?.session?.keycloakToken);
 }
 
 /**
@@ -82,7 +91,7 @@ async function tryHandleBetterAuthRoute(req: NextRequest, auth: AuthInstance) {
 }
 
 /**
- * Obtiene la sesión actual y adjunta el access token de Keycloak en `session.token`.
+ * Obtiene la sesión actual y adjunta el access token de Keycloak en `session`.
  *
  * @param auth Instancia de autenticación configurada para el instituto.
  * @returns Datos de sesión enriquecidos con token o `null` si no hay sesión activa.
@@ -100,16 +109,19 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
       headers: incomingHeaders,
       body: { providerId: "keycloak" },
     })
-    .then((tokens) => tokens?.accessToken)
+    .then((tokens) => tokens.accessToken)
     .catch(() => undefined);
 
-  return {
-    ...sessionData,
-    session: {
-      ...sessionData.session,
-      token: keycloakAccessToken,
-    },
-  };
+  if (!keycloakAccessToken) {
+    await auth.api.signOut({ headers: incomingHeaders });
+    return null;
+  }
+
+  type SessionWithKCToken = typeof sessionData & { session: { keycloakToken?: string } };
+  const sessionDataWithKCToken: SessionWithKCToken = sessionData as SessionWithKCToken;
+  sessionDataWithKCToken.session.keycloakToken = keycloakAccessToken;
+
+  return sessionDataWithKCToken;
 }
 
 /**

@@ -23,7 +23,7 @@ export async function processFetch(
   const fetchData = await tryCatch(fetchResponse.data.json());
   if (fetchData.error) return [true, null];
   if (!fetchResponse.data.ok) {
-    return [true, fetchData.data.detail];
+    return [true, fetchData.data];
   }
 
   return [false, fetchData.data];
