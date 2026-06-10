@@ -1,8 +1,9 @@
 import { initSQLite } from "./sqlite/sqlite";
+import { initSupabase } from "./supabase/supabase";
 
 const mapDb = {
   sqlite: initSQLite,
-  supabase: () => {},
+  supabase: initSupabase,
 };
 
 type DbProvider = keyof typeof mapDb;
