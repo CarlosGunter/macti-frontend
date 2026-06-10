@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { fetchCoursesServer } from "@/domains/courses/services/fetchCoursesServer";
 import ListCourseRequestsStudent from "@/domains/users/components/ListCourseRequestsStudents";
+
+export const metadata: Metadata = {
+  title: "Solicitudes de Alumnos | MACTI",
+  description: "Revisa las solicitudes de los estudiantes para este curso",
+};
 
 interface SolicitudesPageProps {
   params: Promise<{

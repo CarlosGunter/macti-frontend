@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { ProfileCard } from "@/domains/users/components/ui/ProfileCard";
 import ProfileTabs from "@/shared/components/common/ProfileTabs";
+
+export const metadata: Metadata = {
+  title: "Perfil | MACTI",
+  description: "Revisa tu perfil, cursos y solicitudes dentro de tu instituto",
+};
 
 interface PerfilPageProps {
   params: Promise<{
