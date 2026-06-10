@@ -1,5 +1,5 @@
-import type { InstitutesType } from "../config/institutes";
-import { keycloakConfigs } from "../config/kcConfig";
+import type { InstitutesType } from "../../shared/config/institutes";
+import { keycloakConfigs } from "../../shared/config/kcConfig";
 import type { getAuthClient } from "./auth-client";
 
 type AuthClient = ReturnType<typeof getAuthClient>;

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 import { Anchor } from "@/shared/components/ui/Anchor";
 import type { InstitutesType } from "@/shared/config/institutes";
-import { getAuthInstance } from "@/shared/lib/auth-factory";
 import { fetchCoursesServer } from "../services/fetchCoursesServer";
 import CourseCard from "./ui/CourseCard";
 import RequestJoinCourseButton from "./ui/RequestJoinCourseButton";

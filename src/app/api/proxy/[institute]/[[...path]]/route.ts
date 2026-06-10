@@ -1,8 +1,8 @@
 import { toNextJsHandler } from "better-auth/next-js";
 import { headers as NextHeaders } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 import type { InstitutesType } from "@/shared/config/institutes";
-import { getAuthInstance } from "@/shared/lib/auth-factory";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 interface RequestParams {

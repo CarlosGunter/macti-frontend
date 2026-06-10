@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { getAuthInstance } from "@/shared/lib/auth-factory";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 
 export async function proxy(request: NextRequest) {
   const institute = getInstituteFromPath(request.nextUrl.pathname);

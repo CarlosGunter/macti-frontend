@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import MactiLogo from "@/assets/image/logos/macti_logo.png";
-import { getAuthClient } from "@/shared/lib/auth-client";
+import { getAuthClient } from "@/infra/auth/auth-client";
 import { AutenticatedHeader } from "./AutenticatedHeader";
 import { UnauthenticatedHeader } from "./UnauthenticatedHeader";
 

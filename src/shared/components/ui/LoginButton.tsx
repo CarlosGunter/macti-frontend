@@ -1,6 +1,6 @@
 "use client";
 
-import { getAuthClient } from "@/shared/lib/auth-client";
+import { getAuthClient } from "@/infra/auth/auth-client";
 import Button from "./Button";
 
 export function LoginButton({ institute }: { institute: string }) {

@@ -2,8 +2,8 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { genericOAuth, keycloak } from "better-auth/plugins";
 import Database from "better-sqlite3";
-import type { InstitutesType } from "../config/institutes";
-import { keycloakConfigs } from "../config/kcConfig";
+import type { InstitutesType } from "../../shared/config/institutes";
+import { keycloakConfigs } from "../../shared/config/kcConfig";
 
 const SESSION_IDLE_TIMEOUT_SECONDS = 24 * 60 * 60; // 24 horas
 const SESSION_REFRESH_WINDOW_SECONDS = 15 * 60; // 15 minutos

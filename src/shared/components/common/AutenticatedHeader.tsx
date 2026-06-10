@@ -1,8 +1,8 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
+import type { getAuthClient } from "@/infra/auth/auth-client";
 import type { InstitutesType } from "@/shared/config/institutes";
-import type { getAuthClient } from "@/shared/lib/auth-client";
 import { Avatar, AvatarFallback } from "@/shared/shadcn/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/shadcn/components/ui/dropdown-menu";
-import { signOutFederatedSession } from "../../lib/auth-session";
+import { signOutFederatedSession } from "../../../infra/auth/auth-session";
 
 type AuthSession = NonNullable<
   ReturnType<ReturnType<typeof getAuthClient>["useSession"]>["data"]

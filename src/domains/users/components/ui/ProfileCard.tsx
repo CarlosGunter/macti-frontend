@@ -1,7 +1,7 @@
 "use client";
 
+import { getAuthClient } from "@/infra/auth/auth-client";
 import type { InstitutesType } from "@/shared/config/institutes";
-import { getAuthClient } from "@/shared/lib/auth-client";
 
 interface ProfileCardProps {
   institute: InstitutesType;
