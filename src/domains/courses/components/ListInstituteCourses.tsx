@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 import { Anchor } from "@/shared/components/ui/Anchor";
 import type { InstitutesType } from "@/shared/config/institutes";
 import { fetchCoursesServer } from "../services/fetchCoursesServer";
@@ -21,6 +23,10 @@ export default async function ListInstituteCourses({
     );
   }
 
+  const session = await getAuthInstance(institute).api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <div className="grid gap-4">
       {courses.map((course) => (
@@ -30,7 +36,9 @@ export default async function ListInstituteCourses({
           title={course.displayname || course.fullname}
           description={course.summary || course.shortname}
         >
-          <RequestJoinCourseButton institute={institute} courseId={course.id} />
+          {session && (
+            <RequestJoinCourseButton institute={institute} courseId={course.id} />
+          )}
           <Anchor href={`/courses/${course.id}`}>Ver curso</Anchor>
         </CourseCard>
       ))}

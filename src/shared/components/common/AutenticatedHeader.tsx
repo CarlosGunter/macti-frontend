@@ -1,8 +1,8 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
-import { useRouter } from "next/navigation";
-import type { getAuthClient } from "@/shared/lib/auth-client";
+import type { getAuthClient } from "@/infra/auth/auth-client";
+import type { InstitutesType } from "@/shared/config/institutes";
 import { Avatar, AvatarFallback } from "@/shared/shadcn/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,13 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/shadcn/components/ui/dropdown-menu";
+import { signOutFederatedSession } from "../../../infra/auth/auth-session";
 
 type AuthSession = NonNullable<
   ReturnType<ReturnType<typeof getAuthClient>["useSession"]>["data"]
 >;
 
 interface AutenticatedHeaderProps {
-  institute: string;
+  institute: InstitutesType;
   authClient: ReturnType<typeof getAuthClient>;
   session: AuthSession;
   isPending: boolean;
@@ -30,7 +31,6 @@ export function AutenticatedHeader({
   session,
   isPending,
 }: AutenticatedHeaderProps) {
-  const router = useRouter();
   const userInfo = session?.user;
   const initials = userInfo?.name
     ? userInfo.name
@@ -79,17 +79,9 @@ export function AutenticatedHeader({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() =>
-            authClient.signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  router.push(`/${institute}`);
-                  router.refresh();
-                },
-              },
-            })
-          }
+          onClick={() => signOutFederatedSession({ authClient, institute })}
           className="cursor-pointer"
+          role="button"
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span>Cerrar sesión</span>

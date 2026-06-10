@@ -23,7 +23,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
         <h2 className="text-center font-bold text-lg transition-[translate] -translate-y-10 md:translate-0 md:group-hover:-translate-y-10">
           {name}
         </h2>
-        <div className="absolute flex gap-2 bottom-7 md:opacity-0 md:translate-y-7 transition-[opacity,translate] md:group-hover:opacity-100 md:group-hover:translate-y-0 self-center-safe">
+        <div className="absolute inset-x-0 bottom-7 flex justify-center gap-2 md:opacity-0 md:translate-y-7 transition-[opacity,transform,translate] md:group-hover:opacity-100 md:group-hover:translate-y-0">
           <LoginCardButton institute={id} />
           <button
             type="button"

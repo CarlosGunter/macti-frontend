@@ -2,3 +2,4 @@ minimumReleaseAge: 2880
 
 onlyBuiltDependencies:
   - sharp
+  - better-sqlite3

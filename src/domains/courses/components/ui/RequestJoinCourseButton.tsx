@@ -4,7 +4,6 @@ import { useState } from "react";
 import { createCourseRequestAutenticated } from "@/domains/courses/services/createCourseRequestAutenticated";
 import Button from "@/shared/components/ui/Button";
 import type { InstitutesType } from "@/shared/config/institutes";
-import { getAuthClient } from "@/shared/lib/auth-client";
 
 interface RequestJoinCourseButtonProps {
   institute: InstitutesType;
@@ -15,14 +14,8 @@ export default function RequestJoinCourseButton({
   institute,
   courseId,
 }: RequestJoinCourseButtonProps) {
-  const authClient = getAuthClient(institute);
-  const { data: session, isPending } = authClient.useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasRequested, setHasRequested] = useState(false);
-
-  if (isPending || !session) {
-    return null;
-  }
 
   const handleRequest = async () => {
     setIsSubmitting(true);
