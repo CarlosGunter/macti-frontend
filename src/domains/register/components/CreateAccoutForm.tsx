@@ -1,7 +1,6 @@
 "use client";
 
 import Form from "next/form";
-import { useSearchParams } from "next/navigation";
 import { useActionState, useState } from "react";
 import VisibilityIcon from "@/assets/svg/visibility";
 import VisibilityOffIcon from "@/assets/svg/visibilityOff";
@@ -18,17 +17,21 @@ import {
 } from "@/shared/shadcn/components/ui/field";
 import { Input } from "@/shared/shadcn/components/ui/input";
 import { createAccountAction } from "../actions/createAccountAction";
-import type { CreateAccountResponse } from "../schemas/createAccountSchema";
+import type { FetchAccountInfoResponse } from "../schemas/createAccountSchema";
 
-export default function CreateAccount({ userData }: { userData: CreateAccountResponse }) {
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+interface CreateAccountProps {
+  userData: FetchAccountInfoResponse;
+  token: string;
+}
+
+export default function CreateAccount({ userData, token }: CreateAccountProps) {
   const [state, formAction, isPending] = useActionState(createAccountAction, null);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isVisiblePass, setIsVisiblePass] = useState(false);
   const [isVisibleConfirmPass, setIsVisibleConfirmPass] = useState(false);
+  userData.role = "docente";
 
   const passwordsMatch = password === confirmPassword || confirmPassword === "";
 
@@ -36,13 +39,17 @@ export default function CreateAccount({ userData }: { userData: CreateAccountRes
     <Form action={formAction} disabled={isPending}>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>Crear Cuenta</FieldLegend>
+          <FieldLegend>
+            Crear Cuenta - {userData.name} {userData.last_name}
+          </FieldLegend>
           <FieldDescription>
-            Establece una contraseña segura para tu cuenta.
+            Bienvenido, <span className="font-semibold">{userData.email}</span>. Tu
+            solicitud de cuenta ha sido aprobada para MACTI |{" "}
+            {userData.institute.charAt(0).toUpperCase() + userData.institute.slice(1)}.
           </FieldDescription>
 
           <input type="hidden" name="user_id" defaultValue={userData.id} />
-          <input type="hidden" name="token" defaultValue={token || ""} />
+          <input type="hidden" name="token" defaultValue={token} />
 
           <FieldGroup>
             <Field>
@@ -101,6 +108,12 @@ export default function CreateAccount({ userData }: { userData: CreateAccountRes
 
             {state?.errors.general && (
               <FieldError>{state.errors.general.errors[0]}</FieldError>
+            )}
+
+            {state?.success && (
+              <FieldContent className="text-green-600">
+                Cuenta creada exitosamente. Puedes iniciar sesión ahora.
+              </FieldContent>
             )}
 
             <Button type="submit" disabled={isPending} className="w-full">

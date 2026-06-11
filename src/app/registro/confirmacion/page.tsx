@@ -23,7 +23,7 @@ export default async function ConfirmacionPage({ searchParams }: ConfirmacionPag
 
   return (
     <div className="w-full max-w-md mx-auto py-10 px-4">
-      <CreateAccount userData={userData} />
+      <CreateAccount userData={userData} token={token} />
     </div>
   );
 }
