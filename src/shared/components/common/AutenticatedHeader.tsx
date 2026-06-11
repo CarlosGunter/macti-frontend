@@ -2,6 +2,7 @@
 
 import { LogOut, User } from "lucide-react";
 import type { getAuthClient } from "@/infra/auth/auth-client";
+import { signOutFederatedSession } from "@/infra/auth/auth-session";
 import type { InstitutesType } from "@/shared/config/institutes";
 import { Avatar, AvatarFallback } from "@/shared/shadcn/components/ui/avatar";
 import {
@@ -12,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/shadcn/components/ui/dropdown-menu";
-import { signOutFederatedSession } from "../../../infra/auth/auth-session";
 
 type AuthSession = NonNullable<
   ReturnType<ReturnType<typeof getAuthClient>["useSession"]>["data"]
@@ -20,17 +20,10 @@ type AuthSession = NonNullable<
 
 interface AutenticatedHeaderProps {
   institute: InstitutesType;
-  authClient: ReturnType<typeof getAuthClient>;
   session: AuthSession;
-  isPending: boolean;
 }
 
-export function AutenticatedHeader({
-  institute,
-  authClient,
-  session,
-  isPending,
-}: AutenticatedHeaderProps) {
+export function AutenticatedHeader({ institute, session }: AutenticatedHeaderProps) {
   const userInfo = session?.user;
   const initials = userInfo?.name
     ? userInfo.name
@@ -39,8 +32,6 @@ export function AutenticatedHeader({
         .slice(0, 2)
         .join("")
     : "?";
-
-  if (isPending) return <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />;
 
   return (
     <DropdownMenu>
@@ -79,7 +70,7 @@ export function AutenticatedHeader({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => signOutFederatedSession({ authClient, institute })}
+          onClick={() => signOutFederatedSession({ institute })}
           className="cursor-pointer"
           role="button"
         >

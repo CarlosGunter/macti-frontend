@@ -1,9 +1,8 @@
-"use client";
-
+import { headers } from "next/dist/server/request/headers";
 import Image from "next/image";
 import Link from "next/link";
 import MactiLogo from "@/assets/image/logos/macti_logo.png";
-import { getAuthClient } from "@/infra/auth/auth-client";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 import { AutenticatedHeader } from "./AutenticatedHeader";
 import { UnauthenticatedHeader } from "./UnauthenticatedHeader";
 
@@ -11,9 +10,11 @@ interface HeaderProps {
   institute: string;
 }
 
-export default function Header({ institute }: HeaderProps) {
-  const authClient = getAuthClient(institute);
-  const { data: session, isPending } = authClient.useSession();
+export async function Header({ institute }: HeaderProps) {
+  const auth = getAuthInstance(institute);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const authenticated = !!session;
 
   return (
@@ -22,12 +23,7 @@ export default function Header({ institute }: HeaderProps) {
         <Image src={MactiLogo.src} alt="Macti Logo" width={86} height={40} />
       </Link>
       {authenticated ? (
-        <AutenticatedHeader
-          institute={institute}
-          authClient={authClient}
-          session={session}
-          isPending={isPending}
-        />
+        <AutenticatedHeader institute={institute} session={session} />
       ) : (
         <UnauthenticatedHeader institute={institute} />
       )}
