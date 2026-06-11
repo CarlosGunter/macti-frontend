@@ -5,6 +5,7 @@ interface AnchorProps {
   href: string;
   className?: string;
   variant?: "default" | "secondary";
+  external?: boolean;
 }
 
 const variants = {
@@ -18,10 +19,12 @@ export function Anchor({
   href,
   className = "",
   variant = "default",
+  external = false,
 }: AnchorProps) {
   return (
     <Link
       href={href}
+      target={external ? "_blank" : "_self"}
       className={`flex justify-center items-center gap-2 p-2 rounded-lg transition-shadow duration-200 ${variants[variant]} ${className}`}
     >
       {children}

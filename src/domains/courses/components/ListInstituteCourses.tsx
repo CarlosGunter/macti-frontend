@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { getAuthInstance } from "@/infra/auth/auth-factory";
 import { Anchor } from "@/shared/components/ui/Anchor";
-import type { InstitutesType } from "@/shared/config/institutes";
+import { type InstitutesType, institutes } from "@/shared/config/institutes";
 import { fetchCoursesServer } from "../services/fetchCoursesServer";
 import CourseCard from "./ui/CourseCard";
 import RequestJoinCourseButton from "./ui/RequestJoinCourseButton";
@@ -14,6 +14,7 @@ export default async function ListInstituteCourses({
   institute,
 }: ListInstituteCoursesProps) {
   const courses = await fetchCoursesServer({ institute });
+  const currentInstitute = institutes[institute];
 
   if (!courses || courses.length === 0) {
     return (
@@ -39,7 +40,12 @@ export default async function ListInstituteCourses({
           {session && (
             <RequestJoinCourseButton institute={institute} courseId={course.id} />
           )}
-          <Anchor href={`/courses/${course.id}`}>Ver curso</Anchor>
+          <Anchor
+            href={`${currentInstitute.moodle}/course/view.php?id=${course.id}`}
+            external
+          >
+            Moodle
+          </Anchor>
         </CourseCard>
       ))}
     </div>
