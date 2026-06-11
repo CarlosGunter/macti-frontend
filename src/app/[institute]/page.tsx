@@ -3,7 +3,7 @@ import ListInstituteCourses from "@/domains/courses/components/ListInstituteCour
 import { Anchor } from "@/shared/components/ui/Anchor";
 import { institutes } from "@/shared/config/institutes";
 
-export const revalidate = 12 * 60 * 60; // 12 horas en segundos
+export const revalidate = 3600; // 1 hora en segundos
 
 interface InstitutePageProps {
   params: Promise<{
