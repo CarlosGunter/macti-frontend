@@ -44,8 +44,12 @@ export default async function InstitutePage({ params }: InstitutePageProps) {
         <p>Bienvenido al portal del instituto {currentInstitute.name}.</p>
 
         <div className="flex justify-center gap-4 py-4">
-          <Anchor href={currentInstitute.moodle}>Moodle</Anchor>
-          <Anchor href={currentInstitute.jupyter}>Jupyter</Anchor>
+          <Anchor href={currentInstitute.moodle} external>
+            Moodle
+          </Anchor>
+          <Anchor href={currentInstitute.jupyter} external>
+            Jupyter
+          </Anchor>
         </div>
       </div>
 
