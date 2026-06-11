@@ -1,51 +1,54 @@
-"use client";
-
 import { BookPlus } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
 import CreateCourseRequestAutenticatedDialog from "@/domains/courses/components/CreateCourseRequestAutenticatedDialog";
 import ListEnrolledCourses from "@/domains/courses/components/ListEnrolledCourses";
 import ListCourseRequestsTeachers from "@/domains/users/components/ListCourseRequestsTeachers";
 
-type TabType = "courses" | "teachers";
+const ProfileTabsMap = {
+  EnrolledCourses: "cursos",
+  RequestsCourses: "solicitudes",
+} as const;
+type ProfileTabsType = (typeof ProfileTabsMap)[keyof typeof ProfileTabsMap];
 
 interface ProfileTabsProps {
   institute: string;
+  activeTab: string | undefined;
 }
 
-export default function ProfileTabs({ institute }: ProfileTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("courses");
+export default function ProfileTabs({ institute, activeTab }: ProfileTabsProps) {
+  if (!Object.values(ProfileTabsMap).includes(activeTab as ProfileTabsType)) {
+    activeTab = ProfileTabsMap.EnrolledCourses;
+  }
 
   return (
     <div className="grid gap-4">
       {/* Horizontal Menu */}
       <div className="flex border-b border-gray-200 dark:border-gray-700">
-        <button
-          type="button"
-          onClick={() => setActiveTab("courses")}
+        <Link
+          href={`?tab=${ProfileTabsMap.EnrolledCourses}`}
           className={`px-6 py-3 font-medium text-sm transition-colors ${
-            activeTab === "courses"
+            activeTab === ProfileTabsMap.EnrolledCourses
               ? "border-b-2 border-black text-black dark:border-white dark:text-white"
               : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           }`}
         >
           Mis cursos
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("teachers")}
+        </Link>
+        <Link
+          href={`?tab=${ProfileTabsMap.RequestsCourses}`}
           className={`px-6 py-3 font-medium text-sm transition-colors ${
-            activeTab === "teachers"
+            activeTab === ProfileTabsMap.RequestsCourses
               ? "border-b-2 border-black text-black dark:border-white dark:text-white"
               : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           }`}
         >
           Solicitudes de cursos
-        </button>
+        </Link>
       </div>
 
       {/* Tab Content */}
       <div className="mt-4">
-        {activeTab === "courses" && (
+        {activeTab === ProfileTabsMap.EnrolledCourses && (
           <div className="grid gap-4">
             <ListEnrolledCourses institute={institute} />
             <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-muted/35 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between py-6">
@@ -63,7 +66,9 @@ export default function ProfileTabs({ institute }: ProfileTabsProps) {
             </div>
           </div>
         )}
-        {activeTab === "teachers" && <ListCourseRequestsTeachers institute={institute} />}
+        {activeTab === ProfileTabsMap.RequestsCourses && (
+          <ListCourseRequestsTeachers institute={institute} />
+        )}
       </div>
     </div>
   );
