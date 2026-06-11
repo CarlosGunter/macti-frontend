@@ -1,4 +1,4 @@
-import Header from "@/shared/components/common/Header";
+import { Header } from "@/shared/components/common/Header";
 import { RuntimeRecoveryBoundary } from "@/shared/components/feedback/RuntimeRecoveryBoundary";
 
 interface LayoutProps {
