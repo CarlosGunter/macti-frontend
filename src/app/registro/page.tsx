@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import AccountRequestForm from "@/domains/register/components/AccountRequestForm";
 import { QueryContextProvider } from "@/shared/providers/QueryProvider";
+
+export const metadata: Metadata = {
+  title: "Registro Alumno | MACTI",
+  description: "Solicita una cuenta para acceder a los cursos de tu instituto",
+};
 
 interface RegistroPageProps {
   searchParams: {

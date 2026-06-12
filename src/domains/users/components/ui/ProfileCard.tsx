@@ -1,21 +1,19 @@
-"use client";
-
-import { getAuthClient } from "@/infra/auth/auth-client";
+import { headers } from "next/headers";
+import { getAuthInstance } from "@/infra/auth/auth-factory";
 import type { InstitutesType } from "@/shared/config/institutes";
 
 interface ProfileCardProps {
   institute: InstitutesType;
 }
 
-export function ProfileCard({ institute }: ProfileCardProps) {
-  const authClient = getAuthClient(institute);
-  const { data: session, isPending } = authClient.useSession();
+export async function ProfileCard({ institute }: ProfileCardProps) {
+  const auth = getAuthInstance(institute);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   const userInfo = session?.user;
 
-  const preferredUsername = (
-    userInfo as typeof userInfo & { preferred_username?: string }
-  )?.preferred_username;
-  const identifier = preferredUsername || userInfo?.name || "Usuario pendiente";
+  const identifier = userInfo?.name || "Usuario pendiente";
   const displayName = userInfo?.name || identifier || "Usuario sin nombre";
   const email = userInfo?.email || "Correo no disponible";
   const initials =
