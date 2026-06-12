@@ -28,10 +28,11 @@ export function AutenticatedHeader({ institute, session }: AutenticatedHeaderPro
   const initials = userInfo?.name
     ? userInfo.name
         .split(" ")
-        .map((n) => n[0].toUpperCase())
+        .filter(Boolean)
         .slice(0, 2)
-        .join("")
-    : "?";
+        .map((n) => n.charAt(0)?.toUpperCase() || "")
+        .join("") || "NA"
+    : "NA";
 
   return (
     <DropdownMenu>
