@@ -1,5 +1,5 @@
 import { processFetch } from "@/shared/utils/process-fetch";
-import { createAccountResponseSchema } from "../schemas/createAccountSchema";
+import { fetchAccountInfoResponseSchema } from "../schemas/createAccountSchema";
 
 export async function fetchAccountInfo(token: string) {
   const verifyTokenPromise = fetch(
@@ -13,7 +13,7 @@ export async function fetchAccountInfo(token: string) {
   const [error, userData] = await processFetch(verifyTokenPromise);
   if (error) return undefined;
 
-  const parsedUserData = createAccountResponseSchema.safeParse(userData);
+  const parsedUserData = fetchAccountInfoResponseSchema.safeParse(userData);
   if (!parsedUserData.success) return undefined;
 
   return parsedUserData.data;

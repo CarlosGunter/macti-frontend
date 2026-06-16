@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { fetchCoursesServer } from "@/domains/courses/services/fetchCoursesServer";
 import ListCourseRequestsStudent from "@/domains/users/components/ListCourseRequestsStudents";
+
+export const metadata: Metadata = {
+  title: "Solicitudes de Alumnos | MACTI",
+  description: "Revisa las solicitudes de los estudiantes para este curso",
+};
 
 interface SolicitudesPageProps {
   params: Promise<{
@@ -22,7 +28,7 @@ export default async function SolicitudesPage({ params }: SolicitudesPageProps) 
     <div className="grid gap-6">
       <div>
         <h1 className="text-2xl font-bold">{currentCourse?.fullname ?? "Sin nombre"}</h1>
-        <h2 className="text-xl">Solicitudes de cuenta</h2>
+        <h2 className="text-xl">Solicitudes</h2>
       </div>
 
       <ListCourseRequestsStudent course_id={course_id} institute={institute} />

@@ -1,3 +1,8 @@
+allowBuilds:
+  better-sqlite3: true
+  msw: false
+  sharp: true
+
 minimumReleaseAge: 2880
 
 onlyBuiltDependencies:

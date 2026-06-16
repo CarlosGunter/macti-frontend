@@ -1,20 +1,17 @@
 import type { InstitutesType } from "../../shared/config/institutes";
 import { keycloakConfigs } from "../../shared/config/kcConfig";
-import type { getAuthClient } from "./auth-client";
-
-type AuthClient = ReturnType<typeof getAuthClient>;
+import { getAuthClient } from "./auth-client";
 
 interface SignOutFederatedSessionParams {
-  authClient: AuthClient;
   institute: InstitutesType;
   redirectPath?: string;
 }
 
 export async function signOutFederatedSession({
-  authClient,
   institute,
   redirectPath = `/${institute}`,
 }: SignOutFederatedSessionParams) {
+  const authClient = getAuthClient(institute);
   await authClient.signOut();
 
   const kcIssuer = keycloakConfigs[institute]?.issuer;

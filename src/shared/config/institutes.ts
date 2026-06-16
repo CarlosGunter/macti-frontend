@@ -21,9 +21,9 @@ type Institute = {
 
 export const institutes: Record<string, Institute> = {
   principal: {
-    name: "MACTI (principal)",
-    moodle: "https://moodle.org",
-    jupyter: "https://jupyter.org",
+    name: "Principal",
+    moodle: "https://tlapoa.lamod.unam.mx/lmsier",
+    jupyter: "https://tlapoa.lamod.unam.mx/hubier/hub",
     details: "/principal",
     image: principal,
   },
