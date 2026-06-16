@@ -4,4 +4,4 @@ node_modules
 out
 build
 .env*
-!.env.production.local
+# !.env.production.local
