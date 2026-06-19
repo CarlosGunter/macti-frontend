@@ -134,7 +134,7 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
 function buildResolvedApiEndpoint(req: NextRequest, targetPath: string) {
   const searchParams = req.nextUrl.searchParams.toString();
 
-  return `${process.env.API_URL_BASE}/${targetPath}${searchParams ? `?${searchParams}` : ""}`;
+  return `${process.env.NEXT_PUBLIC_API_URL}/${targetPath}${searchParams ? `?${searchParams}` : ""}`;
 }
 
 /**
