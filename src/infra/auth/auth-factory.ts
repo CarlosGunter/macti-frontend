@@ -11,7 +11,11 @@ const SESSION_REFRESH_WINDOW_SECONDS = 15 * 60; // 15 minutos
 
 const isBuildPhase = process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD;
 
-export const getAuthInstance = (institute: InstitutesType) => {
+export const getAuthInstance = (
+  institute: InstitutesType,
+  dbProvider: string | null = null,
+  baseUrl: string | null = null,
+) => {
   // Durante la fase de build, devolvemos una instancia genérica
   if (isBuildPhase) {
     return genericAuthInstance;
@@ -20,8 +24,8 @@ export const getAuthInstance = (institute: InstitutesType) => {
   const keycloakConfig = keycloakConfigs[institute];
 
   return betterAuth({
-    database: getDbInstance(),
-    baseURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}`,
+    database: getDbInstance(dbProvider),
+    baseURL: baseUrl || `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}`,
     advanced: {
       cookiePrefix: `auth-${institute}`,
     },
