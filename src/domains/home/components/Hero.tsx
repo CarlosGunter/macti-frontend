@@ -3,7 +3,6 @@ import mactiLogo from "@/assets/image/logos/macti_logo.png";
 import bgHero from "@/assets/svg/low-poly-grid-haikei.svg";
 
 export default function Hero() {
-  console.log({ bgHero });
   return (
     <div
       className={`relative w-full h-80 flex flex-col items-center justify-center gap-4 bg-cover bg-center bg-no-repeat bg-fixed text-white md:h-96 lg:h-130`}
