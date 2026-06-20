@@ -18,9 +18,9 @@ FROM node:lts-alpine AS builder
     ENV NODE_ENV=production
 
     # Variables de entorno internas necesarias para la construcción.
-    ENV NEXT_PUBLIC_EXTERNAL_API_URL=https://macti-api.onrender.com
-    ENV NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000
-    ENV NEXT_PUBLIC_PROXY_API_URL=http://127.0.0.1:3000/api/proxy
+    ENV NEXT_PUBLIC_NODE_ENV=production
+    ENV NEXT_PUBLIC_APP_URL=https://tlapoa.lamod.unam.mx/macti
+    ENV NEXT_PUBLIC_API_URL=https://tlapoa.lamod.unam.mx/macti-api
     ENV NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=test-next-login
     ENV NEXT_PUBLIC_PRINCIPAL_KEYCLOAK_ISSUER=https://sso.lamod.unam.mx/auth/realms/macti3dev
 
