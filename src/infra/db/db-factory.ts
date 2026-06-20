@@ -8,15 +8,17 @@ const mapDb = {
 
 type DbProvider = keyof typeof mapDb;
 
-export const getDbInstance = () => {
-  const DATABASE_PROVIDER = process.env.DATABASE_PROVIDER as DbProvider;
-  const initDb = mapDb[DATABASE_PROVIDER];
+export const getDbInstance = (dbProvider: string | null = null) => {
+  const DATABASE_PROVIDER =
+    (dbProvider as DbProvider) || (process.env.DATABASE_PROVIDER as DbProvider);
 
-  if (!initDb) {
+  if (!DATABASE_PROVIDER || !(DATABASE_PROVIDER in mapDb)) {
     throw new Error(
       `Solo se admiten los siguientes proveedores de base de datos: ${Object.keys(mapDb).join(", ")}. Proveedor recibido: ${DATABASE_PROVIDER}`,
     );
   }
+
+  const initDb = mapDb[DATABASE_PROVIDER];
 
   return initDb();
 };
