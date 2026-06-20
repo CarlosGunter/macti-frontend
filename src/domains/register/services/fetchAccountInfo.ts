@@ -3,7 +3,7 @@ import { fetchAccountInfoResponseSchema } from "../schemas/createAccountSchema";
 
 export async function fetchAccountInfo(token: string) {
   const verifyTokenPromise = fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/register/user-info-by-token?token=${token}`,
+    `${process.env.K8S_API_URL}/register/user-info-by-token?token=${token}`,
     {
       method: "GET",
       cache: "no-store",

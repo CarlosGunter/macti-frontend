@@ -134,7 +134,7 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
 function buildResolvedApiEndpoint(req: NextRequest, targetPath: string) {
   const searchParams = req.nextUrl.searchParams.toString();
 
-  return `${process.env.NEXT_PUBLIC_API_URL}/${targetPath}${searchParams ? `?${searchParams}` : ""}`;
+  return `${process.env.K8S_API_URL}/${targetPath}${searchParams ? `?${searchParams}` : ""}`;
 }
 
 /**

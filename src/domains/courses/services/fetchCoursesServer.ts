@@ -15,7 +15,7 @@ export async function fetchCoursesServer({ institute, ids }: FetchCoursesServerP
   }
 
   const listCoursesPromise = fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/courses?${queryParams.toString()}`,
+    `${process.env.K8S_API_URL}/courses?${queryParams.toString()}`,
     {
       method: "GET",
       next: { revalidate: 300 },
