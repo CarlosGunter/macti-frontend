@@ -25,7 +25,7 @@ function buildRedirectURL(institute: string, request: NextRequest) {
   );
   const redirectUrl = new URL(
     `/api/proxy/${institute}/keycloak/login?callbackURL=${callbackURL}`,
-    process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin,
+    request.nextUrl.origin,
   );
 
   return redirectUrl;
