@@ -51,7 +51,7 @@ export default function ProfileTabs({ institute, activeTab }: ProfileTabsProps) 
         {activeTab === ProfileTabsMap.EnrolledCourses && (
           <div className="grid gap-4">
             <ListEnrolledCourses institute={institute} />
-            <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-muted/35 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between py-6">
+            <div className="flex flex-col gap-3 rounded-2xl border border-border/70 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between py-6 bg-card text-card-foreground">
               <div className="grid gap-1">
                 <p className="flex items-center gap-2 text-sm font-medium text-foreground">
                   <BookPlus className="size-4 text-primary" aria-hidden="true" />
