@@ -15,4 +15,8 @@ import { getAuthInstance } from "./auth-factory";
  * @description Instancia de autenticación para el instituto "principal". Se exporta por conveniencia, pero se recomienda usar getAuthInstance para obtener instancias específicas de cada instituto.
  * @see getAuthInstance(institute) para obtener instancias específicas de cada instituto.
  */
-export const auth = getAuthInstance("principal");
+export const auth = getAuthInstance(
+  "principal",
+  "postgres",
+  "http://localhost:3000/api/proxy/principal",
+);

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import AccountRequestForm from "@/domains/register/components/AccountRequestForm";
 import { QueryContextProvider } from "@/shared/providers/QueryProvider";
 
@@ -23,9 +24,9 @@ export default async function RegistroPage({ searchParams }: RegistroPageProps) 
       </QueryContextProvider>
       <p className="text-foreground font-medium text-center text-sm">
         ¿Eres Profesor?{" "}
-        <a href="/registro/profesor" className="text-blue-500 hover:underline">
+        <Link href="/registro/profesor" className="text-blue-500 hover:underline">
           Regístrate aquí
-        </a>
+        </Link>
       </p>
     </div>
   );
