@@ -29,7 +29,7 @@ export default async function ListInstituteCourses({
   });
 
   return (
-    <div className="grid gap-4">
+    <div className="grid grid-cols-3 gap-4">
       {courses.map((course) => (
         <CourseCard
           key={`course-${course.id}`}

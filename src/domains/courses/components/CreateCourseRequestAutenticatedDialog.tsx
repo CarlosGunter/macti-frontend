@@ -122,9 +122,7 @@ export default function CreateCourseRequestAutenticatedDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="w-full sm:w-auto">
-          Solicitar nuevo curso
-        </Button>
+        <Button className="w-full sm:w-auto">Solicitar nuevo curso</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-180">

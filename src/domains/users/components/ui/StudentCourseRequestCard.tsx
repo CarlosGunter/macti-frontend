@@ -1,4 +1,5 @@
 import { Mail, School, UserRound } from "lucide-react";
+import Link from "next/link";
 import { STATUS_BADGE_LABELS, USER_ROLES } from "../../constants";
 import type { CourseRequestStudent } from "../../schemas/courseRequestsStudentsSchema";
 import CourseRequestStatusActions from "./CourseRequestStatusActions";
@@ -43,12 +44,12 @@ export default function StudentCourseRequestCard({
         <section className="grid gap-3 rounded-xl border border-border/60 bg-background/65 p-3.5">
           <div className="flex items-center gap-2 text-sm font-medium text-card-foreground/80">
             <Mail className="h-4 w-4 text-card-foreground/55" />
-            <a
+            <Link
               href={`mailto:${request.email}`}
               className="truncate transition-colors hover:text-primary"
             >
               {request.email}
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-card-foreground/60">

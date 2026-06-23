@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut, User } from "lucide-react";
+import Link from "next/link";
 import type { getAuthClient } from "@/infra/auth/auth-client";
 import { signOutFederatedSession } from "@/infra/auth/auth-session";
 import type { InstitutesType } from "@/shared/config/institutes";
@@ -64,10 +65,10 @@ export function AutenticatedHeader({ institute, session }: AutenticatedHeaderPro
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href={`/${institute}/perfil`} className="cursor-pointer">
+          <Link href={`/${institute}/perfil`} className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             <span>Perfil</span>
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
