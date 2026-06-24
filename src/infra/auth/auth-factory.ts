@@ -39,9 +39,9 @@ export const getAuthInstance = (
       genericOAuth({
         config: [
           keycloak({
-            clientId: keycloakConfig.clientId,
-            clientSecret: keycloakConfig.clientSecret,
-            issuer: keycloakConfig.issuer,
+            clientId: keycloakConfig?.clientId ?? "",
+            clientSecret: keycloakConfig?.clientSecret ?? "",
+            issuer: keycloakConfig?.issuer ?? "",
           }),
         ],
       }),
