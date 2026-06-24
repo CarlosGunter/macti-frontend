@@ -6,7 +6,7 @@ const isBuildPhase = process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD;
 
 const createInstituteAuthClient = (institute: string) =>
   createAuthClient({
-    baseURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}`,
+    baseURL: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/${institute}`,
     plugins: [genericOAuthClient()],
   });
 

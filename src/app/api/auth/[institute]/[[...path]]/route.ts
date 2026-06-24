@@ -36,14 +36,14 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   }
 
   const session = await getSessionWithAccessToken(auth);
-  if (!session) {
-    const redirectURL = new URL(
-      `/api/proxy/${institute}/keycloak/login`,
-      process.env.NEXT_PUBLIC_APP_URL,
-    );
-    redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
-    return NextResponse.redirect(redirectURL);
-  }
+  // if (!session) {
+  //   const redirectURL = new URL(
+  //     `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}/keycloak/login`,
+  //   );
+  //   redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
+  //   // console.log({ from: "proxy-api", redirectURL });
+  //   return NextResponse.redirect(redirectURL, 303);
+  // }
 
   const targetPath = getTargetPath(path);
   const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
@@ -82,6 +82,7 @@ async function tryHandleBetterAuthRoute(req: NextRequest, auth: AuthInstance) {
   }
 
   const betterAuthResponse = await betterAuthHandler(req.clone());
+  console.log({ betterAuthResponse });
 
   if (betterAuthResponse.status !== 404) {
     return betterAuthResponse;

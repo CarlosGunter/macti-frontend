@@ -20,7 +20,7 @@ export async function fetchCourseRequestsStudents({
   }
 
   const listCourseRequestPromise = fetch(
-    `/api/proxy/${institute}/register/list-account-requests/students?${queryParams.toString()}`,
+    `/api/auth/${institute}/register/list-account-requests/students?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
