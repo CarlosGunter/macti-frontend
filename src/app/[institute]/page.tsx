@@ -34,6 +34,7 @@ export async function generateStaticParams(): Promise<InstituteStaticParams[]> {
 export default async function InstitutePage({ params }: InstitutePageProps) {
   const { institute } = await params;
   const currentInstitute = institutes[institute];
+  console.info({ institute, currentInstitute });
 
   if (!currentInstitute) notFound();
 
