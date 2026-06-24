@@ -35,7 +35,7 @@ FROM node:${NODE_VERSION} AS builder
     ENV NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=next-login
     ENV NEXT_PUBLIC_PRINCIPAL_KEYCLOAK_ISSUER=https://sso.lamod.unam.mx/auth/realms/macti3dev
     # Solo para la construcción. Se sobreescribirá en tiempo de ejecución.
-    ENV K8S_API_URL=https://tlapoa.lamod.unam.mx/macti
+    ENV K8S_API_URL=https://tlapoa.lamod.unam.mx/macti-api
 
     RUN corepack enable pnpm && pnpm build;
 
