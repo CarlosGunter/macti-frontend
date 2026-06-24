@@ -15,6 +15,8 @@ export async function generateMetadata({ params }: InstitutePageProps) {
   const { institute } = await params;
   const currentInstitute = institutes[institute];
 
+  if (!currentInstitute) notFound();
+
   return {
     title: `${currentInstitute.name} | MACTI`,
     description: `Bienvenido al portal del instituto ${currentInstitute.name}.`,
