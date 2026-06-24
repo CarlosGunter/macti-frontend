@@ -14,7 +14,7 @@ export async function GET(req: Request, { params }: KeycloakRouteProps) {
   const { institute } = await params;
   const url = new URL(req.url);
   const callbackURL = url.searchParams.get("callbackURL") ?? `/${institute}/perfil`;
-  const appOrigin = url.origin;
+  const appOrigin = process.env.NEXT_PUBLIC_APP_URL ?? url.origin;
   const action = new URL(`/api/proxy/${institute}/${AUTH_ENDPOINT_PATH}`, appOrigin);
 
   const response = await fetch(action, {
