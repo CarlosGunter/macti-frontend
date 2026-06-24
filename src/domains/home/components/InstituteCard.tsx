@@ -30,7 +30,7 @@ export default function InstituteCard({ id, name, details, image }: Institute) {
             className="px-4 py-2 rounded-sm bg-black/40 hover:bg-black/70 active:bg-black/90 cursor-pointer pointer-events-auto"
             onClick={(e) => {
               e.preventDefault();
-              window.open(`/registro?institute=${id}`, "_self");
+              window.open(`./registro?institute=${id}`, "_self");
             }}
           >
             Registro

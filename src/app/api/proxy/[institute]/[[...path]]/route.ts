@@ -39,7 +39,7 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   if (!session) {
     const redirectURL = new URL(
       `/api/proxy/${institute}/keycloak/login`,
-      process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin,
+      process.env.NEXT_PUBLIC_APP_URL,
     );
     redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
     return NextResponse.redirect(redirectURL);
