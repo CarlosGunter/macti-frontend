@@ -13,8 +13,12 @@ const PROVIDER_ID = "keycloak";
 
 export async function GET(req: Request, { params }: KeycloakRouteProps) {
   const { institute } = await params;
+
   const url = new URL(req.url);
-  const callbackURL = url.searchParams.get("callbackURL") ?? `/macti/${institute}/perfil`;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const callbackURL =
+    url.searchParams.get("callbackURL") ?? `${basePath}/${institute}/perfil`;
+
   const auth = getAuthInstance(institute);
   const action = new URL(
     `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}/${AUTH_ENDPOINT_PATH}`,
