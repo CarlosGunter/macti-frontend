@@ -20,7 +20,8 @@ type AuthInstance = ReturnType<typeof getAuthInstance>;
  * 1. Resuelve la instancia de autenticación según el instituto.
  * 2. Intenta delegar primero en rutas internas de Better Auth.
  * 3. Obtiene la sesión y, si existe, el access token de Keycloak.
- * 4. Construye el endpoint final y reenvía la petición a la API externa.
+ * 4. Si no hay sesión, inicia el flujo de login con Better Auth.
+ * 5. Construye el endpoint final y reenvía la petición a la API externa.
  *
  * @param req Solicitud entrante de Next.js.
  * @param context Contexto de ruta con parámetros dinámicos.
@@ -37,27 +38,17 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
 
   const session = await getSessionWithAccessToken(auth);
   if (!session) {
-    const redirectURL = new URL(
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}/keycloak/login`,
-    );
-    redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
-    return NextResponse.redirect(redirectURL, 303);
+    const redirectUrl = await handleBetterAuthLogin(req, auth);
+    if (redirectUrl) return NextResponse.redirect(redirectUrl);
+
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    return NextResponse.redirect(new URL(`${basePath}/${institute}`, req.url));
   }
 
   const targetPath = getTargetPath(path);
   const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
 
   return proxyToApi(req, resolvedApiEndpoint, session?.session?.keycloakToken);
-}
-
-/**
- * Convierte los segmentos dinámicos de la ruta en un path único separado por '/'.
- *
- * @param path Segmentos capturados por la ruta catch-all.
- * @returns Path concatenado o cadena vacía si no hay segmentos.
- */
-function getTargetPath(path?: string[]) {
-  return path?.join("/") || "";
 }
 
 /**
@@ -132,6 +123,39 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
   sessionDataWithKCToken.session.keycloakToken = keycloakAccessToken;
 
   return sessionDataWithKCToken;
+}
+
+/**
+ * Inicia el proceso de inicio de sesión social con Better Auth para el instituto.
+ *
+ * @param req Solicitud HTTP entrante.
+ * @param auth Instancia de autenticación configurada para el instituto.
+ * @returns Resultado de la llamada a `signInSocial`.
+ */
+async function handleBetterAuthLogin(req: NextRequest, auth: AuthInstance) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const callbackURL = `${basePath}${req.nextUrl.pathname}${req.nextUrl.search}`;
+
+  const result = await auth.api.signInSocial({
+    body: {
+      provider: "keycloak",
+      disableRedirect: true,
+      callbackURL: callbackURL,
+    },
+    headers: await NextHeaders(),
+  });
+
+  return result?.url;
+}
+
+/**
+ * Convierte los segmentos dinámicos de la ruta en un path único separado por '/'.
+ *
+ * @param path Segmentos capturados por la ruta catch-all.
+ * @returns Path concatenado o cadena vacía si no hay segmentos.
+ */
+function getTargetPath(path?: string[]) {
+  return path?.join("/") || "";
 }
 
 /**
