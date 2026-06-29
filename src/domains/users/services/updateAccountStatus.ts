@@ -10,7 +10,7 @@ export async function updateRequestStatus({
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
   const submitNewStatusPromise = fetch(
-    `${basePath}/api/proxy/${institute}/register/update-request-status/${role}?${institute}`,
+    `${basePath}/api/proxy/${institute}/register/update-request-status/${role}?institute=${institute}`,
     {
       method: "PATCH",
       cache: "no-store",
