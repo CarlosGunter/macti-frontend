@@ -64,6 +64,7 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
  */
 async function tryHandleBetterAuthRoute(req: NextRequest, auth: AuthInstance) {
   // Reconstruimos la URL completa con el base path y query params correctos
+  // Next.js no pasa la URL con el base path.
   const urlWithPath = new URL(
     `${process.env.NEXT_PUBLIC_APP_URL}${req.nextUrl.pathname}${req.nextUrl.search}`,
   );
