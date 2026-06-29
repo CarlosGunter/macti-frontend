@@ -18,12 +18,12 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(result.url);
   }
 
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return NextResponse.redirect(new URL(`${basePath}/${institute}`, request.url));
 }
 
 async function handleBetterAuthLogin(request: NextRequest, auth: AuthInstance) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const callbackURL = `${basePath}${request.nextUrl.pathname}${request.nextUrl.search}`;
 
   const result = await auth.api.signInSocial({

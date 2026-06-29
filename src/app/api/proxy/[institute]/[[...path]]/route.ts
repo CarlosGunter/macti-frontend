@@ -41,7 +41,7 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
     const redirectUrl = await handleBetterAuthLogin(req, auth);
     if (redirectUrl) return NextResponse.redirect(redirectUrl);
 
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
     return NextResponse.redirect(new URL(`${basePath}/${institute}`, req.url));
   }
 
@@ -133,7 +133,7 @@ async function getSessionWithAccessToken(auth: AuthInstance) {
  * @returns Resultado de la llamada a `signInSocial`.
  */
 async function handleBetterAuthLogin(req: NextRequest, auth: AuthInstance) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const callbackURL = `${basePath}${req.nextUrl.pathname}${req.nextUrl.search}`;
 
   const result = await auth.api.signInSocial({
