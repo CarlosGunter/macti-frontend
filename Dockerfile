@@ -30,6 +30,7 @@ FROM node:${NODE_VERSION} AS builder
 
     # Variables de entorno internas necesarias para la construcción.
     ENV NEXT_PUBLIC_NODE_ENV=production
+    ENV NEXT_PUBLIC_BASE_PATH=/macti
     ENV NEXT_PUBLIC_APP_URL=https://tlapoa.lamod.unam.mx/macti
     ENV NEXT_PUBLIC_API_URL=https://tlapoa.lamod.unam.mx/macti-api
     ENV NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=next-login
