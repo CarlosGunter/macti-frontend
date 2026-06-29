@@ -1,6 +1,6 @@
 import { toNextJsHandler } from "better-auth/next-js";
 import { headers as NextHeaders } from "next/headers";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAuthInstance } from "@/infra/auth/auth-factory";
 import type { InstitutesType } from "@/shared/config/institutes";
 import { tryCatch } from "@/shared/utils/try-catch";
@@ -36,14 +36,13 @@ async function proxyHandler(req: NextRequest, { params }: RequestParams) {
   }
 
   const session = await getSessionWithAccessToken(auth);
-  // if (!session) {
-  //   const redirectURL = new URL(
-  //     `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}/keycloak/login`,
-  //   );
-  //   redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
-  //   // console.log({ from: "proxy-api", redirectURL });
-  //   return NextResponse.redirect(redirectURL, 303);
-  // }
+  if (!session) {
+    const redirectURL = new URL(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}/keycloak/login`,
+    );
+    redirectURL.searchParams.set("callbackURL", req.nextUrl.pathname);
+    return NextResponse.redirect(redirectURL, 303);
+  }
 
   const targetPath = getTargetPath(path);
   const resolvedApiEndpoint = buildResolvedApiEndpoint(req, targetPath);
@@ -73,16 +72,26 @@ function getTargetPath(path?: string[]) {
  * @returns Respuesta de Better Auth o `null` cuando no aplica.
  */
 async function tryHandleBetterAuthRoute(req: NextRequest, auth: AuthInstance) {
+  // Reconstruimos la URL completa con el base path y query params correctos
+  const urlWithPath = new URL(
+    `${process.env.NEXT_PUBLIC_APP_URL}${req.nextUrl.pathname}${req.nextUrl.search}`,
+  );
+  const reqToHandle = new NextRequest(urlWithPath, {
+    method: req.method,
+    headers: req.headers,
+    body: req.method !== "GET" && req.body ? req.clone().body : undefined,
+    duplex: "half",
+  });
+
   const betterAuthHandlers = toNextJsHandler(auth);
   const betterAuthHandler =
-    betterAuthHandlers[req.method as keyof typeof betterAuthHandlers];
+    betterAuthHandlers[reqToHandle.method as keyof typeof betterAuthHandlers];
 
   if (!betterAuthHandler) {
     return null;
   }
 
-  const betterAuthResponse = await betterAuthHandler(req.clone());
-  console.log({ betterAuthResponse });
+  const betterAuthResponse = await betterAuthHandler(reqToHandle);
 
   if (betterAuthResponse.status !== 404) {
     return betterAuthResponse;

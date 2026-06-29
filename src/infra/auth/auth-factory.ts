@@ -25,7 +25,7 @@ export const getAuthInstance = (
 
   return betterAuth({
     database: getDbInstance(dbProvider),
-    baseURL: baseUrl || `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/${institute}`,
+    baseURL: baseUrl || `${process.env.NEXT_PUBLIC_APP_URL}/api/proxy/${institute}`,
     advanced: {
       cookiePrefix: `auth-${institute}`,
     },

@@ -23,7 +23,7 @@ export async function createCourseRequestAutenticated({
   const queryParams = new URLSearchParams({ institute });
 
   const courseRequestAutenticatedPromise = fetch(
-    `/api/auth/${institute}/register/request-account/${userRole}/authenticated?${queryParams.toString()}`,
+    `/api/proxy/${institute}/register/request-account/${userRole}/authenticated?${queryParams.toString()}`,
     {
       method: "POST",
       cache: "no-store",

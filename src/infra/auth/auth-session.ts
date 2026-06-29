@@ -9,7 +9,7 @@ interface SignOutFederatedSessionParams {
 
 export async function signOutFederatedSession({
   institute,
-  redirectPath = `/${institute}`,
+  redirectPath = `/macti/${institute}`,
 }: SignOutFederatedSessionParams) {
   const authClient = getAuthClient(institute);
   await authClient.signOut();

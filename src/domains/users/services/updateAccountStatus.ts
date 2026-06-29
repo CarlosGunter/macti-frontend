@@ -8,7 +8,7 @@ export async function updateRequestStatus({
   role,
 }: UpdateRequestStatusPayload) {
   const submitNewStatusPromise = fetch(
-    `/api/auth/${institute}/register/update-request-status/${role}`,
+    `/api/proxy/${institute}/register/update-request-status/${role}`,
     {
       method: "PATCH",
       cache: "no-store",

@@ -18,5 +18,5 @@ import { getAuthInstance } from "./auth-factory";
 export const auth = getAuthInstance(
   "principal",
   "postgres",
-  "http://localhost:3000/api/auth/principal",
+  "http://localhost:3000/api/proxy/principal",
 );

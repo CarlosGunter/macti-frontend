@@ -7,7 +7,7 @@ export async function fetchEnrolledCourses({ institute }: { institute: string })
   });
 
   const enrolledCoursesPromise = fetch(
-    `/api/auth/${institute}/courses/enrolled?${queryParams.toString()}`,
+    `/api/proxy/${institute}/courses/enrolled?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",

@@ -18,7 +18,7 @@ export async function fetchCourseRequestsTeachers({
   }
 
   const listRequestPromise = fetch(
-    `/api/auth/${institute}/register/list-account-requests/teachers?${queryParams.toString()}`,
+    `/api/proxy/${institute}/register/list-account-requests/teachers?${queryParams.toString()}`,
     {
       method: "GET",
       cache: "no-store",
